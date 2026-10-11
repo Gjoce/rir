@@ -21,7 +21,7 @@ Pacient, ki želi mnenje specialista, pogosto čaka več tednov ali mora potovat
 1. Izbere specialista in vrsto konzultacije:
    - **pisna** - opiše težavo in prejme pisno mnenje,
    - **video** - pogovor z zdravnikom prek video klica v brskalniku.
-2. Izpolni obrazec (opis težave, diagnoza, zdravila, alergije, izvidi kot priloge), po potrebi označi nujnost ali potrebo po prevajalcu, in plača.
+2. Izpolni obrazec (opis težave, diagnoza, zdravila, alergije, izvidi kot priloge), po potrebi označi nujnost ali potrebo po prevajalcu.
 3. Mnenje zdravnika prejme po e-pošti, digitalno podpisano.
 
 **Zdravnik** (prijava v nadzorno ploščo):

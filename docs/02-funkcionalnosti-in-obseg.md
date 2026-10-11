@@ -2,11 +2,11 @@
 
 ## Uporabniške vloge
 
-| Vloga | Kaj lahko počne | Česa ne more |
-|---|---|---|
-| **Pacient** (brez računa) | Naroči pisno ali video konzultacijo, priloži izvide, se prek povezave iz e-pošte pridruži video klicu, prejme podpisano mnenje. | Nima prijave ne nadzorne plošče, ne vidi drugih konzultacij, oddane konzultacije ne more spreminjati, video klicu se lahko pridruži le v času termina. |
-| **Zdravnik** | Vidi svoje konzultacije, odda pisni odgovor, določi termin in izvede video klic, odda mnenje po klicu, vidi svojo statistiko. | Ne vidi konzultacij drugih zdravnikov, ne spreminja cen ali svoje provizije, ne dodaja zdravnikov, ne dostopa do konzultacij, ki so mu potekle. |
-| **Administrator** | Dodaja, ureja in briše zdravnike, določa provizije, vnaša konzultacije, vidi vse konzultacije (tudi neopravljene) in celotno statistiko. | Ne odgovarja na konzultacije in se ne pridruži video klicu - to lahko stori le dodeljeni zdravnik. |
+| Vloga                     | Kaj lahko počne                                                                                                                          | Česa ne more                                                                                                                                           |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Pacient** (brez računa) | Naroči pisno ali video konzultacijo, priloži izvide, se prek povezave iz e-pošte pridruži video klicu, prejme podpisano mnenje.          | Nima prijave ne nadzorne plošče, ne vidi drugih konzultacij, oddane konzultacije ne more spreminjati, video klicu se lahko pridruži le v času termina. |
+| **Zdravnik**              | Vidi svoje konzultacije, odda pisni odgovor, določi termin in izvede video klic, odda mnenje po klicu, vidi svojo statistiko.            | Ne vidi konzultacij drugih zdravnikov, ne spreminja cen ali svoje provizije, ne dodaja zdravnikov, ne dostopa do konzultacij, ki so mu potekle.        |
+| **Administrator**         | Dodaja, ureja in briše zdravnike, določa provizije, vnaša konzultacije, vidi vse konzultacije (tudi neopravljene) in celotno statistiko. | Ne odgovarja na konzultacije in se ne pridruži video klicu - to lahko stori le dodeljeni zdravnik.                                                     |
 
 ## Predvidene funkcionalnosti
 
@@ -21,18 +21,14 @@
 9. Upravljanje provizij zdravnikov z obrazložitvijo spremembe in samodejnim obvestilom zdravniku.
 10. Nadzorna plošča s statistiko (prihodki v mesecu, število konzultacij po vrsti in statusu) iz prilagodljivih gradnikov.
 11. Dvostopenjska prijava (TOTP) za zdravnike in administratorja.
-12. Beleženje poteka video klica (vstop/izstop udeležencev, težave s povezavo) za reševanje reklamacij.
-13. Oznaka, da pacient potrebuje prevajalca.
 
 ## Kasnejše nadgradnje
 
 - Spletno plačilo s kartico ob naročilu konzultacije.
 - Uporabniški račun za pacienta z zgodovino konzultacij in mnenj.
-- Koledar razpoložljivosti zdravnika, v katerem pacient sam izbere točen termin.
 - Varno sporočanje med pacientom in zdravnikom za dodatna vprašanja po mnenju.
 - Ocene in mnenja pacientov o zdravnikih.
 - Večjezični uporabniški vmesnik.
-- Mobilna aplikacija s potisnimi obvestili.
 
 ## Out of scope
 
@@ -40,5 +36,4 @@
 - Predpisovanje zdravil (e-recept), napotnice in bolniški stalež.
 - Povezava z nacionalnimi sistemi (eZdravje, ZZZS) in obračun prek zdravstvenega zavarovanja.
 - Vodenje celotnega elektronskega zdravstvenega kartona pacienta.
-- Samodejno (AI) postavljanje diagnoz.
 - Snemanje video klicev.
