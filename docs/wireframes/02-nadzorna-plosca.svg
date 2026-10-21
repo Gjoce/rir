@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" font-family="Arial, Helvetica, sans-serif" fill="#333">
+  <rect width="1200" height="800" fill="#fff"/>
+  <rect x="0" y="0" width="1200" height="60" fill="#e6e6e6" stroke="#999" stroke-width="1" rx="0"/>
+  <circle cx="34" cy="30" r="14" fill="none" stroke="#777" stroke-width="2"/>
+  <polyline points="46,30 54,30 58,20 62,40 66,30 74,30" fill="none" stroke="#777" stroke-width="2"/>
+  <text x="82" y="37" font-size="22" font-weight="bold" fill="#333" text-anchor="start">CyberMedico</text>
+  <rect x="1080" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1095" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">DB</text>
+  <rect x="1118" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1133" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">◐</text>
+  <rect x="1156" y="15" width="30" height="30" fill="#888" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1171" y="35" font-size="13" font-weight="normal" fill="#fff" text-anchor="middle">⇥</text>
+  <rect x="12" y="75" width="150" height="255" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="6"/>
+  <text x="26" y="102" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Panel</text>
+  <text x="26" y="120" font-size="10" font-weight="bold" fill="#777" text-anchor="start">OVERVIEW</text>
+  <rect x="22" y="130" width="130" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="32" y="148" font-size="14" font-weight="bold" fill="#333" text-anchor="start">Dashboard</text>
+  <text x="26" y="182" font-size="10" font-weight="bold" fill="#777" text-anchor="start">MANAGEMENT</text>
+  <text x="32" y="208" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Add Doctor</text>
+  <text x="32" y="236" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Doctors</text>
+  <text x="26" y="266" font-size="10" font-weight="bold" fill="#777" text-anchor="start">CONTENT</text>
+  <text x="32" y="294" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Consultations</text>
+  <line x1="30" y1="314" x2="140" y2="314" stroke="#888" stroke-width="2"/>
+  <text x="180" y="100" font-size="24" font-weight="bold" fill="#333" text-anchor="start">Dashboard</text>
+  <text x="180" y="124" font-size="13" font-weight="normal" fill="#777" text-anchor="start">This is the main dashboard view of the platform</text>
+  <rect x="180" y="140" width="1000" height="620" fill="#f6f6f6" stroke="#bbb" stroke-width="1" rx="6"/>
+  <rect x="192" y="152" width="740" height="180" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="562.0" y="200" font-size="22" font-weight="bold" fill="#333" text-anchor="middle">13</text>
+  <text x="562.0" y="220" font-size="12" font-weight="normal" fill="#777" text-anchor="middle">Total Consultations</text>
+  <path d="M192 300 L392 300 C442 300 462 255 502 255 C542 255 562 300 612 300 L932 300" fill="none" stroke="#777" stroke-width="2"/>
+  <rect x="944" y="152" width="224" height="180" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="4"/>
+  <circle cx="1036.0" cy="242" r="55" fill="none" stroke="#ccc" stroke-width="28"/>
+  <circle cx="1036.0" cy="242" r="55" fill="none" stroke="#888" stroke-width="28" stroke-dasharray="155 345" transform="rotate(-90 1036.0 242)"/>
+  <rect x="1098" y="290" width="12" height="10" fill="#888" stroke="none" stroke-width="1" rx="1"/>
+  <text x="1114" y="299" font-size="11" font-weight="normal" fill="#333" text-anchor="start">video</text>
+  <rect x="1098" y="306" width="12" height="10" fill="#ccc" stroke="none" stroke-width="1" rx="1"/>
+  <text x="1114" y="315" font-size="11" font-weight="normal" fill="#333" text-anchor="start">written</text>
+  <rect x="192" y="344" width="740" height="236" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="4"/>
+  <rect x="204" y="356" width="203" height="22" fill="#ddd" stroke="#999" stroke-width="1" rx="3"/>
+  <text x="211" y="372" font-size="13" font-weight="bold" fill="#333" text-anchor="start" font-family="Consolas, monospace">Upcoming Appointments</text>
+  <rect x="204" y="390" width="716" height="30" fill="#e2e2e2" stroke="#bbb" stroke-width="1" rx="0"/>
+  <text x="216" y="412" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Patient</text>
+  <text x="484" y="412" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Doctor</text>
+  <text x="764" y="412" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Urgent</text>
+  <rect x="204" y="420" width="716" height="30" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="216" y="442" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Martin Stojanovski</text>
+  <text x="484" y="442" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Aleksandar Blazevski</text>
+  <rect x="764" y="428" width="34" height="20" fill="#ddd" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="781" y="443" font-size="12" font-weight="normal" fill="#333" text-anchor="middle">No</text>
+  <rect x="204" y="450" width="716" height="30" fill="#fff" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="216" y="472" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Katerina Blazheska</text>
+  <text x="484" y="472" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Aleksandar Blazevski</text>
+  <rect x="764" y="458" width="34" height="20" fill="#999" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="781" y="473" font-size="12" font-weight="normal" fill="#fff" text-anchor="middle">Yes</text>
+  <rect x="204" y="480" width="716" height="30" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="216" y="502" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Maria Kovačević</text>
+  <text x="484" y="502" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Ivana Petrova</text>
+  <rect x="764" y="488" width="34" height="20" fill="#999" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="781" y="503" font-size="12" font-weight="normal" fill="#fff" text-anchor="middle">Yes</text>
+  <rect x="204" y="510" width="716" height="30" fill="#fff" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="216" y="532" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Nikola Georgievski</text>
+  <text x="484" y="532" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Aleksandar Blazevski</text>
+  <rect x="764" y="518" width="34" height="20" fill="#ddd" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="781" y="533" font-size="12" font-weight="normal" fill="#333" text-anchor="middle">No</text>
+  <rect x="204" y="540" width="716" height="30" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="216" y="562" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Stefan Nikoloski</text>
+  <text x="484" y="562" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Aleksandar Blazevski</text>
+  <rect x="764" y="548" width="34" height="20" fill="#ddd" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="781" y="563" font-size="12" font-weight="normal" fill="#333" text-anchor="middle">No</text>
+  <rect x="944" y="344" width="224" height="170" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="1056.0" y="420" font-size="26" font-weight="bold" fill="#333" text-anchor="middle">770.00 €</text>
+  <text x="1056.0" y="444" font-size="12" font-weight="normal" fill="#333" text-anchor="middle">This month's revenue</text>
+  <text x="1056.0" y="466" font-size="11" font-weight="normal" fill="#777" text-anchor="middle">▲ 156.7 % vs last month</text>
+  <rect x="192" y="592" width="740" height="156" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="362" y="622" font-size="11" font-weight="normal" fill="#333" text-anchor="end">Dr. Aleksandar Blazevski</text>
+  <rect x="372" y="606" width="520" height="22" fill="#999" stroke="none" stroke-width="1" rx="0"/>
+  <text x="898" y="622" font-size="11" font-weight="normal" fill="#333" text-anchor="start">4</text>
+  <text x="362" y="654" font-size="11" font-weight="normal" fill="#333" text-anchor="end">Dr. Sonja Kostadinova</text>
+  <rect x="372" y="638" width="390" height="22" fill="#999" stroke="none" stroke-width="1" rx="0"/>
+  <text x="768" y="654" font-size="11" font-weight="normal" fill="#333" text-anchor="start">3</text>
+  <text x="362" y="686" font-size="11" font-weight="normal" fill="#333" text-anchor="end">Dr. Ivana Petrova</text>
+  <rect x="372" y="670" width="390" height="22" fill="#999" stroke="none" stroke-width="1" rx="0"/>
+  <text x="768" y="686" font-size="11" font-weight="normal" fill="#333" text-anchor="start">3</text>
+  <text x="362" y="718" font-size="11" font-weight="normal" fill="#333" text-anchor="end">Dr. Marjan Trajkov</text>
+  <rect x="372" y="702" width="390" height="22" fill="#999" stroke="none" stroke-width="1" rx="0"/>
+  <text x="768" y="718" font-size="11" font-weight="normal" fill="#333" text-anchor="start">3</text>
+  <rect x="944" y="526" width="224" height="170" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="1056.0" y="605" font-size="26" font-weight="bold" fill="#333" text-anchor="middle">4</text>
+  <text x="1056.0" y="630" font-size="12" font-weight="normal" fill="#333" text-anchor="middle">Total doctors</text>
+  <text x="180" y="785" font-size="11" font-weight="normal" fill="#777" text-anchor="start" font-style="italic">Gradnike je mogoče premikati in jim spreminjati velikost.</text>
+</svg>

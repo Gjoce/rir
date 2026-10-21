@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 470" font-family="Arial, Helvetica, sans-serif" fill="#333">
+  <rect width="1200" height="470" fill="#fff"/>
+  <rect x="0" y="0" width="1200" height="60" fill="#e6e6e6" stroke="#999" stroke-width="1" rx="0"/>
+  <circle cx="34" cy="30" r="14" fill="none" stroke="#777" stroke-width="2"/>
+  <polyline points="46,30 54,30 58,20 62,40 66,30 74,30" fill="none" stroke="#777" stroke-width="2"/>
+  <text x="82" y="37" font-size="22" font-weight="bold" fill="#333" text-anchor="start">CyberMedico</text>
+  <rect x="1118" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1133" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">◐</text>
+  <rect x="1156" y="15" width="30" height="30" fill="#888" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1171" y="35" font-size="13" font-weight="normal" fill="#fff" text-anchor="middle">⇥</text>
+  <rect x="12" y="75" width="150" height="170" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="6"/>
+  <text x="26" y="102" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Panel</text>
+  <text x="26" y="120" font-size="10" font-weight="bold" fill="#777" text-anchor="start">MANAGEMENT</text>
+  <text x="26" y="182" font-size="10" font-weight="bold" fill="#777" text-anchor="start">CONTENT</text>
+  <text x="32" y="148" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Dashboard</text>
+  <rect x="22" y="192" width="130" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="32" y="210" font-size="14" font-weight="bold" fill="#333" text-anchor="start">Consultations</text>
+  <line x1="30" y1="230" x2="140" y2="230" stroke="#888" stroke-width="2"/>
+  <text x="180" y="100" font-size="24" font-weight="bold" fill="#777" text-anchor="start">Consultations &gt; Maria</text>
+  <text x="450.3" y="100" font-size="24" font-weight="bold" fill="#333" text-anchor="start">&gt; Schedule</text>
+  <text x="180" y="124" font-size="13" font-weight="normal" fill="#777" text-anchor="start">Schedule a video consultation with the patient. Choose a date and time that works for both you and the patient.</text>
+  <rect x="180" y="140" width="1000" height="300" fill="#f6f6f6" stroke="#bbb" stroke-width="1" rx="6"/>
+  <rect x="192" y="152" width="976" height="34" fill="#e2e2e2" stroke="#bbb" stroke-width="1" rx="0"/>
+  <text x="204" y="174" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Patient name</text>
+  <text x="362" y="174" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Patient surname</text>
+  <text x="532" y="174" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Patient age</text>
+  <text x="672" y="174" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Consultation type</text>
+  <text x="872" y="174" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Urgent</text>
+  <text x="992" y="174" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Price</text>
+  <rect x="192" y="186" width="976" height="34" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="204" y="208" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Maria</text>
+  <text x="362" y="208" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Kovačević</text>
+  <text x="532" y="208" font-size="13" font-weight="normal" fill="#333" text-anchor="start">45</text>
+  <text x="672" y="208" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Video</text>
+  <rect x="872" y="194" width="34" height="20" fill="#999" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="889" y="209" font-size="12" font-weight="normal" fill="#fff" text-anchor="middle">Yes</text>
+  <text x="992" y="208" font-size="13" font-weight="normal" fill="#333" text-anchor="start">150</text>
+  <text x="192" y="246" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Preferred time by patient</text>
+  <rect x="192" y="254" width="976" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="277" font-size="14" font-weight="normal" fill="#333" text-anchor="start">morning</text>
+  <text x="192" y="316" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Schedule date and time *</text>
+  <rect x="192" y="324" width="976" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="347" font-size="14" font-weight="normal" fill="#999" text-anchor="start">dd.mm.yyyy  --:--</text>
+  <text x="1140" y="346" font-size="14" font-weight="normal" fill="#333" text-anchor="start">📅</text>
+  <rect x="192" y="376" width="976" height="36" fill="#888" stroke="#666" stroke-width="1" rx="4"/>
+  <text x="680.0" y="399.0" font-size="15" font-weight="bold" fill="#fff" text-anchor="middle">Schedule</text>
+</svg>

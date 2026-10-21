@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" font-family="Arial, Helvetica, sans-serif" fill="#333">
+  <rect width="1200" height="640" fill="#fff"/>
+  <rect x="0" y="0" width="1200" height="60" fill="#e6e6e6" stroke="#999" stroke-width="1" rx="0"/>
+  <circle cx="34" cy="30" r="14" fill="none" stroke="#777" stroke-width="2"/>
+  <polyline points="46,30 54,30 58,20 62,40 66,30 74,30" fill="none" stroke="#777" stroke-width="2"/>
+  <text x="82" y="37" font-size="22" font-weight="bold" fill="#333" text-anchor="start">CyberMedico</text>
+  <rect x="1118" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1133" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">◐</text>
+  <rect x="1156" y="15" width="30" height="30" fill="#888" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1171" y="35" font-size="13" font-weight="normal" fill="#fff" text-anchor="middle">⇥</text>
+  <rect x="12" y="75" width="150" height="170" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="6"/>
+  <text x="26" y="102" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Panel</text>
+  <text x="26" y="120" font-size="10" font-weight="bold" fill="#777" text-anchor="start">MANAGEMENT</text>
+  <text x="26" y="182" font-size="10" font-weight="bold" fill="#777" text-anchor="start">CONTENT</text>
+  <text x="32" y="148" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Dashboard</text>
+  <rect x="22" y="192" width="130" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="32" y="210" font-size="14" font-weight="bold" fill="#333" text-anchor="start">Consultations</text>
+  <line x1="30" y1="230" x2="140" y2="230" stroke="#888" stroke-width="2"/>
+  <text x="180" y="100" font-size="24" font-weight="bold" fill="#777" text-anchor="start">Consultations &gt; Katerina</text>
+  <text x="487.20000000000005" y="100" font-size="24" font-weight="bold" fill="#333" text-anchor="start">&gt; Answer</text>
+  <text x="180" y="124" font-size="13" font-weight="normal" fill="#777" text-anchor="start">Provide an answer to the patient's consultation request. Write a detailed response based on the patient's symptoms and medical information.</text>
+  <rect x="180" y="140" width="1000" height="470" fill="#f6f6f6" stroke="#bbb" stroke-width="1" rx="6"/>
+  <rect x="192" y="152" width="976" height="34" fill="#e2e2e2" stroke="#bbb" stroke-width="1" rx="0"/>
+  <text x="204" y="174" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Patient name</text>
+  <text x="362" y="174" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Patient surname</text>
+  <text x="532" y="174" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Patient age</text>
+  <text x="672" y="174" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Consultation type</text>
+  <text x="872" y="174" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Urgent</text>
+  <text x="992" y="174" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Price</text>
+  <rect x="192" y="186" width="976" height="34" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="204" y="208" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Katerina</text>
+  <text x="362" y="208" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Blazheska</text>
+  <text x="532" y="208" font-size="13" font-weight="normal" fill="#333" text-anchor="start">29</text>
+  <text x="672" y="208" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Written</text>
+  <rect x="872" y="194" width="34" height="20" fill="#999" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="889" y="209" font-size="12" font-weight="normal" fill="#fff" text-anchor="middle">Yes</text>
+  <text x="992" y="208" font-size="13" font-weight="normal" fill="#333" text-anchor="start">65</text>
+  <line x1="192" y1="234" x2="1168" y2="234" stroke="#bbb" stroke-width="1"/>
+  <text x="192" y="260" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Answer *</text>
+  <rect x="192" y="268" width="976" height="34" fill="#eee" stroke="#bbb" stroke-width="1" rx="0"/>
+  <text x="204" y="291" font-size="14" font-weight="normal" fill="#333" text-anchor="start">B   I   U   S    ≡   1.   •    🔗</text>
+  <rect x="192" y="302" width="976" height="220" fill="#fff" stroke="#bbb" stroke-width="1" rx="0"/>
+  <text x="204" y="330" font-size="14" font-weight="normal" fill="#999" text-anchor="start">Based on your provided symptoms...</text>
+  <rect x="192" y="540" width="140" height="36" fill="#888" stroke="#666" stroke-width="1" rx="4"/>
+  <text x="262.0" y="563.0" font-size="15" font-weight="bold" fill="#fff" text-anchor="middle">Submit</text>
+  <rect x="0" y="0" width="1200" height="640" fill="#000" fill-opacity="0.35"/>
+  <rect x="360" y="220" width="480" height="210" fill="#fff" stroke="#666" stroke-width="2" rx="8"/>
+  <text x="384" y="258" font-size="17" font-weight="bold" fill="#333" text-anchor="start">Enter TOTP code</text>
+  <text x="810" y="258" font-size="16" font-weight="normal" fill="#777" text-anchor="start">✕</text>
+  <line x1="360" y1="276" x2="840" y2="276" stroke="#bbb" stroke-width="1"/>
+  <text x="384" y="306" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Authentication Code (from your authenticator app) *</text>
+  <rect x="384" y="314" width="432" height="36" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="394" y="337" font-size="14" font-weight="normal" fill="#999" text-anchor="start">000000</text>
+  <rect x="384" y="366" width="432" height="36" fill="#888" stroke="#666" stroke-width="1" rx="4"/>
+  <text x="600.0" y="389.0" font-size="15" font-weight="bold" fill="#fff" text-anchor="middle">Submit answer</text>
+  <text x="180" y="630" font-size="11" font-weight="normal" fill="#fff" text-anchor="start" font-style="italic">Po kliku Submit se odpre okno za TOTP; odgovor se podpiše in pošlje pacientu šele po pravilni kodi.</text>
+</svg>

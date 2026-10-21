@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" font-family="Arial, Helvetica, sans-serif" fill="#333">
+  <rect width="1200" height="800" fill="#fff"/>
+  <rect x="0" y="0" width="1200" height="60" fill="#e6e6e6" stroke="#999" stroke-width="1" rx="0"/>
+  <circle cx="34" cy="30" r="14" fill="none" stroke="#777" stroke-width="2"/>
+  <polyline points="46,30 54,30 58,20 62,40 66,30 74,30" fill="none" stroke="#777" stroke-width="2"/>
+  <text x="82" y="37" font-size="22" font-weight="bold" fill="#333" text-anchor="start">CyberMedico</text>
+  <rect x="1080" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1095" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">DB</text>
+  <rect x="1118" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1133" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">◐</text>
+  <rect x="1156" y="15" width="30" height="30" fill="#888" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1171" y="35" font-size="13" font-weight="normal" fill="#fff" text-anchor="middle">⇥</text>
+  <rect x="12" y="75" width="150" height="255" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="6"/>
+  <text x="26" y="102" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Panel</text>
+  <text x="26" y="120" font-size="10" font-weight="bold" fill="#777" text-anchor="start">OVERVIEW</text>
+  <text x="32" y="148" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Dashboard</text>
+  <text x="26" y="182" font-size="10" font-weight="bold" fill="#777" text-anchor="start">MANAGEMENT</text>
+  <text x="32" y="208" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Add Doctor</text>
+  <rect x="22" y="218" width="130" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="32" y="236" font-size="14" font-weight="bold" fill="#333" text-anchor="start">Doctors</text>
+  <text x="26" y="266" font-size="10" font-weight="bold" fill="#777" text-anchor="start">CONTENT</text>
+  <text x="32" y="294" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Consultations</text>
+  <line x1="30" y1="314" x2="140" y2="314" stroke="#888" stroke-width="2"/>
+  <rect x="180" y="75" width="1000" height="228" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="6"/>
+  <rect x="192" y="87" width="150" height="160" fill="#ddd" stroke="#999" stroke-width="1" rx="0"/>
+  <line x1="192" y1="87" x2="342" y2="247" stroke="#aaa" stroke-width="1"/>
+  <line x1="342" y1="87" x2="192" y2="247" stroke="#aaa" stroke-width="1"/>
+  <text x="360" y="117" font-size="22" font-weight="bold" fill="#555" text-anchor="start">Dr. Ivana Petrova</text>
+  <line x1="360" y1="121" x2="547" y2="121" stroke="#999"/>
+  <rect x="360" y="133" width="104" height="22" fill="#ddd" stroke="#999" stroke-width="1" rx="3"/>
+  <text x="367" y="149" font-size="13" font-weight="bold" fill="#333" text-anchor="start" font-family="Consolas, monospace">Cardiology</text>
+  <text x="360" y="175" font-size="12" font-weight="normal" fill="#777" text-anchor="start" font-style="italic">Interventional Cardiology</text>
+  <rect x="360" y="193" width="800" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <rect x="360" y="209" width="800" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <rect x="360" y="225" width="480.0" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <line x1="180" y1="261" x2="1180" y2="261" stroke="#bbb" stroke-width="1"/>
+  <text x="192" y="287" font-size="13" font-weight="normal" fill="#333" text-anchor="start">University Clinic for Cardiology, Skopje</text>
+  <rect x="180" y="315" width="1000" height="228" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="6"/>
+  <rect x="192" y="327" width="150" height="160" fill="#ddd" stroke="#999" stroke-width="1" rx="0"/>
+  <line x1="192" y1="327" x2="342" y2="487" stroke="#aaa" stroke-width="1"/>
+  <line x1="342" y1="327" x2="192" y2="487" stroke="#aaa" stroke-width="1"/>
+  <text x="360" y="357" font-size="22" font-weight="bold" fill="#555" text-anchor="start">Dr. Marjan Trajkov</text>
+  <line x1="360" y1="361" x2="558" y2="361" stroke="#999"/>
+  <rect x="360" y="373" width="95" height="22" fill="#ddd" stroke="#999" stroke-width="1" rx="3"/>
+  <text x="367" y="389" font-size="13" font-weight="bold" fill="#333" text-anchor="start" font-family="Consolas, monospace">Neurology</text>
+  <text x="360" y="415" font-size="12" font-weight="normal" fill="#777" text-anchor="start" font-style="italic">Headache and Pain Medicine</text>
+  <rect x="360" y="433" width="800" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <rect x="360" y="449" width="800" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <rect x="360" y="465" width="480.0" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <line x1="180" y1="501" x2="1180" y2="501" stroke="#bbb" stroke-width="1"/>
+  <text x="192" y="527" font-size="13" font-weight="normal" fill="#333" text-anchor="start">University Clinic for Neurology, Skopje</text>
+  <rect x="180" y="555" width="1000" height="228" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="6"/>
+  <rect x="192" y="567" width="150" height="160" fill="#ddd" stroke="#999" stroke-width="1" rx="0"/>
+  <line x1="192" y1="567" x2="342" y2="727" stroke="#aaa" stroke-width="1"/>
+  <line x1="342" y1="567" x2="192" y2="727" stroke="#aaa" stroke-width="1"/>
+  <text x="360" y="597" font-size="22" font-weight="bold" fill="#555" text-anchor="start">Dr. Sonja Kostadinova</text>
+  <line x1="360" y1="601" x2="591" y2="601" stroke="#999"/>
+  <rect x="360" y="613" width="131" height="22" fill="#ddd" stroke="#999" stroke-width="1" rx="3"/>
+  <text x="367" y="629" font-size="13" font-weight="bold" fill="#333" text-anchor="start" font-family="Consolas, monospace">Endocrinology</text>
+  <text x="360" y="655" font-size="12" font-weight="normal" fill="#777" text-anchor="start" font-style="italic">Diabetes and Thyroid Disorders</text>
+  <rect x="360" y="673" width="800" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <rect x="360" y="689" width="800" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <rect x="360" y="705" width="480.0" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <line x1="180" y1="741" x2="1180" y2="741" stroke="#bbb" stroke-width="1"/>
+  <text x="192" y="767" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Clinic for Endocrinology, Diabetes and Metabolic Disorders, Skopje</text>
+</svg>

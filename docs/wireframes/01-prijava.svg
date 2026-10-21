@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" font-family="Arial, Helvetica, sans-serif" fill="#333">
+  <rect width="1200" height="560" fill="#fff"/>
+  <rect x="0" y="0" width="1200" height="560" fill="#efefef" stroke="none" stroke-width="1" rx="0"/>
+  <rect x="60" y="80" width="520" height="380" fill="#fff" stroke="#999" stroke-width="1" rx="8"/>
+  <text x="90" y="130" font-size="24" font-weight="bold" fill="#333" text-anchor="start">Login</text>
+  <text x="90" y="158" font-size="13" font-weight="normal" fill="#777" text-anchor="start">Welcome back! Please enter your credentials to log in.</text>
+  <text x="90" y="200" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Email:</text>
+  <rect x="90" y="208" width="460" height="36" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="100" y="231" font-size="14" font-weight="normal" fill="#999" text-anchor="start">you@example.com</text>
+  <text x="90" y="280" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Password:</text>
+  <rect x="90" y="288" width="460" height="36" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <rect x="90" y="370" width="460" height="40" fill="#888" stroke="#666" stroke-width="1" rx="4"/>
+  <text x="320.0" y="395.0" font-size="15" font-weight="bold" fill="#fff" text-anchor="middle">Login</text>
+  <text x="90" y="440" font-size="12" font-weight="normal" fill="#777" text-anchor="start" font-style="italic">Korak 1</text>
+  <rect x="620" y="80" width="520" height="380" fill="#fff" stroke="#999" stroke-width="1" rx="8"/>
+  <text x="650" y="130" font-size="24" font-weight="bold" fill="#333" text-anchor="start">Two-factor authentication</text>
+  <text x="650" y="158" font-size="13" font-weight="normal" fill="#777" text-anchor="start">Enter the 6-digit code from your authenticator app.</text>
+  <text x="650" y="200" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Authentication Code:</text>
+  <rect x="650" y="208" width="460" height="36" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="660" y="231" font-size="14" font-weight="normal" fill="#999" text-anchor="start">000000</text>
+  <rect x="650" y="290" width="460" height="40" fill="#888" stroke="#666" stroke-width="1" rx="4"/>
+  <text x="880.0" y="315.0" font-size="15" font-weight="bold" fill="#fff" text-anchor="middle">Verify</text>
+  <text x="650" y="440" font-size="12" font-weight="normal" fill="#777" text-anchor="start" font-style="italic">Korak 2</text>
+  <text x="600" y="260" font-size="40" font-weight="normal" fill="#777" text-anchor="middle">→</text>
+  <text x="60" y="510" font-size="13" font-weight="normal" fill="#777" text-anchor="start">Ob prvi prijavi se namesto koraka 2 prikaže nastavitev TOTP (setup key + Confirmation Code + Confirm Setup).</text>
+</svg>

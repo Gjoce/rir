@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 860" font-family="Arial, Helvetica, sans-serif" fill="#333">
+  <rect width="1200" height="860" fill="#fff"/>
+  <rect x="0" y="0" width="1200" height="60" fill="#e6e6e6" stroke="#999" stroke-width="1" rx="0"/>
+  <circle cx="34" cy="30" r="14" fill="none" stroke="#777" stroke-width="2"/>
+  <polyline points="46,30 54,30 58,20 62,40 66,30 74,30" fill="none" stroke="#777" stroke-width="2"/>
+  <text x="82" y="37" font-size="22" font-weight="bold" fill="#333" text-anchor="start">CyberMedico</text>
+  <rect x="1080" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1095" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">DB</text>
+  <rect x="1118" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1133" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">◐</text>
+  <rect x="1156" y="15" width="30" height="30" fill="#888" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1171" y="35" font-size="13" font-weight="normal" fill="#fff" text-anchor="middle">⇥</text>
+  <rect x="12" y="75" width="150" height="255" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="6"/>
+  <text x="26" y="102" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Panel</text>
+  <text x="26" y="120" font-size="10" font-weight="bold" fill="#777" text-anchor="start">OVERVIEW</text>
+  <text x="32" y="148" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Dashboard</text>
+  <text x="26" y="182" font-size="10" font-weight="bold" fill="#777" text-anchor="start">MANAGEMENT</text>
+  <text x="32" y="208" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Add Doctor</text>
+  <rect x="22" y="218" width="130" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="32" y="236" font-size="14" font-weight="bold" fill="#333" text-anchor="start">Doctors</text>
+  <text x="26" y="266" font-size="10" font-weight="bold" fill="#777" text-anchor="start">CONTENT</text>
+  <text x="32" y="294" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Consultations</text>
+  <line x1="30" y1="314" x2="140" y2="314" stroke="#888" stroke-width="2"/>
+  <text x="180" y="100" font-size="24" font-weight="bold" fill="#777" text-anchor="start">Doctors</text>
+  <text x="278.1" y="100" font-size="24" font-weight="bold" fill="#333" text-anchor="start">&gt; Dr. Ivana Petrova</text>
+  <rect x="180" y="112" width="104" height="22" fill="#ddd" stroke="#999" stroke-width="1" rx="3"/>
+  <text x="187" y="128" font-size="13" font-weight="bold" fill="#333" text-anchor="start" font-family="Consolas, monospace">Cardiology</text>
+  <text x="180" y="150" font-size="12" font-weight="normal" fill="#777" text-anchor="start" font-style="italic">Interventional Cardiology</text>
+  <rect x="180" y="162" width="1000" height="680" fill="#f6f6f6" stroke="#bbb" stroke-width="1" rx="6"/>
+  <text x="192" y="186" font-size="14" font-weight="normal" fill="#555" text-anchor="start">Edit</text>
+  <text x="252" y="186" font-size="14" font-weight="normal" fill="#555" text-anchor="start">Delete</text>
+  <text x="312" y="186" font-size="14" font-weight="normal" fill="#555" text-anchor="start">Provision</text>
+  <line x1="180" y1="198" x2="1180" y2="198" stroke="#bbb" stroke-width="1"/>
+  <rect x="200" y="212" width="180" height="180" fill="#ddd" stroke="#999" stroke-width="1" rx="0"/>
+  <line x1="200" y1="212" x2="380" y2="392" stroke="#aaa" stroke-width="1"/>
+  <line x1="380" y1="212" x2="200" y2="392" stroke="#aaa" stroke-width="1"/>
+  <rect x="400" y="220" width="750" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <rect x="400" y="236" width="750" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <rect x="400" y="252" width="750" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <rect x="400" y="268" width="750" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <rect x="400" y="284" width="450.0" height="8" fill="#ddd" stroke="none" stroke-width="1" rx="2"/>
+  <text x="400" y="330" font-size="13" font-weight="normal" fill="#333" text-anchor="start">University Clinic for Cardiology, Skopje</text>
+  <rect x="192" y="420" width="77" height="22" fill="#ddd" stroke="#999" stroke-width="1" rx="3"/>
+  <text x="199" y="436" font-size="13" font-weight="bold" fill="#333" text-anchor="start" font-family="Consolas, monospace">Contact</text>
+  <text x="192" y="470" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Phone number</text>
+  <rect x="192" y="478" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="501" font-size="14" font-weight="normal" fill="#333" text-anchor="start">049 834 233</text>
+  <text x="686.0" y="470" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Video meet link</text>
+  <rect x="686.0" y="478" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="696.0" y="501" font-size="14" font-weight="normal" fill="#333" text-anchor="start">https://meet.cybermedico.net/dr-petrova</text>
+  <rect x="192" y="540" width="77" height="22" fill="#ddd" stroke="#999" stroke-width="1" rx="3"/>
+  <text x="199" y="556" font-size="13" font-weight="bold" fill="#333" text-anchor="start" font-family="Consolas, monospace">Pricing</text>
+  <text x="192" y="590" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Written consultation</text>
+  <rect x="192" y="598" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="621" font-size="14" font-weight="normal" fill="#333" text-anchor="start">70.00</text>
+  <text x="686.0" y="590" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Video consultation</text>
+  <rect x="686.0" y="598" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="696.0" y="621" font-size="14" font-weight="normal" fill="#333" text-anchor="start">150.00</text>
+  <rect x="192" y="660" width="104" height="22" fill="#ddd" stroke="#999" stroke-width="1" rx="3"/>
+  <text x="199" y="676" font-size="13" font-weight="bold" fill="#333" text-anchor="start" font-family="Consolas, monospace">Financials</text>
+  <text x="192" y="710" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Bank account</text>
+  <rect x="192" y="718" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="741" font-size="14" font-weight="normal" fill="#333" text-anchor="start">300-0000000000-00</text>
+  <text x="686.0" y="710" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Provision</text>
+  <rect x="686.0" y="718" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="696.0" y="741" font-size="14" font-weight="normal" fill="#333" text-anchor="start">20</text>
+  <text x="192" y="790" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Languages: macedonian, english</text>
+  <rect x="0" y="0" width="1200" height="860" fill="#000" fill-opacity="0.35"/>
+  <rect x="330" y="260" width="560" height="330" fill="#fff" stroke="#666" stroke-width="2" rx="8"/>
+  <text x="354" y="300" font-size="18" font-weight="bold" fill="#333" text-anchor="start">Change doctors provision</text>
+  <text x="860" y="300" font-size="16" font-weight="normal" fill="#777" text-anchor="start">✕</text>
+  <text x="354" y="340" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Provide a reason for changing the provision</text>
+  <rect x="354" y="348" width="512" height="80" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="364" y="371" font-size="14" font-weight="normal" fill="#999" text-anchor="start">e.g. new contract terms</text>
+  <text x="354" y="460" font-size="14" font-weight="normal" fill="#333" text-anchor="start">New provision value</text>
+  <rect x="354" y="468" width="512" height="36" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="364" y="491" font-size="14" font-weight="normal" fill="#333" text-anchor="start">25</text>
+  <rect x="690" y="530" width="176" height="36" fill="#888" stroke="#666" stroke-width="1" rx="4"/>
+  <text x="778.0" y="553.0" font-size="15" font-weight="bold" fill="#fff" text-anchor="middle">Save and submit</text>
+  <text x="354" y="553" font-size="12" font-weight="normal" fill="#777" text-anchor="start" font-style="italic">Zdravnik prejme e-pošto.</text>
+</svg>

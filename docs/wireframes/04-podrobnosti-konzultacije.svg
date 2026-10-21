@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1060" font-family="Arial, Helvetica, sans-serif" fill="#333">
+  <rect width="1200" height="1060" fill="#fff"/>
+  <rect x="0" y="0" width="1200" height="60" fill="#e6e6e6" stroke="#999" stroke-width="1" rx="0"/>
+  <circle cx="34" cy="30" r="14" fill="none" stroke="#777" stroke-width="2"/>
+  <polyline points="46,30 54,30 58,20 62,40 66,30 74,30" fill="none" stroke="#777" stroke-width="2"/>
+  <text x="82" y="37" font-size="22" font-weight="bold" fill="#333" text-anchor="start">CyberMedico</text>
+  <rect x="1080" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1095" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">DB</text>
+  <rect x="1118" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1133" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">◐</text>
+  <rect x="1156" y="15" width="30" height="30" fill="#888" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1171" y="35" font-size="13" font-weight="normal" fill="#fff" text-anchor="middle">⇥</text>
+  <rect x="12" y="75" width="150" height="255" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="6"/>
+  <text x="26" y="102" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Panel</text>
+  <text x="26" y="120" font-size="10" font-weight="bold" fill="#777" text-anchor="start">OVERVIEW</text>
+  <text x="32" y="148" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Dashboard</text>
+  <text x="26" y="182" font-size="10" font-weight="bold" fill="#777" text-anchor="start">MANAGEMENT</text>
+  <text x="32" y="208" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Add Doctor</text>
+  <text x="32" y="236" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Doctors</text>
+  <text x="26" y="266" font-size="10" font-weight="bold" fill="#777" text-anchor="start">CONTENT</text>
+  <rect x="22" y="276" width="130" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="32" y="294" font-size="14" font-weight="bold" fill="#333" text-anchor="start">Consultations</text>
+  <line x1="30" y1="314" x2="140" y2="314" stroke="#888" stroke-width="2"/>
+  <text x="180" y="100" font-size="24" font-weight="bold" fill="#777" text-anchor="start">Consultations</text>
+  <text x="351.9" y="100" font-size="24" font-weight="bold" fill="#333" text-anchor="start">&gt; Katerina</text>
+  <text x="180" y="124" font-size="13" font-weight="normal" fill="#777" text-anchor="start">Detailed information about the consultation, including patient details, medical information, attachments, and timestamps.</text>
+  <rect x="180" y="140" width="1000" height="300" fill="#f6f6f6" stroke="#bbb" stroke-width="1" rx="6"/>
+  <text x="192" y="170" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Patient name</text>
+  <rect x="192" y="178" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="201" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Katerina</text>
+  <text x="686.0" y="170" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Patient surname</text>
+  <rect x="686.0" y="178" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="696.0" y="201" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Blazheska</text>
+  <text x="192" y="238" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Patient age</text>
+  <rect x="192" y="246" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="269" font-size="14" font-weight="normal" fill="#333" text-anchor="start">29</text>
+  <text x="686.0" y="238" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Patient place of living</text>
+  <rect x="686.0" y="246" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="696.0" y="269" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Negotino</text>
+  <text x="192" y="306" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Urgent</text>
+  <rect x="192" y="314" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="337" font-size="14" font-weight="normal" fill="#333" text-anchor="start">true</text>
+  <text x="686.0" y="306" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Translator needed</text>
+  <rect x="686.0" y="314" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="696.0" y="337" font-size="14" font-weight="normal" fill="#333" text-anchor="start">false</text>
+  <text x="192" y="374" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Consultation type</text>
+  <rect x="192" y="382" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="405" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Written</text>
+  <text x="686.0" y="374" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Consultation status</text>
+  <rect x="686.0" y="382" width="482.0" height="32" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="696.0" y="405" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Pending</text>
+  <text x="180" y="485" font-size="20" font-weight="bold" fill="#333" text-anchor="start">Medical information</text>
+  <text x="180" y="507" font-size="13" font-weight="normal" fill="#777" text-anchor="start">Medical information provided by the patient during the consultation request.</text>
+  <rect x="180" y="520" width="1000" height="330" fill="#f6f6f6" stroke="#bbb" stroke-width="1" rx="6"/>
+  <text x="192" y="548" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Medical problem</text>
+  <rect x="192" y="556" width="976" height="44" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="579" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Acute onset neck pain and stiffness following a rear-end car accident ...</text>
+  <text x="192" y="624" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Patient diagnosis</text>
+  <rect x="192" y="632" width="976" height="44" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="655" font-size="14" font-weight="normal" fill="#333" text-anchor="start">/</text>
+  <text x="192" y="700" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Patient allergies</text>
+  <rect x="192" y="708" width="976" height="44" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="731" font-size="14" font-weight="normal" fill="#333" text-anchor="start">None</text>
+  <text x="192" y="776" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Patient medications</text>
+  <rect x="192" y="784" width="976" height="44" fill="#fff" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="202" y="807" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Ibuprofen 600mg twice daily</text>
+  <text x="180" y="890" font-size="20" font-weight="bold" fill="#333" text-anchor="start">Attachments</text>
+  <rect x="180" y="902" width="1000" height="50" fill="#f6f6f6" stroke="#bbb" stroke-width="1" rx="6"/>
+  <rect x="192" y="912" width="230" height="30" fill="#fff" stroke="#999" stroke-width="1" rx="4"/>
+  <text x="204" y="932" font-size="13" font-weight="normal" fill="#333" text-anchor="start">⬇ ecg-report.pdf</text>
+  <text x="180" y="990" font-size="20" font-weight="bold" fill="#333" text-anchor="start">Metadata</text>
+  <rect x="180" y="1000" width="1000" height="50" fill="#f6f6f6" stroke="#bbb" stroke-width="1" rx="6"/>
+  <text x="192" y="1030" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Created at: 20-10-2026 14:02</text>
+  <text x="686.0" y="1030" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Finished at: -</text>
+</svg>

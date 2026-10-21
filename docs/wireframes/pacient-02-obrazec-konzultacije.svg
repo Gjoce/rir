@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#333">
+  <rect width="1200" height="900" fill="#fff"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#e6e6e6" stroke="#999"/>
+  <text x="32" y="40" font-size="22" font-weight="bold">CyberMedico</text>
+  <!-- left: form -->
+  <text x="32" y="115" font-size="28" font-weight="bold">Nova konzultacija</text>
+  <!-- type toggle -->
+  <rect x="32" y="135" width="160" height="40" fill="#bbb" stroke="#888" rx="4"/>
+  <text x="70" y="161" font-weight="bold">Pisna</text>
+  <rect x="192" y="135" width="160" height="40" fill="#fff" stroke="#888" rx="4"/>
+  <text x="235" y="161">Video</text>
+  <!-- personal data -->
+  <text x="32" y="215" font-weight="bold">Osebni podatki</text>
+  <rect x="32" y="228" width="360" height="40" fill="#fff" stroke="#999"/><text x="44" y="254" fill="#999">Ime *</text>
+  <rect x="408" y="228" width="360" height="40" fill="#fff" stroke="#999"/><text x="420" y="254" fill="#999">Priimek *</text>
+  <rect x="32" y="280" width="160" height="40" fill="#fff" stroke="#999"/><text x="44" y="306" fill="#999">Starost *</text>
+  <rect x="208" y="280" width="270" height="40" fill="#fff" stroke="#999"/><text x="220" y="306" fill="#999">E-pošta *</text>
+  <rect x="494" y="280" width="274" height="40" fill="#fff" stroke="#999"/><text x="506" y="306" fill="#999">Telefon *</text>
+  <!-- medical -->
+  <text x="32" y="360" font-weight="bold">Zdravstvena težava</text>
+  <rect x="32" y="373" width="736" height="120" fill="#fff" stroke="#999"/><text x="44" y="398" fill="#999">Opis težave *</text>
+  <rect x="32" y="505" width="736" height="40" fill="#fff" stroke="#999"/><text x="44" y="531" fill="#999">Postavljena diagnoza</text>
+  <rect x="32" y="557" width="360" height="40" fill="#fff" stroke="#999"/><text x="44" y="583" fill="#999">Zdravila</text>
+  <rect x="408" y="557" width="360" height="40" fill="#fff" stroke="#999"/><text x="420" y="583" fill="#999">Alergije</text>
+  <!-- attachments -->
+  <text x="32" y="635" font-weight="bold">Izvidi (PDF, JPG, PNG · največ 5 · do 10 MB)</text>
+  <rect x="32" y="648" width="736" height="80" fill="#f4f4f4" stroke="#999" stroke-dasharray="6 4"/>
+  <text x="270" y="694" fill="#777">Povlecite datoteke sem ali kliknite</text>
+  <!-- options -->
+  <rect x="32" y="750" width="18" height="18" fill="#fff" stroke="#666"/><text x="60" y="765">Potrebujem prevajalca</text>
+  <rect x="300" y="750" width="18" height="18" fill="#fff" stroke="#666"/><text x="328" y="765">Strinjam se s pogoji uporabe *</text>
+  <rect x="32" y="800" width="220" height="48" fill="#888" stroke="#666" rx="4"/>
+  <text x="70" y="830" fill="#fff" font-weight="bold">Oddaj konzultacijo</text>
+  <!-- right: summary -->
+  <rect x="808" y="135" width="360" height="300" fill="#fafafa" stroke="#999" rx="6"/>
+  <text x="828" y="170" font-weight="bold">Povzetek</text>
+  <rect x="828" y="190" width="70" height="70" fill="#ddd" stroke="#aaa"/>
+  <text x="912" y="215" font-weight="bold">dr. Ime Priimek</text>
+  <text x="912" y="240" fill="#666">Kardiologija</text>
+  <line x1="828" y1="285" x2="1148" y2="285" stroke="#ccc"/>
+  <text x="828" y="315">Vrsta: Pisna konzultacija</text>
+  <text x="828" y="345">Odgovor: v 72 urah</text>
+  <text x="828" y="395" font-size="22" font-weight="bold">Cena: 40 €</text>
+  <!-- video variant note -->
+  <rect x="808" y="460" width="360" height="170" fill="#fff" stroke="#999" stroke-dasharray="6 4" rx="6"/>
+  <text x="828" y="490" font-weight="bold">Pri izbiri "Video" dodatno:</text>
+  <text x="828" y="520">Želeni del dneva *</text>
+  <rect x="828" y="532" width="100" height="34" fill="#fff" stroke="#999"/><text x="838" y="555">Dopoldne</text>
+  <rect x="936" y="532" width="100" height="34" fill="#fff" stroke="#999"/><text x="946" y="555">Popoldne</text>
+  <rect x="1044" y="532" width="100" height="34" fill="#fff" stroke="#999"/><text x="1056" y="555">Zvečer</text>
+  <rect x="828" y="586" width="18" height="18" fill="#fff" stroke="#666"/><text x="856" y="601">Nujno (termin v 8 urah)</text>
+</svg>

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" font-family="Arial, Helvetica, sans-serif" fill="#333">
+  <rect width="1200" height="800" fill="#fff"/>
+  <rect x="0" y="0" width="1200" height="60" fill="#e6e6e6" stroke="#999" stroke-width="1" rx="0"/>
+  <circle cx="34" cy="30" r="14" fill="none" stroke="#777" stroke-width="2"/>
+  <polyline points="46,30 54,30 58,20 62,40 66,30 74,30" fill="none" stroke="#777" stroke-width="2"/>
+  <text x="82" y="37" font-size="22" font-weight="bold" fill="#333" text-anchor="start">CyberMedico</text>
+  <rect x="1118" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1133" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">◐</text>
+  <rect x="1156" y="15" width="30" height="30" fill="#888" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1171" y="35" font-size="13" font-weight="normal" fill="#fff" text-anchor="middle">⇥</text>
+  <rect x="12" y="75" width="150" height="170" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="6"/>
+  <text x="26" y="102" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Panel</text>
+  <text x="26" y="120" font-size="10" font-weight="bold" fill="#777" text-anchor="start">MANAGEMENT</text>
+  <text x="26" y="182" font-size="10" font-weight="bold" fill="#777" text-anchor="start">CONTENT</text>
+  <rect x="22" y="130" width="130" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="32" y="148" font-size="14" font-weight="bold" fill="#333" text-anchor="start">Dashboard</text>
+  <text x="32" y="210" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Consultations</text>
+  <line x1="30" y1="230" x2="140" y2="230" stroke="#888" stroke-width="2"/>
+  <text x="180" y="100" font-size="24" font-weight="bold" fill="#333" text-anchor="start">Dashboard</text>
+  <text x="180" y="124" font-size="13" font-weight="normal" fill="#777" text-anchor="start">This is the main dashboard view of the platform</text>
+  <rect x="180" y="140" width="1000" height="620" fill="#f6f6f6" stroke="#bbb" stroke-width="1" rx="6"/>
+  <rect x="192" y="152" width="740" height="180" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="562.0" y="200" font-size="22" font-weight="bold" fill="#333" text-anchor="middle">3</text>
+  <text x="562.0" y="220" font-size="12" font-weight="normal" fill="#777" text-anchor="middle">My Consultations</text>
+  <line x1="192" y1="300" x2="932" y2="300" stroke="#777" stroke-width="2"/>
+  <rect x="944" y="152" width="224" height="180" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="4"/>
+  <circle cx="1036.0" cy="242" r="55" fill="none" stroke="#888" stroke-width="28"/>
+  <rect x="1098" y="306" width="12" height="10" fill="#888" stroke="none" stroke-width="1" rx="1"/>
+  <text x="1114" y="315" font-size="11" font-weight="normal" fill="#333" text-anchor="start">video</text>
+  <rect x="192" y="344" width="740" height="236" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="4"/>
+  <rect x="204" y="356" width="203" height="22" fill="#ddd" stroke="#999" stroke-width="1" rx="3"/>
+  <text x="211" y="372" font-size="13" font-weight="bold" fill="#333" text-anchor="start" font-family="Consolas, monospace">Upcoming Appointments</text>
+  <rect x="204" y="390" width="716" height="30" fill="#e2e2e2" stroke="#bbb" stroke-width="1" rx="0"/>
+  <text x="216" y="412" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Patient</text>
+  <text x="484" y="412" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Doctor</text>
+  <text x="764" y="412" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Urgent</text>
+  <rect x="204" y="420" width="716" height="30" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="216" y="442" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Maria Kovačević</text>
+  <text x="484" y="442" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Ivana Petrova</text>
+  <rect x="764" y="428" width="34" height="20" fill="#999" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="781" y="443" font-size="12" font-weight="normal" fill="#fff" text-anchor="middle">Yes</text>
+  <text x="204" y="470" font-size="11" font-weight="normal" fill="#777" text-anchor="start" font-style="italic">Le konzultacije prijavljenega zdravnika.</text>
+  <rect x="944" y="344" width="224" height="170" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="1056.0" y="420" font-size="26" font-weight="bold" fill="#333" text-anchor="middle">150.00 €</text>
+  <text x="1056.0" y="444" font-size="12" font-weight="normal" fill="#333" text-anchor="middle">This month's revenue</text>
+  <text x="1056.0" y="466" font-size="11" font-weight="normal" fill="#777" text-anchor="middle">▼ 50.0 % vs last month</text>
+  <rect x="192" y="592" width="740" height="156" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="282" y="626" font-size="11" font-weight="normal" fill="#333" text-anchor="end">scheduled</text>
+  <rect x="292" y="610" width="500" height="24" fill="#999" stroke="none" stroke-width="1" rx="0"/>
+  <text x="798" y="626" font-size="11" font-weight="normal" fill="#333" text-anchor="start">1</text>
+  <text x="282" y="666" font-size="11" font-weight="normal" fill="#333" text-anchor="end">pending</text>
+  <rect x="292" y="650" width="500" height="24" fill="#999" stroke="none" stroke-width="1" rx="0"/>
+  <text x="798" y="666" font-size="11" font-weight="normal" fill="#333" text-anchor="start">1</text>
+  <text x="282" y="706" font-size="11" font-weight="normal" fill="#333" text-anchor="end">finished</text>
+  <rect x="292" y="690" width="500" height="24" fill="#999" stroke="none" stroke-width="1" rx="0"/>
+  <text x="798" y="706" font-size="11" font-weight="normal" fill="#333" text-anchor="start">1</text>
+  <rect x="944" y="526" width="224" height="170" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="4"/>
+  <text x="1056.0" y="605" font-size="26" font-weight="bold" fill="#333" text-anchor="middle">1</text>
+  <text x="1056.0" y="630" font-size="12" font-weight="normal" fill="#333" text-anchor="middle">Pending consultations</text>
+  <text x="180" y="785" font-size="11" font-weight="normal" fill="#777" text-anchor="start" font-style="italic">Gradnike je mogoče premikati in jim spreminjati velikost.</text>
+</svg>

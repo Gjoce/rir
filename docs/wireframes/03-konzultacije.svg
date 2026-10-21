@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" font-family="Arial, Helvetica, sans-serif" fill="#333">
+  <rect width="1200" height="560" fill="#fff"/>
+  <rect x="0" y="0" width="1200" height="60" fill="#e6e6e6" stroke="#999" stroke-width="1" rx="0"/>
+  <circle cx="34" cy="30" r="14" fill="none" stroke="#777" stroke-width="2"/>
+  <polyline points="46,30 54,30 58,20 62,40 66,30 74,30" fill="none" stroke="#777" stroke-width="2"/>
+  <text x="82" y="37" font-size="22" font-weight="bold" fill="#333" text-anchor="start">CyberMedico</text>
+  <rect x="1080" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1095" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">DB</text>
+  <rect x="1118" y="15" width="30" height="30" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1133" y="35" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">◐</text>
+  <rect x="1156" y="15" width="30" height="30" fill="#888" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="1171" y="35" font-size="13" font-weight="normal" fill="#fff" text-anchor="middle">⇥</text>
+  <rect x="12" y="75" width="150" height="255" fill="#fafafa" stroke="#bbb" stroke-width="1" rx="6"/>
+  <text x="26" y="102" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Panel</text>
+  <text x="26" y="120" font-size="10" font-weight="bold" fill="#777" text-anchor="start">OVERVIEW</text>
+  <text x="32" y="148" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Dashboard</text>
+  <text x="26" y="182" font-size="10" font-weight="bold" fill="#777" text-anchor="start">MANAGEMENT</text>
+  <text x="32" y="208" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Add Doctor</text>
+  <text x="32" y="236" font-size="14" font-weight="normal" fill="#333" text-anchor="start">Doctors</text>
+  <text x="26" y="266" font-size="10" font-weight="bold" fill="#777" text-anchor="start">CONTENT</text>
+  <rect x="22" y="276" width="130" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="4"/>
+  <text x="32" y="294" font-size="14" font-weight="bold" fill="#333" text-anchor="start">Consultations</text>
+  <line x1="30" y1="314" x2="140" y2="314" stroke="#888" stroke-width="2"/>
+  <text x="180" y="100" font-size="24" font-weight="bold" fill="#333" text-anchor="start">Consultations</text>
+  <text x="180" y="124" font-size="13" font-weight="normal" fill="#777" text-anchor="start">View and manage your consultations. Click on a consultation to see details and take actions.</text>
+  <rect x="180" y="140" width="1000" height="400" fill="#f6f6f6" stroke="#bbb" stroke-width="1" rx="6"/>
+  <rect x="250" y="156" width="120" height="32" fill="#888" stroke="#666" stroke-width="1" rx="4"/>
+  <text x="310.0" y="177.0" font-size="15" font-weight="bold" fill="#fff" text-anchor="middle">Active</text>
+  <rect x="490" y="156" width="120" height="32" fill="#fff" stroke="#666" stroke-width="1" rx="4"/>
+  <text x="550.0" y="177.0" font-size="15" font-weight="normal" fill="#333" text-anchor="middle">Scheduled</text>
+  <rect x="730" y="156" width="120" height="32" fill="#fff" stroke="#666" stroke-width="1" rx="4"/>
+  <text x="790.0" y="177.0" font-size="15" font-weight="normal" fill="#333" text-anchor="middle">Finished</text>
+  <rect x="970" y="156" width="120" height="32" fill="#fff" stroke="#666" stroke-width="1" rx="4"/>
+  <text x="1030.0" y="177.0" font-size="15" font-weight="normal" fill="#333" text-anchor="middle">Not Attended</text>
+  <rect x="192" y="206" width="976" height="34" fill="#e2e2e2" stroke="#bbb" stroke-width="1" rx="0"/>
+  <text x="204" y="228" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Patient</text>
+  <text x="342" y="228" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Doctor</text>
+  <text x="522" y="228" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Patient Email</text>
+  <text x="752" y="228" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Type</text>
+  <text x="822" y="228" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Urgent</text>
+  <text x="892" y="228" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Price</text>
+  <text x="962" y="228" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Created At</text>
+  <text x="1072" y="228" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Time Left</text>
+  <rect x="192" y="240" width="976" height="34" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="204" y="262" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Katerina Blazheska</text>
+  <text x="342" y="262" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Aleksandar Blazevski</text>
+  <text x="522" y="262" font-size="13" font-weight="normal" fill="#333" text-anchor="start">katerina.blazheska@gmail.com</text>
+  <text x="752" y="262" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Written</text>
+  <rect x="822" y="248" width="34" height="20" fill="#999" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="839" y="263" font-size="12" font-weight="normal" fill="#fff" text-anchor="middle">Yes</text>
+  <text x="892" y="262" font-size="13" font-weight="normal" fill="#333" text-anchor="start">65 €</text>
+  <text x="962" y="262" font-size="13" font-weight="normal" fill="#333" text-anchor="start">20-10-2026</text>
+  <text x="1072" y="262" font-size="13" font-weight="normal" fill="#333" text-anchor="start">2d 23h 58m</text>
+  <rect x="192" y="274" width="976" height="34" fill="#fff" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="204" y="296" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Maria Kovačević</text>
+  <text x="342" y="296" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Ivana Petrova</text>
+  <text x="522" y="296" font-size="13" font-weight="normal" fill="#333" text-anchor="start">maria.kovacevic@gmail.com</text>
+  <text x="752" y="296" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Video</text>
+  <rect x="822" y="282" width="34" height="20" fill="#999" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="839" y="297" font-size="12" font-weight="normal" fill="#fff" text-anchor="middle">Yes</text>
+  <text x="892" y="296" font-size="13" font-weight="normal" fill="#333" text-anchor="start">150 €</text>
+  <text x="962" y="296" font-size="13" font-weight="normal" fill="#333" text-anchor="start">19-10-2026</text>
+  <text x="1072" y="296" font-size="13" font-weight="normal" fill="#333" text-anchor="start">7h 58m 26s</text>
+  <rect x="192" y="308" width="976" height="34" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="204" y="330" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Stefan Nikoloski</text>
+  <text x="342" y="330" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Aleksandar Blazevski</text>
+  <text x="522" y="330" font-size="13" font-weight="normal" fill="#333" text-anchor="start">stefan.nikoloski@hotmail.com</text>
+  <text x="752" y="330" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Written</text>
+  <rect x="822" y="316" width="34" height="20" fill="#ddd" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="839" y="331" font-size="12" font-weight="normal" fill="#333" text-anchor="middle">No</text>
+  <text x="892" y="330" font-size="13" font-weight="normal" fill="#333" text-anchor="start">65 €</text>
+  <text x="962" y="330" font-size="13" font-weight="normal" fill="#333" text-anchor="start">17-10-2026</text>
+  <text x="1072" y="330" font-size="13" font-weight="normal" fill="#333" text-anchor="start">2d 23h 58m</text>
+  <rect x="192" y="342" width="976" height="34" fill="#fff" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="204" y="364" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Elena Stojanovska</text>
+  <text x="342" y="364" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Sonja Kostadinova</text>
+  <text x="522" y="364" font-size="13" font-weight="normal" fill="#333" text-anchor="start">elena.stojanovska@outlook.com</text>
+  <text x="752" y="364" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Written</text>
+  <rect x="822" y="350" width="34" height="20" fill="#ddd" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="839" y="365" font-size="12" font-weight="normal" fill="#333" text-anchor="middle">No</text>
+  <text x="892" y="364" font-size="13" font-weight="normal" fill="#333" text-anchor="start">55 €</text>
+  <text x="962" y="364" font-size="13" font-weight="normal" fill="#333" text-anchor="start">16-10-2026</text>
+  <text x="1072" y="364" font-size="13" font-weight="normal" fill="#333" text-anchor="start">2d 23h 58m</text>
+  <rect x="192" y="376" width="976" height="34" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="204" y="398" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Bojan Trajkovski</text>
+  <text x="342" y="398" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Sonja Kostadinova</text>
+  <text x="522" y="398" font-size="13" font-weight="normal" fill="#333" text-anchor="start">bojan.trajkovski@gmail.com</text>
+  <text x="752" y="398" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Written</text>
+  <rect x="822" y="384" width="34" height="20" fill="#ddd" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="839" y="399" font-size="12" font-weight="normal" fill="#333" text-anchor="middle">No</text>
+  <text x="892" y="398" font-size="13" font-weight="normal" fill="#333" text-anchor="start">55 €</text>
+  <text x="962" y="398" font-size="13" font-weight="normal" fill="#333" text-anchor="start">11-10-2026</text>
+  <text x="1072" y="398" font-size="13" font-weight="normal" fill="#333" text-anchor="start">2d 23h 58m</text>
+  <rect x="192" y="410" width="976" height="34" fill="#fff" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="204" y="432" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Lidija Zdravevska</text>
+  <text x="342" y="432" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Marjan Trajkov</text>
+  <text x="522" y="432" font-size="13" font-weight="normal" fill="#333" text-anchor="start">lidija.zdravevska@gmail.com</text>
+  <text x="752" y="432" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Video</text>
+  <rect x="822" y="418" width="34" height="20" fill="#ddd" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="839" y="433" font-size="12" font-weight="normal" fill="#333" text-anchor="middle">No</text>
+  <text x="892" y="432" font-size="13" font-weight="normal" fill="#333" text-anchor="start">130 €</text>
+  <text x="962" y="432" font-size="13" font-weight="normal" fill="#333" text-anchor="start">06-10-2026</text>
+  <text x="1072" y="432" font-size="13" font-weight="normal" fill="#333" text-anchor="start">11h 58m 26s</text>
+  <rect x="192" y="444" width="976" height="34" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="0"/>
+  <text x="204" y="466" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Ana Petreska</text>
+  <text x="342" y="466" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Dr. Marjan Trajkov</text>
+  <text x="522" y="466" font-size="13" font-weight="normal" fill="#333" text-anchor="start">ana.petreska@yahoo.com</text>
+  <text x="752" y="466" font-size="13" font-weight="normal" fill="#333" text-anchor="start">Video</text>
+  <rect x="822" y="452" width="34" height="20" fill="#999" stroke="#777" stroke-width="1" rx="3"/>
+  <text x="839" y="467" font-size="12" font-weight="normal" fill="#fff" text-anchor="middle">Yes</text>
+  <text x="892" y="466" font-size="13" font-weight="normal" fill="#333" text-anchor="start">130 €</text>
+  <text x="962" y="466" font-size="13" font-weight="normal" fill="#333" text-anchor="start">03-10-2026</text>
+  <text x="1072" y="466" font-size="13" font-weight="normal" fill="#333" text-anchor="start">7h 58m 26s</text>
+  <text x="680.0" y="510" font-size="13" font-weight="normal" fill="#333" text-anchor="middle">Page 1 of 1</text>
+</svg>
