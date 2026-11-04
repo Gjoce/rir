@@ -7,6 +7,7 @@ node = "26.13.0"
 caddy = "2.11.8"
 golangci-lint = "2.15.0"
 hurl = "8.1.0"
+opa = "1.22.0"
 "go:github.com/a-h/templ/cmd/templ" = "0.3.1100"
 "go:github.com/ogen-go/ogen/cmd/ogen" = "1.24.0"
 "npm:run-pty" = "6.0.2"
@@ -46,6 +47,10 @@ run = "run-pty % mise run templ:watch % mise run api:run % mise run caddy:run"
 [tasks.lint]
 description = "Run golangci-lint and apply fixes"
 run = "golangci-lint run ./... --fix"
+
+[tasks."test:policies"]
+description = "Run the Rego tests for the authorization policies"
+run = "opa test authorization/policies authorization/policies_test"
 
 [tasks."test:hurl"]
 description = "Run the HTTP tests against the running API"
