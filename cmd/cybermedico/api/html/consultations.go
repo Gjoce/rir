@@ -8,6 +8,7 @@ import (
 	"cybermedico/cmd/cybermedico/api/log"
 	"cybermedico/cmd/cybermedico/api/util"
 	api "cybermedico/cmd/cybermedico/ogen"
+	"cybermedico/cmd/cybermedico/signing"
 	"cybermedico/cmd/cybermedico/storage"
 	"errors"
 	"fmt"
@@ -448,8 +449,17 @@ type answerConsultation struct {
 	AnswerErr        string
 }
 
+type answerConsultationTOTP struct {
+	TOTPCode    string
+	TOTPCodeErr string
+}
+
 func (a answerConsultation) Valid() bool {
 	return a.AnswerErr == ""
+}
+
+func (t answerConsultationTOTP) Valid() bool {
+	return t.TOTPCodeErr == ""
 }
 
 // cleanAnswer keeps only what the editor's toolbar can produce. The answer is shown
@@ -520,19 +530,21 @@ func (h ConsultationsHandler) ConsultationAnswerForm(ctx context.Context, params
 
 	return &api.R200{
 		Data: &buff,
-	}, ConsultationAnswerForm(consultation).Render(ctx, &buff)
+	}, ConsultationAnswerForm(consultation, answerConsultationTOTP{}).Render(ctx, &buff)
 }
 
 func (h ConsultationsHandler) ConsultationAnswerSubmit(ctx context.Context, request *api.ConsultationAnswerSubmitReq, params api.ConsultationAnswerSubmitParams) (api.ConsultationAnswerSubmitRes, error) {
 	var doctorID, consultationStatus, consultationType string
 	var scheduledAt *time.Time
+	var totpSecret *string
 
 	err := h.db.QueryRow(ctx, `
-		SELECT c.doctor_id, c.consultation_status, c.consultation_type, vc.scheduled_at
+		SELECT c.doctor_id, c.consultation_status, c.consultation_type, vc.scheduled_at, u.totp_secret
 		FROM consultations c
 		LEFT JOIN video_consultations vc ON vc.consultation_id = c.id
+		JOIN users u ON u.id = c.doctor_id
 		WHERE c.id = @id
-	`, pgx.NamedArgs{"id": params.ID.String()}).Scan(&doctorID, &consultationStatus, &consultationType, &scheduledAt)
+	`, pgx.NamedArgs{"id": params.ID.String()}).Scan(&doctorID, &consultationStatus, &consultationType, &scheduledAt, &totpSecret)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, herrors.HtmlError{Code: http.StatusNotFound, Msg: "Consultation not found", ButtonLink: "/consultations"}
 	}
@@ -567,13 +579,43 @@ func (h ConsultationsHandler) ConsultationAnswerSubmit(ctx context.Context, requ
 		answerCons.AnswerErr = fmt.Sprintf("Answer can have at most %d characters", maxAnswerLength)
 	}
 
+	// Being logged in is not enough here. The answer is signed in the doctor's name,
+	// so this proves it is really the doctor, and not someone at an unattended session.
+	var totp answerConsultationTOTP
+	var totpStep int64
+
+	switch {
+	case request.TotpCode == "":
+		totp.TOTPCodeErr = "Please provide the TOTP code"
+	case totpSecret == nil:
+		totp.TOTPCodeErr = "Two-factor authentication not configured for this account."
+	default:
+		step, ok := signing.MatchTOTPStep(request.TotpCode, *totpSecret, time.Now())
+		if !ok {
+			totp.TOTPCodeErr = "Invalid code. Try again."
+		}
+		totpStep = step
+	}
+
 	r := util.RequestFromContext(ctx)
 	w := util.ResponseFromContext(ctx)
 
+	// The answer is checked first, so a code isn't used up on an answer that can't be sent.
 	if !answerCons.Valid() {
 		sse := datastar.NewSSE(w, r)
 		if err := sse.PatchElementTempl(answerError(answerCons.AnswerErr)); err != nil {
 			return nil, fmt.Errorf("failed to patch answer error: %w", err)
+		}
+		if err := sse.ExecuteScript("document.getElementById('answer-consultation-dialog').close()"); err != nil {
+			return nil, fmt.Errorf("failed to close answer dialog: %w", err)
+		}
+
+		return nil, herrors.ErrNoop
+	}
+	if !totp.Valid() {
+		sse := datastar.NewSSE(w, r)
+		if err := sse.PatchElementTempl(answerConsultationModal(params.ID.String(), totp)); err != nil {
+			return nil, fmt.Errorf("failed to patch TOTP error: %w", err)
 		}
 
 		return nil, herrors.ErrNoop
@@ -589,9 +631,28 @@ func (h ConsultationsHandler) ConsultationAnswerSubmit(ctx context.Context, requ
 		}
 	}()
 
+	// Replay prevention in the UPDATE itself, like at login. If anything later fails,
+	// the rollback gives the code back.
+	tag, err := tx.Exec(ctx, `
+		UPDATE users SET totp_last_used_step = @step
+		WHERE id = @id AND (totp_last_used_step IS NULL OR totp_last_used_step < @step)
+	`, pgx.NamedArgs{"step": totpStep, "id": doctorID})
+	if err != nil {
+		return nil, fmt.Errorf("failed to update totp step: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		sse := datastar.NewSSE(w, r)
+		totp.TOTPCodeErr = "Code already used. Wait for the next code."
+		if err := sse.PatchElementTempl(answerConsultationModal(params.ID.String(), totp)); err != nil {
+			return nil, fmt.Errorf("failed to patch TOTP error: %w", err)
+		}
+
+		return nil, herrors.ErrNoop
+	}
+
 	// The status condition makes this safe against a double click or a second tab:
 	// only one request can finish the consultation, so a sent answer can't be replaced.
-	tag, err := tx.Exec(ctx, `
+	tag, err = tx.Exec(ctx, `
 		UPDATE consultations SET consultation_status = 'finished', finished_at = NOW()
 		WHERE id = @id AND consultation_status = @status
 	`, pgx.NamedArgs{"id": params.ID.String(), "status": consultationStatus})

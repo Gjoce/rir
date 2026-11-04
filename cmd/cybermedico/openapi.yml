@@ -260,8 +260,11 @@ paths:
               properties:
                 answer:
                   type: string
+                totp_code:
+                  type: string
               required:
                 - answer
+                - totp_code
       responses:
         "200":
           $ref: "#/components/responses/200"

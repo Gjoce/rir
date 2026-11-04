@@ -24,10 +24,15 @@ func (s *ConsultationAnswerSubmitReq) encodeFields(e *jx.Encoder) {
 		e.FieldStart("answer")
 		e.Str(s.Answer)
 	}
+	{
+		e.FieldStart("totp_code")
+		e.Str(s.TotpCode)
+	}
 }
 
-var jsonFieldsNameOfConsultationAnswerSubmitReq = [1]string{
+var jsonFieldsNameOfConsultationAnswerSubmitReq = [2]string{
 	0: "answer",
+	1: "totp_code",
 }
 
 // Decode decodes ConsultationAnswerSubmitReq from json.
@@ -51,6 +56,18 @@ func (s *ConsultationAnswerSubmitReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"answer\"")
 			}
+		case "totp_code":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.TotpCode = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"totp_code\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -61,7 +78,7 @@ func (s *ConsultationAnswerSubmitReq) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000001,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

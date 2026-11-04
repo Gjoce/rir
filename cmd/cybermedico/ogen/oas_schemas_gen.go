@@ -9,7 +9,8 @@ import (
 )
 
 type ConsultationAnswerSubmitReq struct {
-	Answer string `json:"answer"`
+	Answer   string `json:"answer"`
+	TotpCode string `json:"totp_code"`
 }
 
 // GetAnswer returns the value of Answer.
@@ -17,9 +18,19 @@ func (s *ConsultationAnswerSubmitReq) GetAnswer() string {
 	return s.Answer
 }
 
+// GetTotpCode returns the value of TotpCode.
+func (s *ConsultationAnswerSubmitReq) GetTotpCode() string {
+	return s.TotpCode
+}
+
 // SetAnswer sets the value of Answer.
 func (s *ConsultationAnswerSubmitReq) SetAnswer(val string) {
 	s.Answer = val
+}
+
+// SetTotpCode sets the value of TotpCode.
+func (s *ConsultationAnswerSubmitReq) SetTotpCode(val string) {
+	s.TotpCode = val
 }
 
 // Ref: #/components/schemas/ConsultationOrderForm
