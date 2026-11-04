@@ -1,0 +1,10 @@
+{
+	admin localhost:2600
+	http_port 8081
+	https_port 443
+	local_certs
+}
+
+cybermedico.local {
+	reverse_proxy localhost:8080
+}
