@@ -49,8 +49,10 @@ func NewScheduledVideoEmailWorker(db *pgxpool.Pool, emailService email.Service, 
 	}
 }
 
-func (w *ScheduledVideoEmailWorker) Work(ctx context.Context, job *river.Job[ScheduledVideoEmailArgs]) error {
-	rows, err := w.db.Query(ctx, `
+// loadScheduledVideo cancels the job when the consultation is gone or no longer
+// scheduled, because retrying can't help then.
+func loadScheduledVideo(ctx context.Context, db *pgxpool.Pool, consultationID string) (scheduledVideo, error) {
+	rows, err := db.Query(ctx, `
 		SELECT
 			c.patient_name,
 			c.patient_surname,
@@ -61,23 +63,40 @@ func (w *ScheduledVideoEmailWorker) Work(ctx context.Context, job *river.Job[Sch
 		JOIN doctor_profile p ON p.id = c.doctor_id
 		JOIN video_consultations v ON v.consultation_id = c.id
 		WHERE c.id = @id AND c.consultation_status = 'scheduled'
-	`, pgx.NamedArgs{"id": job.Args.ConsultationID})
+	`, pgx.NamedArgs{"id": consultationID})
 	if err != nil {
-		return fmt.Errorf("failed to query consultation: %w", err)
+		return scheduledVideo{}, fmt.Errorf("failed to query consultation: %w", err)
 	}
 
 	consultation, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByName[scheduledVideo])
 	if errors.Is(err, pgx.ErrNoRows) {
-		// The consultation is gone or no longer scheduled, so retrying can't help.
-		return river.JobCancel(fmt.Errorf("scheduled consultation %s not found: %w", job.Args.ConsultationID, err))
+		return scheduledVideo{}, river.JobCancel(fmt.Errorf("scheduled consultation %s not found: %w", consultationID, err))
 	}
 	if err != nil {
-		return fmt.Errorf("failed to collect consultation: %w", err)
+		return scheduledVideo{}, fmt.Errorf("failed to collect consultation: %w", err)
 	}
 
+	return consultation, nil
+}
+
+func formatInSkopje(t time.Time) (string, error) {
 	location, err := time.LoadLocation("Europe/Skopje")
 	if err != nil {
-		return fmt.Errorf("failed to load time zone: %w", err)
+		return "", fmt.Errorf("failed to load time zone: %w", err)
+	}
+
+	return t.In(location).Format(orderDeadlineFormat), nil
+}
+
+func (w *ScheduledVideoEmailWorker) Work(ctx context.Context, job *river.Job[ScheduledVideoEmailArgs]) error {
+	consultation, err := loadScheduledVideo(ctx, w.db, job.Args.ConsultationID)
+	if err != nil {
+		return err
+	}
+
+	dateTime, err := formatInSkopje(consultation.ScheduledAt)
+	if err != nil {
+		return err
 	}
 
 	joinLink, err := w.videoURLBuilder.PatientJoinURL(job.Args.ConsultationID, consultation.ScheduledAt)
@@ -88,7 +107,7 @@ func (w *ScheduledVideoEmailWorker) Work(ctx context.Context, job *river.Job[Sch
 	if err := w.emailService.Send(ctx,
 		[]email.EmailAddress{{Name: consultation.PatientName + " " + consultation.PatientSurname, Email: consultation.PatientEmail}},
 		"Your video consultation is scheduled",
-		email_templates.ScheduledVideoConsultation(consultation.DoctorName, consultation.ScheduledAt.In(location).Format(orderDeadlineFormat), joinLink),
+		email_templates.ScheduledVideoConsultation(consultation.DoctorName, dateTime, joinLink),
 	); err != nil {
 		w.logger.Error("failed to send scheduled video email", "error", err, "consultation_id", job.Args.ConsultationID)
 
