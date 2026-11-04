@@ -193,6 +193,20 @@ func (s *ConsultationOrderFormMultipart) SetAttachments(val []ht.MultipartFile) 
 	s.Attachments = val
 }
 
+type ConsultationScheduleSubmitReq struct {
+	Date string `json:"date"`
+}
+
+// GetDate returns the value of Date.
+func (s *ConsultationScheduleSubmitReq) GetDate() string {
+	return s.Date
+}
+
+// SetDate sets the value of Date.
+func (s *ConsultationScheduleSubmitReq) SetDate(val string) {
+	s.Date = val
+}
+
 type Default struct {
 	Data io.Reader
 }
@@ -233,26 +247,28 @@ func (s *DefaultStatusCode) SetResponse(val Default) {
 	s.Response = val
 }
 
-func (*DefaultStatusCode) consultationAnswerFormRes()   {}
-func (*DefaultStatusCode) consultationAnswerSubmitRes() {}
-func (*DefaultStatusCode) consultationFormRes()         {}
-func (*DefaultStatusCode) consultationsFormRes()        {}
-func (*DefaultStatusCode) dashboardRes()                {}
-func (*DefaultStatusCode) loginRes()                    {}
-func (*DefaultStatusCode) loginSubmitRes()              {}
-func (*DefaultStatusCode) logoutRes()                   {}
-func (*DefaultStatusCode) orderSubmittedRes()           {}
-func (*DefaultStatusCode) rootRes()                     {}
-func (*DefaultStatusCode) specialistRes()               {}
-func (*DefaultStatusCode) themesRes()                   {}
-func (*DefaultStatusCode) twoFactorFormRes()            {}
-func (*DefaultStatusCode) twoFactorSetupFormRes()       {}
-func (*DefaultStatusCode) twoFactorSetupSubmitRes()     {}
-func (*DefaultStatusCode) twoFactorSubmitRes()          {}
-func (*DefaultStatusCode) videoOrderFormRes()           {}
-func (*DefaultStatusCode) videoOrderSubmitRes()         {}
-func (*DefaultStatusCode) writtenOrderFormRes()         {}
-func (*DefaultStatusCode) writtenOrderSubmitRes()       {}
+func (*DefaultStatusCode) consultationAnswerFormRes()     {}
+func (*DefaultStatusCode) consultationAnswerSubmitRes()   {}
+func (*DefaultStatusCode) consultationFormRes()           {}
+func (*DefaultStatusCode) consultationScheduleFormRes()   {}
+func (*DefaultStatusCode) consultationScheduleSubmitRes() {}
+func (*DefaultStatusCode) consultationsFormRes()          {}
+func (*DefaultStatusCode) dashboardRes()                  {}
+func (*DefaultStatusCode) loginRes()                      {}
+func (*DefaultStatusCode) loginSubmitRes()                {}
+func (*DefaultStatusCode) logoutRes()                     {}
+func (*DefaultStatusCode) orderSubmittedRes()             {}
+func (*DefaultStatusCode) rootRes()                       {}
+func (*DefaultStatusCode) specialistRes()                 {}
+func (*DefaultStatusCode) themesRes()                     {}
+func (*DefaultStatusCode) twoFactorFormRes()              {}
+func (*DefaultStatusCode) twoFactorSetupFormRes()         {}
+func (*DefaultStatusCode) twoFactorSetupSubmitRes()       {}
+func (*DefaultStatusCode) twoFactorSubmitRes()            {}
+func (*DefaultStatusCode) videoOrderFormRes()             {}
+func (*DefaultStatusCode) videoOrderSubmitRes()           {}
+func (*DefaultStatusCode) writtenOrderFormRes()           {}
+func (*DefaultStatusCode) writtenOrderSubmitRes()         {}
 
 type LoginSubmitReq struct {
 	Email    string `json:"email"`
@@ -385,24 +401,26 @@ func (s R200) Read(p []byte) (n int, err error) {
 	return s.Data.Read(p)
 }
 
-func (*R200) consultationAnswerFormRes()   {}
-func (*R200) consultationAnswerSubmitRes() {}
-func (*R200) consultationFormRes()         {}
-func (*R200) consultationsFormRes()        {}
-func (*R200) dashboardRes()                {}
-func (*R200) loginRes()                    {}
-func (*R200) loginSubmitRes()              {}
-func (*R200) orderSubmittedRes()           {}
-func (*R200) rootRes()                     {}
-func (*R200) specialistRes()               {}
-func (*R200) twoFactorFormRes()            {}
-func (*R200) twoFactorSetupFormRes()       {}
-func (*R200) twoFactorSetupSubmitRes()     {}
-func (*R200) twoFactorSubmitRes()          {}
-func (*R200) videoOrderFormRes()           {}
-func (*R200) videoOrderSubmitRes()         {}
-func (*R200) writtenOrderFormRes()         {}
-func (*R200) writtenOrderSubmitRes()       {}
+func (*R200) consultationAnswerFormRes()     {}
+func (*R200) consultationAnswerSubmitRes()   {}
+func (*R200) consultationFormRes()           {}
+func (*R200) consultationScheduleFormRes()   {}
+func (*R200) consultationScheduleSubmitRes() {}
+func (*R200) consultationsFormRes()          {}
+func (*R200) dashboardRes()                  {}
+func (*R200) loginRes()                      {}
+func (*R200) loginSubmitRes()                {}
+func (*R200) orderSubmittedRes()             {}
+func (*R200) rootRes()                       {}
+func (*R200) specialistRes()                 {}
+func (*R200) twoFactorFormRes()              {}
+func (*R200) twoFactorSetupFormRes()         {}
+func (*R200) twoFactorSetupSubmitRes()       {}
+func (*R200) twoFactorSubmitRes()            {}
+func (*R200) videoOrderFormRes()             {}
+func (*R200) videoOrderSubmitRes()           {}
+func (*R200) writtenOrderFormRes()           {}
+func (*R200) writtenOrderSubmitRes()         {}
 
 // Ref: #/components/responses/303
 type R303 struct {
@@ -430,15 +448,16 @@ func (s *R303) SetSetCookie(val OptString) {
 	s.SetCookie = val
 }
 
-func (*R303) loginSubmitRes()          {}
-func (*R303) logoutRes()               {}
-func (*R303) themesRes()               {}
-func (*R303) twoFactorFormRes()        {}
-func (*R303) twoFactorSetupFormRes()   {}
-func (*R303) twoFactorSetupSubmitRes() {}
-func (*R303) twoFactorSubmitRes()      {}
-func (*R303) videoOrderSubmitRes()     {}
-func (*R303) writtenOrderSubmitRes()   {}
+func (*R303) consultationScheduleSubmitRes() {}
+func (*R303) loginSubmitRes()                {}
+func (*R303) logoutRes()                     {}
+func (*R303) themesRes()                     {}
+func (*R303) twoFactorFormRes()              {}
+func (*R303) twoFactorSetupFormRes()         {}
+func (*R303) twoFactorSetupSubmitRes()       {}
+func (*R303) twoFactorSubmitRes()            {}
+func (*R303) videoOrderSubmitRes()           {}
+func (*R303) writtenOrderSubmitRes()         {}
 
 type SessionCookie struct {
 	APIKey string

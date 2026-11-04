@@ -369,6 +369,93 @@ templ consultationActions(consultation Consultation, role string, canAnswer, can
     }
 }
 
+templ ScheduleConsultationForm(schedule ScheduleConsultation) {
+    @layouts.Dashboard(nil) {
+        @components.HeadingGroup(components.Config{
+            Description: "Schedule a video consultation with the patient. Choose a date and time that works for both you and the patient.",
+            Breadcrumbs: []components.Breadcrumb{
+                {Title: "Consultations", URL: "/consultations"},
+                {Title: schedule.PatientName, URL: fmt.Sprintf("/consultations/%s", schedule.ID)},
+                {Title: "Schedule"},
+            },
+        })
+        <article>
+            <div class="overflow-auto">
+                <table class="striped" style="white-space: nowrap;">
+                    <thead>
+                        <tr>
+                            <th>Patient name</th>
+                            <th>Patient surname</th>
+                            <th>Patient age</th>
+                            <th>Consultation type</th>
+                            <th>Urgent</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{ schedule.PatientName }</td>
+                            <td>{ schedule.PatientSurname }</td>
+                            <td>{ schedule.PatientAge }</td>
+                            <td>{ consultationType(schedule.ConsultationType) }</td>
+                                if schedule.Urgent {
+                                <td>
+                                    <span class="badge-true">Yes</span>
+                                </td>
+                            } else {
+                                <td>
+                                    <span class="badge-false">No</span>
+                                </td>
+                            }
+                            <td>{ schedule.Price }</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                Time left to schedule:
+                <strong>
+                    @components.CountdownTimer(components.CountdownConfig{
+                        RequiresResponseBySchedule: schedule.VideoRequiresResponseBy,
+                        ConsultationID:             schedule.ID,
+                        ConsultationType:           schedule.ConsultationType,
+                        ConsultationStatus:         schedule.ConsultationStatus,
+                    })
+                </strong>
+            </p>
+            @components.CountdownScript()
+            @components.Input(components.InputConfig{
+                Label: "Preferred time by patient",
+                Value: schedule.PreferredTime,
+                Type: components.TextInput,
+                ReadOnly: true,
+            })
+            <hr/>
+            <div>
+                <form method="POST" action={ templ.SafeURL(fmt.Sprintf("/consultations/%s/schedule", schedule.ID)) } novalidate>
+                    @components.Input(components.InputConfig{
+                        Label: "Schedule date and time",
+                        ID: "scheduled_at_local",
+                        Type: components.DatetimeLocalInput,
+                        Required: true,
+                        Value: schedule.ScheduledAt,
+                        Valid: schedule.ScheduledAtErr == "",
+                        ValidationText: schedule.ScheduledAtErr,
+                    })
+                    @components.HiddenInput("date", "")
+                    <button type="submit">Schedule</button>
+                </form>
+                <script>
+                    document.querySelector('form').addEventListener('submit', function() {
+                        const value = document.getElementById('scheduled_at_local').value;
+                        document.getElementById('date').value = value ? new Date(value).toISOString() : '';
+                    });
+                </script>
+            </div>
+        </article>
+    }
+}
+
 templ answerConsultationModal(consultationID string, totp answerConsultationTOTP) {
     <dialog
         id="answer-consultation-dialog"

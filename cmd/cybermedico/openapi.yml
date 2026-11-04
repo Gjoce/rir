@@ -233,6 +233,42 @@ paths:
           $ref: "#/components/responses/200"
         "default":
           $ref: "#/components/responses/default"
+  /consultations/{id}/schedule:
+    get:
+      security:
+        - sessionCookie: []
+      operationId: consultation_schedule_form
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "default":
+          $ref: "#/components/responses/default"
+    post:
+      security:
+        - sessionCookie: []
+      operationId: consultation_schedule_submit
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+              required:
+                - date
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "303":
+          $ref: "#/components/responses/303"
+        "default":
+          $ref: "#/components/responses/default"
   /consultations/{id}/answer:
     get:
       security:

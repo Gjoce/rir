@@ -13,6 +13,14 @@ type ConsultationFormRes interface {
 	consultationFormRes()
 }
 
+type ConsultationScheduleFormRes interface {
+	consultationScheduleFormRes()
+}
+
+type ConsultationScheduleSubmitRes interface {
+	consultationScheduleSubmitRes()
+}
+
 type ConsultationsFormRes interface {
 	consultationsFormRes()
 }

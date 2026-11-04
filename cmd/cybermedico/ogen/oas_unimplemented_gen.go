@@ -34,6 +34,20 @@ func (UnimplementedHandler) ConsultationForm(ctx context.Context, params Consult
 	return r, ht.ErrNotImplemented
 }
 
+// ConsultationScheduleForm implements consultation_schedule_form operation.
+//
+// GET /consultations/{id}/schedule
+func (UnimplementedHandler) ConsultationScheduleForm(ctx context.Context, params ConsultationScheduleFormParams) (r ConsultationScheduleFormRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ConsultationScheduleSubmit implements consultation_schedule_submit operation.
+//
+// POST /consultations/{id}/schedule
+func (UnimplementedHandler) ConsultationScheduleSubmit(ctx context.Context, req *ConsultationScheduleSubmitReq, params ConsultationScheduleSubmitParams) (r ConsultationScheduleSubmitRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // ConsultationsForm implements consultations_form operation.
 //
 // GET /consultations
