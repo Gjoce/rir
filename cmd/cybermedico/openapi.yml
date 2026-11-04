@@ -47,38 +47,35 @@ paths:
         required: true
         content:
           multipart/form-data:
-            # Nothing is required here on purpose: the handler validates the fields,
-            # so a missing one shows a message on the form instead of an error page.
             schema:
-              type: object
-              properties:
-                patient_name:
-                  type: string
-                patient_surname:
-                  type: string
-                patient_age:
-                  type: string
-                patient_email:
-                  type: string
-                patient_phone:
-                  type: string
-                medical_problem:
-                  type: string
-                patient_diagnosis:
-                  type: string
-                medication:
-                  type: string
-                allergies:
-                  type: string
-                need_translator:
-                  type: boolean
-                terms_accepted:
-                  type: boolean
-                attachments:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
+              $ref: "#/components/schemas/ConsultationOrderForm"
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "303":
+          $ref: "#/components/responses/303"
+        "default":
+          $ref: "#/components/responses/default"
+  /specialists/{id}/video:
+    get:
+      operationId: video_order_form
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "default":
+          $ref: "#/components/responses/default"
+    post:
+      operationId: video_order_submit
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/ConsultationOrderForm"
       responses:
         "200":
           $ref: "#/components/responses/200"
@@ -220,6 +217,45 @@ paths:
         "default":
           $ref: "#/components/responses/default"
 components:
+  schemas:
+    # Nothing is required here on purpose: the handler validates the fields, so a
+    # missing one shows a message on the form instead of an error page.
+    ConsultationOrderForm:
+      type: object
+      properties:
+        patient_name:
+          type: string
+        patient_surname:
+          type: string
+        patient_age:
+          type: string
+        patient_email:
+          type: string
+        patient_phone:
+          type: string
+        medical_problem:
+          type: string
+        patient_diagnosis:
+          type: string
+        medication:
+          type: string
+        allergies:
+          type: string
+        need_translator:
+          type: boolean
+        terms_accepted:
+          type: boolean
+        preferred_time:
+          type: string
+          description: Only used for video consultations
+        urgent:
+          type: boolean
+          description: Only used for video consultations
+        attachments:
+          type: array
+          items:
+            type: string
+            format: binary
   securitySchemes:
     sessionCookie:
       type: apiKey

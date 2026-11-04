@@ -8,6 +8,166 @@ import (
 	ht "github.com/ogen-go/ogen/http"
 )
 
+// Ref: #/components/schemas/ConsultationOrderForm
+type ConsultationOrderFormMultipart struct {
+	PatientName      OptString `json:"patient_name"`
+	PatientSurname   OptString `json:"patient_surname"`
+	PatientAge       OptString `json:"patient_age"`
+	PatientEmail     OptString `json:"patient_email"`
+	PatientPhone     OptString `json:"patient_phone"`
+	MedicalProblem   OptString `json:"medical_problem"`
+	PatientDiagnosis OptString `json:"patient_diagnosis"`
+	Medication       OptString `json:"medication"`
+	Allergies        OptString `json:"allergies"`
+	NeedTranslator   OptBool   `json:"need_translator"`
+	TermsAccepted    OptBool   `json:"terms_accepted"`
+	// Only used for video consultations.
+	PreferredTime OptString `json:"preferred_time"`
+	// Only used for video consultations.
+	Urgent      OptBool            `json:"urgent"`
+	Attachments []ht.MultipartFile `json:"attachments"`
+}
+
+// GetPatientName returns the value of PatientName.
+func (s *ConsultationOrderFormMultipart) GetPatientName() OptString {
+	return s.PatientName
+}
+
+// GetPatientSurname returns the value of PatientSurname.
+func (s *ConsultationOrderFormMultipart) GetPatientSurname() OptString {
+	return s.PatientSurname
+}
+
+// GetPatientAge returns the value of PatientAge.
+func (s *ConsultationOrderFormMultipart) GetPatientAge() OptString {
+	return s.PatientAge
+}
+
+// GetPatientEmail returns the value of PatientEmail.
+func (s *ConsultationOrderFormMultipart) GetPatientEmail() OptString {
+	return s.PatientEmail
+}
+
+// GetPatientPhone returns the value of PatientPhone.
+func (s *ConsultationOrderFormMultipart) GetPatientPhone() OptString {
+	return s.PatientPhone
+}
+
+// GetMedicalProblem returns the value of MedicalProblem.
+func (s *ConsultationOrderFormMultipart) GetMedicalProblem() OptString {
+	return s.MedicalProblem
+}
+
+// GetPatientDiagnosis returns the value of PatientDiagnosis.
+func (s *ConsultationOrderFormMultipart) GetPatientDiagnosis() OptString {
+	return s.PatientDiagnosis
+}
+
+// GetMedication returns the value of Medication.
+func (s *ConsultationOrderFormMultipart) GetMedication() OptString {
+	return s.Medication
+}
+
+// GetAllergies returns the value of Allergies.
+func (s *ConsultationOrderFormMultipart) GetAllergies() OptString {
+	return s.Allergies
+}
+
+// GetNeedTranslator returns the value of NeedTranslator.
+func (s *ConsultationOrderFormMultipart) GetNeedTranslator() OptBool {
+	return s.NeedTranslator
+}
+
+// GetTermsAccepted returns the value of TermsAccepted.
+func (s *ConsultationOrderFormMultipart) GetTermsAccepted() OptBool {
+	return s.TermsAccepted
+}
+
+// GetPreferredTime returns the value of PreferredTime.
+func (s *ConsultationOrderFormMultipart) GetPreferredTime() OptString {
+	return s.PreferredTime
+}
+
+// GetUrgent returns the value of Urgent.
+func (s *ConsultationOrderFormMultipart) GetUrgent() OptBool {
+	return s.Urgent
+}
+
+// GetAttachments returns the value of Attachments.
+func (s *ConsultationOrderFormMultipart) GetAttachments() []ht.MultipartFile {
+	return s.Attachments
+}
+
+// SetPatientName sets the value of PatientName.
+func (s *ConsultationOrderFormMultipart) SetPatientName(val OptString) {
+	s.PatientName = val
+}
+
+// SetPatientSurname sets the value of PatientSurname.
+func (s *ConsultationOrderFormMultipart) SetPatientSurname(val OptString) {
+	s.PatientSurname = val
+}
+
+// SetPatientAge sets the value of PatientAge.
+func (s *ConsultationOrderFormMultipart) SetPatientAge(val OptString) {
+	s.PatientAge = val
+}
+
+// SetPatientEmail sets the value of PatientEmail.
+func (s *ConsultationOrderFormMultipart) SetPatientEmail(val OptString) {
+	s.PatientEmail = val
+}
+
+// SetPatientPhone sets the value of PatientPhone.
+func (s *ConsultationOrderFormMultipart) SetPatientPhone(val OptString) {
+	s.PatientPhone = val
+}
+
+// SetMedicalProblem sets the value of MedicalProblem.
+func (s *ConsultationOrderFormMultipart) SetMedicalProblem(val OptString) {
+	s.MedicalProblem = val
+}
+
+// SetPatientDiagnosis sets the value of PatientDiagnosis.
+func (s *ConsultationOrderFormMultipart) SetPatientDiagnosis(val OptString) {
+	s.PatientDiagnosis = val
+}
+
+// SetMedication sets the value of Medication.
+func (s *ConsultationOrderFormMultipart) SetMedication(val OptString) {
+	s.Medication = val
+}
+
+// SetAllergies sets the value of Allergies.
+func (s *ConsultationOrderFormMultipart) SetAllergies(val OptString) {
+	s.Allergies = val
+}
+
+// SetNeedTranslator sets the value of NeedTranslator.
+func (s *ConsultationOrderFormMultipart) SetNeedTranslator(val OptBool) {
+	s.NeedTranslator = val
+}
+
+// SetTermsAccepted sets the value of TermsAccepted.
+func (s *ConsultationOrderFormMultipart) SetTermsAccepted(val OptBool) {
+	s.TermsAccepted = val
+}
+
+// SetPreferredTime sets the value of PreferredTime.
+func (s *ConsultationOrderFormMultipart) SetPreferredTime(val OptString) {
+	s.PreferredTime = val
+}
+
+// SetUrgent sets the value of Urgent.
+func (s *ConsultationOrderFormMultipart) SetUrgent(val OptBool) {
+	s.Urgent = val
+}
+
+// SetAttachments sets the value of Attachments.
+func (s *ConsultationOrderFormMultipart) SetAttachments(val []ht.MultipartFile) {
+	s.Attachments = val
+}
+
 type Default struct {
 	Data io.Reader
 }
@@ -60,6 +220,8 @@ func (*DefaultStatusCode) twoFactorFormRes()        {}
 func (*DefaultStatusCode) twoFactorSetupFormRes()   {}
 func (*DefaultStatusCode) twoFactorSetupSubmitRes() {}
 func (*DefaultStatusCode) twoFactorSubmitRes()      {}
+func (*DefaultStatusCode) videoOrderFormRes()       {}
+func (*DefaultStatusCode) videoOrderSubmitRes()     {}
 func (*DefaultStatusCode) writtenOrderFormRes()     {}
 func (*DefaultStatusCode) writtenOrderSubmitRes()   {}
 
@@ -204,6 +366,8 @@ func (*R200) twoFactorFormRes()        {}
 func (*R200) twoFactorSetupFormRes()   {}
 func (*R200) twoFactorSetupSubmitRes() {}
 func (*R200) twoFactorSubmitRes()      {}
+func (*R200) videoOrderFormRes()       {}
+func (*R200) videoOrderSubmitRes()     {}
 func (*R200) writtenOrderFormRes()     {}
 func (*R200) writtenOrderSubmitRes()   {}
 
@@ -240,6 +404,7 @@ func (*R303) twoFactorFormRes()        {}
 func (*R303) twoFactorSetupFormRes()   {}
 func (*R303) twoFactorSetupSubmitRes() {}
 func (*R303) twoFactorSubmitRes()      {}
+func (*R303) videoOrderSubmitRes()     {}
 func (*R303) writtenOrderSubmitRes()   {}
 
 type SessionCookie struct {
@@ -293,139 +458,4 @@ func (s *TwoFactorSubmitReq) GetTotpCode() string {
 // SetTotpCode sets the value of TotpCode.
 func (s *TwoFactorSubmitReq) SetTotpCode(val string) {
 	s.TotpCode = val
-}
-
-type WrittenOrderSubmitReq struct {
-	PatientName      OptString          `json:"patient_name"`
-	PatientSurname   OptString          `json:"patient_surname"`
-	PatientAge       OptString          `json:"patient_age"`
-	PatientEmail     OptString          `json:"patient_email"`
-	PatientPhone     OptString          `json:"patient_phone"`
-	MedicalProblem   OptString          `json:"medical_problem"`
-	PatientDiagnosis OptString          `json:"patient_diagnosis"`
-	Medication       OptString          `json:"medication"`
-	Allergies        OptString          `json:"allergies"`
-	NeedTranslator   OptBool            `json:"need_translator"`
-	TermsAccepted    OptBool            `json:"terms_accepted"`
-	Attachments      []ht.MultipartFile `json:"attachments"`
-}
-
-// GetPatientName returns the value of PatientName.
-func (s *WrittenOrderSubmitReq) GetPatientName() OptString {
-	return s.PatientName
-}
-
-// GetPatientSurname returns the value of PatientSurname.
-func (s *WrittenOrderSubmitReq) GetPatientSurname() OptString {
-	return s.PatientSurname
-}
-
-// GetPatientAge returns the value of PatientAge.
-func (s *WrittenOrderSubmitReq) GetPatientAge() OptString {
-	return s.PatientAge
-}
-
-// GetPatientEmail returns the value of PatientEmail.
-func (s *WrittenOrderSubmitReq) GetPatientEmail() OptString {
-	return s.PatientEmail
-}
-
-// GetPatientPhone returns the value of PatientPhone.
-func (s *WrittenOrderSubmitReq) GetPatientPhone() OptString {
-	return s.PatientPhone
-}
-
-// GetMedicalProblem returns the value of MedicalProblem.
-func (s *WrittenOrderSubmitReq) GetMedicalProblem() OptString {
-	return s.MedicalProblem
-}
-
-// GetPatientDiagnosis returns the value of PatientDiagnosis.
-func (s *WrittenOrderSubmitReq) GetPatientDiagnosis() OptString {
-	return s.PatientDiagnosis
-}
-
-// GetMedication returns the value of Medication.
-func (s *WrittenOrderSubmitReq) GetMedication() OptString {
-	return s.Medication
-}
-
-// GetAllergies returns the value of Allergies.
-func (s *WrittenOrderSubmitReq) GetAllergies() OptString {
-	return s.Allergies
-}
-
-// GetNeedTranslator returns the value of NeedTranslator.
-func (s *WrittenOrderSubmitReq) GetNeedTranslator() OptBool {
-	return s.NeedTranslator
-}
-
-// GetTermsAccepted returns the value of TermsAccepted.
-func (s *WrittenOrderSubmitReq) GetTermsAccepted() OptBool {
-	return s.TermsAccepted
-}
-
-// GetAttachments returns the value of Attachments.
-func (s *WrittenOrderSubmitReq) GetAttachments() []ht.MultipartFile {
-	return s.Attachments
-}
-
-// SetPatientName sets the value of PatientName.
-func (s *WrittenOrderSubmitReq) SetPatientName(val OptString) {
-	s.PatientName = val
-}
-
-// SetPatientSurname sets the value of PatientSurname.
-func (s *WrittenOrderSubmitReq) SetPatientSurname(val OptString) {
-	s.PatientSurname = val
-}
-
-// SetPatientAge sets the value of PatientAge.
-func (s *WrittenOrderSubmitReq) SetPatientAge(val OptString) {
-	s.PatientAge = val
-}
-
-// SetPatientEmail sets the value of PatientEmail.
-func (s *WrittenOrderSubmitReq) SetPatientEmail(val OptString) {
-	s.PatientEmail = val
-}
-
-// SetPatientPhone sets the value of PatientPhone.
-func (s *WrittenOrderSubmitReq) SetPatientPhone(val OptString) {
-	s.PatientPhone = val
-}
-
-// SetMedicalProblem sets the value of MedicalProblem.
-func (s *WrittenOrderSubmitReq) SetMedicalProblem(val OptString) {
-	s.MedicalProblem = val
-}
-
-// SetPatientDiagnosis sets the value of PatientDiagnosis.
-func (s *WrittenOrderSubmitReq) SetPatientDiagnosis(val OptString) {
-	s.PatientDiagnosis = val
-}
-
-// SetMedication sets the value of Medication.
-func (s *WrittenOrderSubmitReq) SetMedication(val OptString) {
-	s.Medication = val
-}
-
-// SetAllergies sets the value of Allergies.
-func (s *WrittenOrderSubmitReq) SetAllergies(val OptString) {
-	s.Allergies = val
-}
-
-// SetNeedTranslator sets the value of NeedTranslator.
-func (s *WrittenOrderSubmitReq) SetNeedTranslator(val OptBool) {
-	s.NeedTranslator = val
-}
-
-// SetTermsAccepted sets the value of TermsAccepted.
-func (s *WrittenOrderSubmitReq) SetTermsAccepted(val OptBool) {
-	s.TermsAccepted = val
-}
-
-// SetAttachments sets the value of Attachments.
-func (s *WrittenOrderSubmitReq) SetAttachments(val []ht.MultipartFile) {
-	s.Attachments = val
 }

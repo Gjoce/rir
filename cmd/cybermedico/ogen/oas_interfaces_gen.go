@@ -49,6 +49,14 @@ type TwoFactorSubmitRes interface {
 	twoFactorSubmitRes()
 }
 
+type VideoOrderFormRes interface {
+	videoOrderFormRes()
+}
+
+type VideoOrderSubmitRes interface {
+	videoOrderSubmitRes()
+}
+
 type WrittenOrderFormRes interface {
 	writtenOrderFormRes()
 }

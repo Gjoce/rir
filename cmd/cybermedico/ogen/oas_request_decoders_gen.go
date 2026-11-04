@@ -251,8 +251,8 @@ func (s *Server) decodeTwoFactorSubmitRequest(r *http.Request) (
 	}
 }
 
-func (s *Server) decodeWrittenOrderSubmitRequest(r *http.Request) (
-	req *WrittenOrderSubmitReq,
+func (s *Server) decodeVideoOrderSubmitRequest(r *http.Request) (
+	req *ConsultationOrderFormMultipart,
 	rawBody []byte,
 	close func() error,
 	rerr error,
@@ -293,7 +293,7 @@ func (s *Server) decodeWrittenOrderSubmitRequest(r *http.Request) (
 		form := url.Values(r.MultipartForm.Value)
 		_ = form
 
-		var request WrittenOrderSubmitReq
+		var request ConsultationOrderFormMultipart
 		q := uri.NewQueryDecoder(form)
 		{
 			cfg := uri.QueryParameterDecodingConfig{
@@ -644,6 +644,560 @@ func (s *Server) decodeWrittenOrderSubmitRequest(r *http.Request) (
 					return nil
 				}); err != nil {
 					return req, rawBody, close, errors.Wrap(err, "decode \"terms_accepted\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "preferred_time",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotPreferredTimeVal string
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotPreferredTimeVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.PreferredTime.SetTo(requestDotPreferredTimeVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"preferred_time\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "urgent",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotUrgentVal bool
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToBool(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotUrgentVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.Urgent.SetTo(requestDotUrgentVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"urgent\"")
+				}
+			}
+		}
+		{
+			if err := func() error {
+				files, ok := r.MultipartForm.File["attachments"]
+				_ = ok
+				request.Attachments = make([]ht.MultipartFile, 0, len(files))
+				for _, fh := range files {
+					f, err := fh.Open()
+					if err != nil {
+						return errors.Wrap(err, "open")
+					}
+					closers = append(closers, f.Close)
+
+					request.Attachments = append(request.Attachments, ht.MultipartFile{
+						Name:   fh.Filename,
+						File:   f,
+						Size:   fh.Size,
+						Header: fh.Header,
+					})
+				}
+				return nil
+			}(); err != nil {
+				return req, rawBody, close, errors.Wrap(err, "decode \"attachments\"")
+			}
+		}
+		return &request, rawBody, close, nil
+	default:
+		return req, rawBody, close, validate.InvalidContentType(ct)
+	}
+}
+
+func (s *Server) decodeWrittenOrderSubmitRequest(r *http.Request) (
+	req *ConsultationOrderFormMultipart,
+	rawBody []byte,
+	close func() error,
+	rerr error,
+) {
+	var closers []func() error
+	close = func() error {
+		var merr error
+		// Close in reverse order, to match defer behavior.
+		for i := len(closers) - 1; i >= 0; i-- {
+			c := closers[i]
+			merr = errors.Join(merr, c())
+		}
+		return merr
+	}
+	defer func() {
+		if rerr != nil {
+			rerr = errors.Join(rerr, close())
+		}
+	}()
+	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
+	if err != nil {
+		return req, rawBody, close, errors.Wrap(err, "parse media type")
+	}
+	switch {
+	case ct == "multipart/form-data":
+		if r.ContentLength == 0 {
+			return req, rawBody, close, validate.ErrBodyRequired
+		}
+		if err := r.ParseMultipartForm(s.cfg.MaxMultipartMemory); err != nil {
+			return req, rawBody, close, errors.Wrap(err, "parse multipart form")
+		}
+		// Remove all temporary files created by ParseMultipartForm when the request is done.
+		//
+		// Notice that the closers are called in reverse order, to match defer behavior, so
+		// any opened file will be closed before RemoveAll call.
+		closers = append(closers, r.MultipartForm.RemoveAll)
+		// Form values may be unused.
+		form := url.Values(r.MultipartForm.Value)
+		_ = form
+
+		var request ConsultationOrderFormMultipart
+		q := uri.NewQueryDecoder(form)
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "patient_name",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotPatientNameVal string
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotPatientNameVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.PatientName.SetTo(requestDotPatientNameVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"patient_name\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "patient_surname",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotPatientSurnameVal string
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotPatientSurnameVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.PatientSurname.SetTo(requestDotPatientSurnameVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"patient_surname\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "patient_age",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotPatientAgeVal string
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotPatientAgeVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.PatientAge.SetTo(requestDotPatientAgeVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"patient_age\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "patient_email",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotPatientEmailVal string
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotPatientEmailVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.PatientEmail.SetTo(requestDotPatientEmailVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"patient_email\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "patient_phone",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotPatientPhoneVal string
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotPatientPhoneVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.PatientPhone.SetTo(requestDotPatientPhoneVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"patient_phone\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "medical_problem",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotMedicalProblemVal string
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotMedicalProblemVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.MedicalProblem.SetTo(requestDotMedicalProblemVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"medical_problem\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "patient_diagnosis",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotPatientDiagnosisVal string
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotPatientDiagnosisVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.PatientDiagnosis.SetTo(requestDotPatientDiagnosisVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"patient_diagnosis\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "medication",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotMedicationVal string
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotMedicationVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.Medication.SetTo(requestDotMedicationVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"medication\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "allergies",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotAllergiesVal string
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotAllergiesVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.Allergies.SetTo(requestDotAllergiesVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"allergies\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "need_translator",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotNeedTranslatorVal bool
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToBool(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotNeedTranslatorVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.NeedTranslator.SetTo(requestDotNeedTranslatorVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"need_translator\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "terms_accepted",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotTermsAcceptedVal bool
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToBool(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotTermsAcceptedVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.TermsAccepted.SetTo(requestDotTermsAcceptedVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"terms_accepted\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "preferred_time",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotPreferredTimeVal string
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotPreferredTimeVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.PreferredTime.SetTo(requestDotPreferredTimeVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"preferred_time\"")
+				}
+			}
+		}
+		{
+			cfg := uri.QueryParameterDecodingConfig{
+				Name:    "urgent",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.HasParam(cfg); err == nil {
+				if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+					var requestDotUrgentVal bool
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToBool(val)
+						if err != nil {
+							return err
+						}
+
+						requestDotUrgentVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					request.Urgent.SetTo(requestDotUrgentVal)
+					return nil
+				}); err != nil {
+					return req, rawBody, close, errors.Wrap(err, "decode \"urgent\"")
 				}
 			}
 		}

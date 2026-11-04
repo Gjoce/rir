@@ -26,6 +26,9 @@ var (
 	rn13AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
+	rn15AllowedHeaders = map[string]string{
+		"POST": "Content-Type",
+	}
 )
 
 func (s *Server) cutPrefix(path string) (string, bool) {
@@ -297,35 +300,80 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				switch elem[0] {
-				case '/': // Prefix: "/written"
+				case '/': // Prefix: "/"
 
-					if l := len("/written"); len(elem) >= l && elem[0:l] == "/written" {
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "GET":
-							s.handleWrittenOrderFormRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						case "POST":
-							s.handleWrittenOrderSubmitRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, notAllowedParams{
-								allowedMethods: "GET,POST",
-								allowedHeaders: rn13AllowedHeaders,
-								acceptPost:     "multipart/form-data",
-								acceptPatch:    "",
-							})
+						break
+					}
+					switch elem[0] {
+					case 'v': // Prefix: "video"
+
+						if l := len("video"); len(elem) >= l && elem[0:l] == "video" {
+							elem = elem[l:]
+						} else {
+							break
 						}
 
-						return
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "GET":
+								s.handleVideoOrderFormRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "POST":
+								s.handleVideoOrderSubmitRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, notAllowedParams{
+									allowedMethods: "GET,POST",
+									allowedHeaders: rn13AllowedHeaders,
+									acceptPost:     "multipart/form-data",
+									acceptPatch:    "",
+								})
+							}
+
+							return
+						}
+
+					case 'w': // Prefix: "written"
+
+						if l := len("written"); len(elem) >= l && elem[0:l] == "written" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "GET":
+								s.handleWrittenOrderFormRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "POST":
+								s.handleWrittenOrderSubmitRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, notAllowedParams{
+									allowedMethods: "GET,POST",
+									allowedHeaders: rn15AllowedHeaders,
+									acceptPost:     "multipart/form-data",
+									acceptPatch:    "",
+								})
+							}
+
+							return
+						}
+
 					}
 
 				}
@@ -703,38 +751,86 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					}
 				}
 				switch elem[0] {
-				case '/': // Prefix: "/written"
+				case '/': // Prefix: "/"
 
-					if l := len("/written"); len(elem) >= l && elem[0:l] == "/written" {
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "GET":
-							r.name = WrittenOrderFormOperation
-							r.summary = ""
-							r.operationID = "written_order_form"
-							r.operationGroup = ""
-							r.pathPattern = "/specialists/{id}/written"
-							r.args = args
-							r.count = 1
-							return r, true
-						case "POST":
-							r.name = WrittenOrderSubmitOperation
-							r.summary = ""
-							r.operationID = "written_order_submit"
-							r.operationGroup = ""
-							r.pathPattern = "/specialists/{id}/written"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
+						break
+					}
+					switch elem[0] {
+					case 'v': // Prefix: "video"
+
+						if l := len("video"); len(elem) >= l && elem[0:l] == "video" {
+							elem = elem[l:]
+						} else {
+							break
 						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "GET":
+								r.name = VideoOrderFormOperation
+								r.summary = ""
+								r.operationID = "video_order_form"
+								r.operationGroup = ""
+								r.pathPattern = "/specialists/{id}/video"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "POST":
+								r.name = VideoOrderSubmitOperation
+								r.summary = ""
+								r.operationID = "video_order_submit"
+								r.operationGroup = ""
+								r.pathPattern = "/specialists/{id}/video"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+
+					case 'w': // Prefix: "written"
+
+						if l := len("written"); len(elem) >= l && elem[0:l] == "written" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "GET":
+								r.name = WrittenOrderFormOperation
+								r.summary = ""
+								r.operationID = "written_order_form"
+								r.operationGroup = ""
+								r.pathPattern = "/specialists/{id}/written"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "POST":
+								r.name = WrittenOrderSubmitOperation
+								r.summary = ""
+								r.operationID = "written_order_submit"
+								r.operationGroup = ""
+								r.pathPattern = "/specialists/{id}/written"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+
 					}
 
 				}

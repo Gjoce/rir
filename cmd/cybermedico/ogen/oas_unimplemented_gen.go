@@ -97,6 +97,20 @@ func (UnimplementedHandler) TwoFactorSubmit(ctx context.Context, req *TwoFactorS
 	return r, ht.ErrNotImplemented
 }
 
+// VideoOrderForm implements video_order_form operation.
+//
+// GET /specialists/{id}/video
+func (UnimplementedHandler) VideoOrderForm(ctx context.Context, params VideoOrderFormParams) (r VideoOrderFormRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// VideoOrderSubmit implements video_order_submit operation.
+//
+// POST /specialists/{id}/video
+func (UnimplementedHandler) VideoOrderSubmit(ctx context.Context, req *ConsultationOrderFormMultipart, params VideoOrderSubmitParams) (r VideoOrderSubmitRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // WrittenOrderForm implements written_order_form operation.
 //
 // GET /specialists/{id}/written
@@ -107,6 +121,6 @@ func (UnimplementedHandler) WrittenOrderForm(ctx context.Context, params Written
 // WrittenOrderSubmit implements written_order_submit operation.
 //
 // POST /specialists/{id}/written
-func (UnimplementedHandler) WrittenOrderSubmit(ctx context.Context, req *WrittenOrderSubmitReq, params WrittenOrderSubmitParams) (r WrittenOrderSubmitRes, _ error) {
+func (UnimplementedHandler) WrittenOrderSubmit(ctx context.Context, req *ConsultationOrderFormMultipart, params WrittenOrderSubmitParams) (r WrittenOrderSubmitRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
