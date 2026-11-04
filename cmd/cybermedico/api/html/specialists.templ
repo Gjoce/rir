@@ -1,0 +1,47 @@
+package html
+
+import (
+    "cybermedico/components"
+    "cybermedico/layouts"
+    "fmt"
+    "strings"
+)
+
+templ SpecialistHtml(doctor SpecialistProfile) {
+    @layouts.Public() {
+        @components.HeadingGroup(components.Config{
+            Breadcrumbs: []components.Breadcrumb{
+                {Title: "Doctors", URL: "/"},
+                {Title: doctor.DisplayName},
+            },
+            Specialization: doctor.Specialization,
+            Subspecialization: doctor.Subspecialization,
+        })
+        <article>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--pico-spacing);">
+                <img
+                    src={ doctor.PhotoUrl }
+                    alt={ doctor.DisplayName }
+                    style="width: 15rem; height: 15rem; object-fit: contain; border-radius: var(--pico-border-radius);"
+                />
+                <div style="flex: 1; min-width: 16rem;">
+                    <p>{ doctor.Bio }</p>
+                    <address>{ doctor.Workplace }</address>
+                    <p style="text-transform: capitalize;"><small>{ strings.Join(doctor.Languages, ", ") }</small></p>
+                </div>
+            </div>
+            <footer>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--pico-spacing);">
+                    <div>
+                        <p>Written consultation: <strong>{ doctor.PriceWritten } €</strong></p>
+                        <a role="button" style="width: 100%;" href={ templ.SafeURL(fmt.Sprintf("/specialists/%s/written", doctor.ID)) }>Written consultation</a>
+                    </div>
+                    <div>
+                        <p>Video consultation: <strong>{ doctor.PriceVideo } €</strong></p>
+                        <a role="button" style="width: 100%;" href={ templ.SafeURL(fmt.Sprintf("/specialists/%s/video", doctor.ID)) }>Video consultation</a>
+                    </div>
+                </div>
+            </footer>
+        </article>
+    }
+}

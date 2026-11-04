@@ -48,6 +48,13 @@ func (UnimplementedHandler) Root(ctx context.Context, params RootParams) (r Root
 	return r, ht.ErrNotImplemented
 }
 
+// Specialist implements specialist operation.
+//
+// GET /specialists/{id}
+func (UnimplementedHandler) Specialist(ctx context.Context, params SpecialistParams) (r SpecialistRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // Themes implements themes operation.
 //
 // GET /themes/{theme}

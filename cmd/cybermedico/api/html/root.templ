@@ -4,6 +4,7 @@ import (
     "cybermedico/components"
     "cybermedico/layouts"
     "encoding/json"
+    "fmt"
     "strings"
 )
 
@@ -43,7 +44,7 @@ templ PublicDoctorsSSE(doctors []PublicDoctor, filters PublicDoctorsFilters) {
                             style="width: 100%; height: 14rem; object-fit: contain; border-radius: var(--pico-border-radius); display: block; margin-bottom: var(--pico-spacing);"
                         />
                         <hgroup>
-                            <h4>{ doctor.DisplayName }</h4>
+                            <h4><a href={ templ.SafeURL(fmt.Sprintf("/specialists/%s", doctor.ID)) }>{ doctor.DisplayName }</a></h4>
                             if doctor.Subspecialization != "" {
                                 <p style="font-style: italic;"><small>{ doctor.Subspecialization }</small></p>
                             }
