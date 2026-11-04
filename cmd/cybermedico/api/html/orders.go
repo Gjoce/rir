@@ -7,6 +7,7 @@ import (
 	"cybermedico/cmd/cybermedico/api/log"
 	api "cybermedico/cmd/cybermedico/ogen"
 	"cybermedico/cmd/cybermedico/storage"
+	"cybermedico/workers"
 	"errors"
 	"fmt"
 	"io"
@@ -22,6 +23,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	ht "github.com/ogen-go/ogen/http"
+	"github.com/riverqueue/river"
 )
 
 const (
@@ -46,12 +48,13 @@ var attachmentExtensions = map[string]string{
 }
 
 type OrdersHandler struct {
-	db      *pgxpool.Pool
-	storage *storage.Service
+	db          *pgxpool.Pool
+	storage     *storage.Service
+	riverClient *river.Client[pgx.Tx]
 }
 
-func NewOrdersHandler(db *pgxpool.Pool, storageService *storage.Service) OrdersHandler {
-	return OrdersHandler{db: db, storage: storageService}
+func NewOrdersHandler(db *pgxpool.Pool, storageService *storage.Service, riverClient *river.Client[pgx.Tx]) OrdersHandler {
+	return OrdersHandler{db: db, storage: storageService, riverClient: riverClient}
 }
 
 type orderAttachment struct {
@@ -467,6 +470,10 @@ func (h OrdersHandler) saveOrder(ctx context.Context, doctor orderDoctor, order 
 		}); err != nil {
 			return fmt.Errorf("failed to insert attachment: %w", err)
 		}
+	}
+
+	if _, err = h.riverClient.InsertTx(ctx, tx, workers.OrderConfirmationEmailArgs{ConsultationID: consultationID}, &river.InsertOpts{MaxAttempts: 5}); err != nil {
+		return fmt.Errorf("failed to enqueue order confirmation email: %w", err)
 	}
 
 	if err = tx.Commit(ctx); err != nil {

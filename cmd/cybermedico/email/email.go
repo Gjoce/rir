@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"net/mail"
 	"net/smtp"
 	"strings"
 
@@ -25,8 +26,10 @@ type EmailAddress struct {
 	Email string
 }
 
+// ToRCPT formats the address for a header. Patients type these names, so they can
+// hold accents, commas or quotes, which have to be encoded to stay valid.
 func (r EmailAddress) ToRCPT() string {
-	return fmt.Sprintf("%s <%s>", r.Name, r.Email)
+	return (&mail.Address{Name: r.Name, Address: r.Email}).String()
 }
 
 func (e Emailer) Send(ctx context.Context, recipients []EmailAddress, subject string, content templ.Component) error {

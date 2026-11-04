@@ -22,6 +22,7 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	_ "time/tzdata" // Workers format times in Europe/Skopje, wherever the app runs.
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/pgx/v5"
@@ -65,7 +66,7 @@ func main() {
 
 	authService, _ := initializeAuth(ctx, dbPool)
 
-	htmlServer := initializeHTMLServer(dbPool, authService, storageService)
+	htmlServer := initializeHTMLServer(dbPool, authService, storageService, riverClient)
 	httpServer := initializeHTTPServer(htmlServer, authService)
 	startHTTPServer(httpServer)
 
@@ -308,7 +309,10 @@ func initializeRiver(ctx context.Context, dbPool *pgxpool.Pool, mailer *email.Em
 
 	doctorAnswerEmailWorker := workers.NewDoctorAnswerEmailWorker(mailer, log.Logger)
 
+	orderConfirmationEmailWorker := workers.NewOrderConfirmationEmailWorker(dbPool, mailer, log.Logger)
+
 	river.AddWorker(riverWorkers, doctorAnswerEmailWorker)
+	river.AddWorker(riverWorkers, orderConfirmationEmailWorker)
 
 	riverClient, err := river.NewClient(riverpgxv5.New(dbPool), &river.Config{
 		Logger: log.Logger,
@@ -355,7 +359,7 @@ func initializeAuth(ctx context.Context, db *pgxpool.Pool) (*html.AuthService, a
 	return authService, authorizer
 }
 
-func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, storageService *storage.Service) *ogen.Server {
+func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, storageService *storage.Service, riverClient *river.Client[pgx.Tx]) *ogen.Server {
 	authHandler := html.NewAuthHandler(dbPool, authService)
 
 	htmlServer, err := ogen.NewServer(struct {
@@ -368,7 +372,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 	}{
 		html.NewRootHandler(dbPool),
 		html.NewSpecialistsHandler(dbPool),
-		html.NewOrdersHandler(dbPool, storageService),
+		html.NewOrdersHandler(dbPool, storageService, riverClient),
 		html.ThemeHandler{},
 		authHandler,
 		html.NewDashboardHandler(authService),
