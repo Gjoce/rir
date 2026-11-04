@@ -8,6 +8,8 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+
+	"github.com/ogen-go/ogen/ogenerrors"
 )
 
 var ErrNoop = errors.New("noop-error")
@@ -30,6 +32,14 @@ func (e HtmlError) Error() string {
 
 func ErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
 	if errors.Is(err, ErrNoop) {
+		return
+	}
+
+	_, isSecurityError := err.(*ogenerrors.SecurityError)
+
+	if errors.Is(err, ogenerrors.ErrSecurityRequirementIsNotSatisfied) || isSecurityError {
+		http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+
 		return
 	}
 

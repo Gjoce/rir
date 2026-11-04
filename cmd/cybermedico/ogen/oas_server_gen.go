@@ -12,6 +12,18 @@ type Handler interface {
 	//
 	// GET /dashboard
 	Dashboard(ctx context.Context) (DashboardRes, error)
+	// Login implements login operation.
+	//
+	// GET /auth/login
+	Login(ctx context.Context) (LoginRes, error)
+	// LoginSubmit implements loginSubmit operation.
+	//
+	// POST /auth/login
+	LoginSubmit(ctx context.Context, req *LoginSubmitReq) (LoginSubmitRes, error)
+	// Logout implements logout operation.
+	//
+	// GET /logout
+	Logout(ctx context.Context) (LogoutRes, error)
 	// Root implements root operation.
 	//
 	// GET /
@@ -25,18 +37,20 @@ type Handler interface {
 // Server implements http server based on OpenAPI v3 specification and
 // calls Handler to handle requests.
 type Server struct {
-	h Handler
+	h   Handler
+	sec SecurityHandler
 	baseServer
 }
 
 // NewServer creates new Server.
-func NewServer(h Handler, opts ...ServerOption) (*Server, error) {
+func NewServer(h Handler, sec SecurityHandler, opts ...ServerOption) (*Server, error) {
 	s, err := newServerConfig(opts...).baseServer()
 	if err != nil {
 		return nil, err
 	}
 	return &Server{
 		h:          h,
+		sec:        sec,
 		baseServer: s,
 	}, nil
 }

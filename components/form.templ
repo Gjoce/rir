@@ -1,0 +1,232 @@
+package components
+
+import (
+    "strconv"
+    "fmt"
+)
+
+type InputConfig struct {
+    Label       string
+    Name        string
+    Type        string
+    Placeholder string
+    Value       string
+    ReadOnly bool
+    Required bool
+    ID string
+    Checked bool
+    Valid bool
+    ValidationText string
+}
+
+type TextAreaConfig struct {
+    Label       string
+    Name        string
+    Placeholder string
+    Value       string
+    ReadOnly bool
+    Required bool
+    MaxLength int
+    MinLength int
+    Rows int
+    Cols int
+    Valid bool
+    ValidationText string
+}
+
+type SelectConfig struct {
+    Label string
+    Name string
+    Options []SelectOption
+    Placeholder string
+    HelperText string
+    Required bool
+    SelectedOption string
+    Value string
+    Valid          bool
+    ValidationText string
+}
+
+type SelectOption struct {
+    Value string
+    Label string
+}
+
+const (
+    TextInput = "text"
+    EmailInput = "email"
+    NumberInput = "number"
+    TelInput = "tel"
+    DateInput = "date"
+    DatetimeLocalInput = "datetime-local"
+    PasswordInput = "password"
+    CheckboxInput = "checkbox"
+    FileInput = "file"
+)
+
+
+templ Input(config InputConfig) {
+    if config.Type == CheckboxInput {
+        <label>
+            <input
+                type = { config.Type }
+                    if config.Name != "" {
+                        name = { config.Name }
+                    }
+                    if config.Value != "" {
+                        value= { config.Value }
+                    }
+                    if config.Checked {
+                        checked
+                    }
+                    if config.Required {
+                        required
+                    }
+            />
+            { config.Label }
+            if config.Required {
+                <span style="color: var(--pico-primary);">*</span>
+            }
+        </label>
+    } else {
+    <label>
+        { config.Label }
+        if config.Required {
+            <span style="color: var(--pico-primary)">*</span>
+        }
+        <input 
+            type = { config.Type }
+            if config.Name != "" {
+                name = { config.Name }
+            }
+            if config.Name != "" {
+                data-bind={ config.Name }
+            }
+            if config.Placeholder != "" {
+                placeholder = { config.Placeholder }
+            }
+            if config.Value != "" {
+                value = { config.Value }
+            }
+            aria-label={ config.Label }
+            if config.ReadOnly {
+                readonly
+            }
+            if config.Required {
+                required
+            }
+            if config.ID != "" {
+                id = { config.ID }
+            }
+            if !config.Valid && config.ValidationText !="" {
+                aria-invalid="true"
+            }
+        />
+        if !config.Valid && config.ValidationText != "" {
+            <small>{ config.ValidationText }</small>
+        }
+    </label>
+    }
+}
+
+templ TextArea(config TextAreaConfig) {
+    <label>
+        { config.Label }
+        if config.Required {
+            <span style="color: var(--pico-primary)">*</span>
+        }
+        <textarea 
+            if config.Name != "" {
+                name = { config.Name }
+            }
+            if config.Name != "" {
+                data-bind={ config.Name }
+            }
+            if config.Placeholder != "" {
+                placeholder = { config.Placeholder }
+            }
+            aria-label={ config.Label }
+            if config.ReadOnly {
+                readonly
+            }
+            if config.Required {
+                required
+            }
+            if config.MaxLength > 0 {
+                maxlength = { strconv.Itoa(config.MaxLength) }
+            }
+            if config.MinLength > 0 {
+                minlength = { strconv.Itoa(config.MinLength) }
+            }
+            if config.Rows > 0 {
+                rows = { strconv.Itoa(config.Rows) }
+            }
+            if config.Cols > 0 {
+                cols = { strconv.Itoa(config.Cols) }
+            }
+            if !config.Valid && config.ValidationText !="" {
+                aria-invalid="true"
+            }
+        > { config.Value } 
+        </textarea>
+        if !config.Valid && config.ValidationText != "" {
+            <small>{ config.ValidationText }</small>
+        }
+    </label>
+}
+
+templ HiddenInput(name, value string) {
+    <input type="hidden" name={ name } id={ name} value={ value } />
+}
+
+templ Select(config SelectConfig) {
+    <label>
+        { config.Label}
+        if config.Required {
+            <span style="color: var(--pico-primary);">*</span>
+        }
+        <select
+            if config.Name != "" {
+                name = { config.Name }
+            }
+            if config.Name != "" {
+                data-bind = { config.Name }
+            }
+            aria-label= { config.Label }
+            if config.Required {
+                required
+            }
+            if config.HelperText != "" {
+                aria-describedby= { fmt.Sprintf("%s-helper", config.Name) }
+            }
+            if !config.Valid && config.ValidationText != "" {
+                aria-invalid="true"
+            }
+        >
+            if config.Placeholder != "" {
+                <option
+                    if config.Value == "" && config.SelectedOption == "" {
+                        selected
+                    }
+                    disabled
+                    value=""
+                >
+                    { config.Placeholder }
+                </option>
+            }
+            for _, option := range config.Options {
+                <option
+                    value={ option.Value }
+                    if option.Value == config.Value || option.Value == config.SelectedOption {
+                        selected
+                    }
+                >
+                    { option.Label }
+                </option>
+            }
+        </select>
+        if !config.Valid && config.ValidationText != "" {
+            <small>{ config.ValidationText }</small>
+        }
+    </label>
+}

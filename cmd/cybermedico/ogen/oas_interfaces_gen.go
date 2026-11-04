@@ -5,6 +5,18 @@ type DashboardRes interface {
 	dashboardRes()
 }
 
+type LoginRes interface {
+	loginRes()
+}
+
+type LoginSubmitRes interface {
+	loginSubmitRes()
+}
+
+type LogoutRes interface {
+	logoutRes()
+}
+
 type RootRes interface {
 	rootRes()
 }

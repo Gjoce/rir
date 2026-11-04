@@ -1,0 +1,53 @@
+package components
+
+type Config struct {
+    Title string
+    Breadcrumbs []Breadcrumb
+    Description string
+    ScheduledAt string
+    Specialization string
+    Subspecialization string
+}
+
+type Breadcrumb struct {
+    Title string
+    URL string
+}
+
+templ HeadingGroup(config Config) {
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <hgroup style="flex: 1; min-width: 0; container-type: inline-size;">
+            <h2>
+                <nav aria-label="breadcrumb">
+                    <ul>
+                        for _, breadcrumb := range config.Breadcrumbs {
+                            <li>
+                                if breadcrumb.URL != "" {
+                                    <a class="breadcrumb-responsive" href={ breadcrumb.URL }>{ breadcrumb.Title }</a>
+                                } else {
+                                    <span class="breadcrumb-responsive">
+                                        { breadcrumb.Title }
+                                    </span>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </h2>
+            if config.Description != "" {
+                <p> { config.Description } </p>
+            }
+            if config.Specialization != "" {
+                <kbd>{ config.Specialization }</kbd>
+            }
+            if config.Subspecialization != "" {
+                <p style="font-style: italic;">
+                    <small>{ config.Subspecialization }</small>
+                </p>
+            }
+        </hgroup>
+        if config.ScheduledAt != "" {
+            <span style="margin-left: 1rem;">Scheduled for: <kbd>{ config.ScheduledAt }</kbd></span>
+        }
+    </div>
+}

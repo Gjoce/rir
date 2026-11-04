@@ -28,8 +28,51 @@ paths:
           $ref: "#/components/responses/303"
         "default":
           $ref: "#/components/responses/default"
+  /auth/login:
+    get:
+      operationId: login
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "default":
+          $ref: "#/components/responses/default"
+    post:
+      operationId: loginSubmit
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "303":
+          $ref: "#/components/responses/303"
+        "default":
+          $ref: "#/components/responses/default"
+  /logout:
+    get:
+      security:
+        - sessionCookie: []
+      operationId: logout
+      responses:
+        "303":
+          $ref: "#/components/responses/303"
+        "default":
+          $ref: "#/components/responses/default"
   /dashboard:
     get:
+      security:
+        - sessionCookie: []
       operationId: dashboard
       responses:
         "200":
@@ -37,6 +80,11 @@ paths:
         "default":
           $ref: "#/components/responses/default"
 components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: cybermedico_session
   responses:
     "200":
       description: OK

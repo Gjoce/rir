@@ -10,6 +10,12 @@ import (
 	"github.com/ogen-go/ogen/uri"
 )
 
+var (
+	rn3AllowedHeaders = map[string]string{
+		"POST": "Content-Type",
+	}
+)
+
 func (s *Server) cutPrefix(path string) (string, bool) {
 	prefix := s.cfg.Prefix
 	if prefix == "" {
@@ -73,6 +79,33 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			switch elem[0] {
+			case 'a': // Prefix: "auth/login"
+
+				if l := len("auth/login"); len(elem) >= l && elem[0:l] == "auth/login" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "GET":
+						s.handleLoginRequest([0]string{}, elemIsEscaped, w, r)
+					case "POST":
+						s.handleLoginSubmitRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, notAllowedParams{
+							allowedMethods: "GET,POST",
+							allowedHeaders: rn3AllowedHeaders,
+							acceptPost:     "application/x-www-form-urlencoded",
+							acceptPatch:    "",
+						})
+					}
+
+					return
+				}
+
 			case 'd': // Prefix: "dashboard"
 
 				if l := len("dashboard"); len(elem) >= l && elem[0:l] == "dashboard" {
@@ -86,6 +119,31 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					switch r.Method {
 					case "GET":
 						s.handleDashboardRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, notAllowedParams{
+							allowedMethods: "GET",
+							allowedHeaders: nil,
+							acceptPost:     "",
+							acceptPatch:    "",
+						})
+					}
+
+					return
+				}
+
+			case 'l': // Prefix: "logout"
+
+				if l := len("logout"); len(elem) >= l && elem[0:l] == "logout" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "GET":
+						s.handleLogoutRequest([0]string{}, elemIsEscaped, w, r)
 					default:
 						s.notAllowed(w, r, notAllowedParams{
 							allowedMethods: "GET",
@@ -246,6 +304,40 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 			}
 			switch elem[0] {
+			case 'a': // Prefix: "auth/login"
+
+				if l := len("auth/login"); len(elem) >= l && elem[0:l] == "auth/login" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch method {
+					case "GET":
+						r.name = LoginOperation
+						r.summary = ""
+						r.operationID = "login"
+						r.operationGroup = ""
+						r.pathPattern = "/auth/login"
+						r.args = args
+						r.count = 0
+						return r, true
+					case "POST":
+						r.name = LoginSubmitOperation
+						r.summary = ""
+						r.operationID = "loginSubmit"
+						r.operationGroup = ""
+						r.pathPattern = "/auth/login"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+
 			case 'd': // Prefix: "dashboard"
 
 				if l := len("dashboard"); len(elem) >= l && elem[0:l] == "dashboard" {
@@ -263,6 +355,31 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						r.operationID = "dashboard"
 						r.operationGroup = ""
 						r.pathPattern = "/dashboard"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+
+			case 'l': // Prefix: "logout"
+
+				if l := len("logout"); len(elem) >= l && elem[0:l] == "logout" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch method {
+					case "GET":
+						r.name = LogoutOperation
+						r.summary = ""
+						r.operationID = "logout"
+						r.operationGroup = ""
+						r.pathPattern = "/logout"
 						r.args = args
 						r.count = 0
 						return r, true

@@ -46,9 +46,37 @@ func (s *DefaultStatusCode) SetResponse(val Default) {
 	s.Response = val
 }
 
-func (*DefaultStatusCode) dashboardRes() {}
-func (*DefaultStatusCode) rootRes()      {}
-func (*DefaultStatusCode) themesRes()    {}
+func (*DefaultStatusCode) dashboardRes()   {}
+func (*DefaultStatusCode) loginRes()       {}
+func (*DefaultStatusCode) loginSubmitRes() {}
+func (*DefaultStatusCode) logoutRes()      {}
+func (*DefaultStatusCode) rootRes()        {}
+func (*DefaultStatusCode) themesRes()      {}
+
+type LoginSubmitReq struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+// GetEmail returns the value of Email.
+func (s *LoginSubmitReq) GetEmail() string {
+	return s.Email
+}
+
+// GetPassword returns the value of Password.
+func (s *LoginSubmitReq) GetPassword() string {
+	return s.Password
+}
+
+// SetEmail sets the value of Email.
+func (s *LoginSubmitReq) SetEmail(val string) {
+	s.Email = val
+}
+
+// SetPassword sets the value of Password.
+func (s *LoginSubmitReq) SetPassword(val string) {
+	s.Password = val
+}
 
 // NewOptString returns new OptString with value set to v.
 func NewOptString(v string) OptString {
@@ -110,8 +138,10 @@ func (s R200) Read(p []byte) (n int, err error) {
 	return s.Data.Read(p)
 }
 
-func (*R200) dashboardRes() {}
-func (*R200) rootRes()      {}
+func (*R200) dashboardRes()   {}
+func (*R200) loginRes()       {}
+func (*R200) loginSubmitRes() {}
+func (*R200) rootRes()        {}
 
 // Ref: #/components/responses/303
 type R303 struct {
@@ -139,4 +169,31 @@ func (s *R303) SetSetCookie(val OptString) {
 	s.SetCookie = val
 }
 
-func (*R303) themesRes() {}
+func (*R303) loginSubmitRes() {}
+func (*R303) logoutRes()      {}
+func (*R303) themesRes()      {}
+
+type SessionCookie struct {
+	APIKey string
+	Roles  []string
+}
+
+// GetAPIKey returns the value of APIKey.
+func (s *SessionCookie) GetAPIKey() string {
+	return s.APIKey
+}
+
+// GetRoles returns the value of Roles.
+func (s *SessionCookie) GetRoles() []string {
+	return s.Roles
+}
+
+// SetAPIKey sets the value of APIKey.
+func (s *SessionCookie) SetAPIKey(val string) {
+	s.APIKey = val
+}
+
+// SetRoles sets the value of Roles.
+func (s *SessionCookie) SetRoles(val []string) {
+	s.Roles = val
+}
