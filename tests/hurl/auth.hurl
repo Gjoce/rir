@@ -51,31 +51,46 @@ body contains "Invalid email or password"
 GET {{host}}/dashboard
 HTTP 303
 
-# Correct credentials start a session
+# The code page needs a correct password first
+GET {{host}}/auth/2fa
+HTTP 303
+[Asserts]
+header "Location" == "/auth/login"
+
+# Correct credentials lead to the code page, not to a full session
 POST {{host}}/auth/login
 [Form]
 email: dr.carter@cybermedico.com
 password: cybermedico-dev
 HTTP 303
 [Asserts]
-header "Location" == "/dashboard"
+header "Location" == "/auth/2fa"
 cookie "cybermedico_session[HttpOnly]" exists
 cookie "cybermedico_session[Secure]" exists
 
 GET {{host}}/dashboard
-HTTP 200
-[Asserts]
-body contains "Panel"
-body contains "href=\"/consultations\""
-body contains "logout-modal"
-
-# Logging out ends the session
-GET {{host}}/logout
 HTTP 303
 [Asserts]
 header "Location" == "/auth/login"
+
+GET {{host}}/auth/2fa
+HTTP 200
+[Asserts]
+body contains "6-digit code"
+
+# Wrong code
+POST {{host}}/auth/2fa
+[Form]
+totp_code: 000000
+HTTP 400
+[Asserts]
+body contains "Invalid code"
 
 GET {{host}}/dashboard
 HTTP 303
+
+# An account that already has a secret can't replace it
+GET {{host}}/auth/2fa/setup
+HTTP 303
 [Asserts]
-header "Location" == "/auth/login"
+header "Location" == "/auth/2fa"

@@ -15,6 +15,7 @@ require (
 	github.com/jackc/pgx/v5 v5.12.0
 	github.com/joho/godotenv v1.5.1
 	github.com/ogen-go/ogen v1.24.0
+	github.com/pquerna/otp v1.5.0
 	github.com/riverqueue/river v0.51.0
 	github.com/riverqueue/river/riverdriver/riverpgxv5 v0.51.0
 	go.opentelemetry.io/otel v1.45.0
@@ -38,6 +39,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.6 // indirect
 	github.com/aws/smithy-go v1.28.7 // indirect
+	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dlclark/regexp2 v1.12.0 // indirect
 	github.com/fatih/color v1.19.0 // indirect

@@ -37,3 +37,63 @@ templ login(loginData loginData) {
         </article>
     }
 }
+
+templ twoFactor() {
+    @layouts.Login() {
+        <article>
+            @components.HeadingGroup(components.Config{
+                Description: "Enter the 6-digit code from your authenticator app.",
+                Breadcrumbs: []components.Breadcrumb{
+                    {Title: "Two-Factor Authentication"},
+                },
+            })
+            <div>
+                <form method="POST" action="/auth/2fa" novalidate>
+                    @components.Input(components.InputConfig{
+                        Type: components.TextInput,
+                        Name: "totp_code",
+                        Label: "Authentication Code:",
+                        Placeholder: "000000",
+                        Required: true,
+                    })
+                    <button type="submit">Verify</button>
+                </form>
+            </div>
+        </article>
+    }
+}
+
+templ twoFactorSetup(data twoFactorSetupData) {
+    @layouts.Login() {
+    <form method="POST" action="/auth/2fa/setup">
+        <article>
+            <h2>Set Up Two-Factor Authentication</h2>
+            <p>
+                Open your authenticator app (Google Authenticator, Authy, etc.),
+                choose <strong>Add account → Enter key manually</strong>, and paste
+                the key below.
+            </p>
+            <label>Your setup key:</label>
+            <pre style="font-size: 1.2rem; letter-spacing: 0.1em; user-select: all;">{ data.Secret }</pre>
+            <hr/>
+            <p>Once added, enter the 6-digit code your app shows to confirm setup.</p>
+            <label for="totp_code">Confirmation Code:</label>
+            <input
+                type="text"
+                id="totp_code"
+                name="totp_code"
+                inputmode="numeric"
+                pattern="[0-9]{6}"
+                maxlength="6"
+                autocomplete="one-time-code"
+                autofocus
+                placeholder="000000"
+            />
+            if data.Err != "" {
+                <span style="color: red">{ data.Err }</span>
+            }
+            <button type="submit">Confirm Setup</button>
+        </article>
+    </form>
+    }
+}

@@ -32,6 +32,22 @@ type Handler interface {
 	//
 	// GET /themes/{theme}
 	Themes(ctx context.Context, params ThemesParams) (ThemesRes, error)
+	// TwoFactorForm implements twoFactorForm operation.
+	//
+	// GET /auth/2fa
+	TwoFactorForm(ctx context.Context) (TwoFactorFormRes, error)
+	// TwoFactorSetupForm implements twoFactorSetupForm operation.
+	//
+	// GET /auth/2fa/setup
+	TwoFactorSetupForm(ctx context.Context) (TwoFactorSetupFormRes, error)
+	// TwoFactorSetupSubmit implements twoFactorSetupSubmit operation.
+	//
+	// POST /auth/2fa/setup
+	TwoFactorSetupSubmit(ctx context.Context, req *TwoFactorSetupSubmitReq) (TwoFactorSetupSubmitRes, error)
+	// TwoFactorSubmit implements twoFactorSubmit operation.
+	//
+	// POST /auth/2fa
+	TwoFactorSubmit(ctx context.Context, req *TwoFactorSubmitReq) (TwoFactorSubmitRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

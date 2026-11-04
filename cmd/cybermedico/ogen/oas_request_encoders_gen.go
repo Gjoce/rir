@@ -50,3 +50,55 @@ func encodeLoginSubmitRequest(
 	ht.SetBody(r, strings.NewReader(encoded), contentType)
 	return nil
 }
+
+func encodeTwoFactorSetupSubmitRequest(
+	req *TwoFactorSetupSubmitReq,
+	r *http.Request,
+) error {
+	const contentType = "application/x-www-form-urlencoded"
+	request := req
+
+	q := uri.NewFormEncoder(map[string]string{})
+	{
+		// Encode "totp_code" form field.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "totp_code",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(request.TotpCode))
+		}); err != nil {
+			return errors.Wrap(err, "encode query")
+		}
+	}
+	encoded := q.Values().Encode()
+	ht.SetBody(r, strings.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeTwoFactorSubmitRequest(
+	req *TwoFactorSubmitReq,
+	r *http.Request,
+) error {
+	const contentType = "application/x-www-form-urlencoded"
+	request := req
+
+	q := uri.NewFormEncoder(map[string]string{})
+	{
+		// Encode "totp_code" form field.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "totp_code",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(request.TotpCode))
+		}); err != nil {
+			return errors.Wrap(err, "encode query")
+		}
+	}
+	encoded := q.Values().Encode()
+	ht.SetBody(r, strings.NewReader(encoded), contentType)
+	return nil
+}

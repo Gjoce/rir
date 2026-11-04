@@ -6,10 +6,14 @@ package ogen
 type OperationName = string
 
 const (
-	DashboardOperation   OperationName = "Dashboard"
-	LoginOperation       OperationName = "Login"
-	LoginSubmitOperation OperationName = "LoginSubmit"
-	LogoutOperation      OperationName = "Logout"
-	RootOperation        OperationName = "Root"
-	ThemesOperation      OperationName = "Themes"
+	DashboardOperation            OperationName = "Dashboard"
+	LoginOperation                OperationName = "Login"
+	LoginSubmitOperation          OperationName = "LoginSubmit"
+	LogoutOperation               OperationName = "Logout"
+	RootOperation                 OperationName = "Root"
+	ThemesOperation               OperationName = "Themes"
+	TwoFactorFormOperation        OperationName = "TwoFactorForm"
+	TwoFactorSetupFormOperation   OperationName = "TwoFactorSetupForm"
+	TwoFactorSetupSubmitOperation OperationName = "TwoFactorSetupSubmit"
+	TwoFactorSubmitOperation      OperationName = "TwoFactorSubmit"
 )

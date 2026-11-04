@@ -46,12 +46,16 @@ func (s *DefaultStatusCode) SetResponse(val Default) {
 	s.Response = val
 }
 
-func (*DefaultStatusCode) dashboardRes()   {}
-func (*DefaultStatusCode) loginRes()       {}
-func (*DefaultStatusCode) loginSubmitRes() {}
-func (*DefaultStatusCode) logoutRes()      {}
-func (*DefaultStatusCode) rootRes()        {}
-func (*DefaultStatusCode) themesRes()      {}
+func (*DefaultStatusCode) dashboardRes()            {}
+func (*DefaultStatusCode) loginRes()                {}
+func (*DefaultStatusCode) loginSubmitRes()          {}
+func (*DefaultStatusCode) logoutRes()               {}
+func (*DefaultStatusCode) rootRes()                 {}
+func (*DefaultStatusCode) themesRes()               {}
+func (*DefaultStatusCode) twoFactorFormRes()        {}
+func (*DefaultStatusCode) twoFactorSetupFormRes()   {}
+func (*DefaultStatusCode) twoFactorSetupSubmitRes() {}
+func (*DefaultStatusCode) twoFactorSubmitRes()      {}
 
 type LoginSubmitReq struct {
 	Email    string `json:"email"`
@@ -138,10 +142,14 @@ func (s R200) Read(p []byte) (n int, err error) {
 	return s.Data.Read(p)
 }
 
-func (*R200) dashboardRes()   {}
-func (*R200) loginRes()       {}
-func (*R200) loginSubmitRes() {}
-func (*R200) rootRes()        {}
+func (*R200) dashboardRes()            {}
+func (*R200) loginRes()                {}
+func (*R200) loginSubmitRes()          {}
+func (*R200) rootRes()                 {}
+func (*R200) twoFactorFormRes()        {}
+func (*R200) twoFactorSetupFormRes()   {}
+func (*R200) twoFactorSetupSubmitRes() {}
+func (*R200) twoFactorSubmitRes()      {}
 
 // Ref: #/components/responses/303
 type R303 struct {
@@ -169,9 +177,13 @@ func (s *R303) SetSetCookie(val OptString) {
 	s.SetCookie = val
 }
 
-func (*R303) loginSubmitRes() {}
-func (*R303) logoutRes()      {}
-func (*R303) themesRes()      {}
+func (*R303) loginSubmitRes()          {}
+func (*R303) logoutRes()               {}
+func (*R303) themesRes()               {}
+func (*R303) twoFactorFormRes()        {}
+func (*R303) twoFactorSetupFormRes()   {}
+func (*R303) twoFactorSetupSubmitRes() {}
+func (*R303) twoFactorSubmitRes()      {}
 
 type SessionCookie struct {
 	APIKey string
@@ -196,4 +208,32 @@ func (s *SessionCookie) SetAPIKey(val string) {
 // SetRoles sets the value of Roles.
 func (s *SessionCookie) SetRoles(val []string) {
 	s.Roles = val
+}
+
+type TwoFactorSetupSubmitReq struct {
+	TotpCode string `json:"totp_code"`
+}
+
+// GetTotpCode returns the value of TotpCode.
+func (s *TwoFactorSetupSubmitReq) GetTotpCode() string {
+	return s.TotpCode
+}
+
+// SetTotpCode sets the value of TotpCode.
+func (s *TwoFactorSetupSubmitReq) SetTotpCode(val string) {
+	s.TotpCode = val
+}
+
+type TwoFactorSubmitReq struct {
+	TotpCode string `json:"totp_code"`
+}
+
+// GetTotpCode returns the value of TotpCode.
+func (s *TwoFactorSubmitReq) GetTotpCode() string {
+	return s.TotpCode
+}
+
+// SetTotpCode sets the value of TotpCode.
+func (s *TwoFactorSubmitReq) SetTotpCode(val string) {
+	s.TotpCode = val
 }

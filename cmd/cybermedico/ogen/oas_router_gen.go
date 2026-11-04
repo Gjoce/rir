@@ -11,6 +11,12 @@ import (
 )
 
 var (
+	rn8AllowedHeaders = map[string]string{
+		"POST": "Content-Type",
+	}
+	rn9AllowedHeaders = map[string]string{
+		"POST": "Content-Type",
+	}
 	rn3AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
@@ -79,31 +85,100 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			switch elem[0] {
-			case 'a': // Prefix: "auth/login"
+			case 'a': // Prefix: "auth/"
 
-				if l := len("auth/login"); len(elem) >= l && elem[0:l] == "auth/login" {
+				if l := len("auth/"); len(elem) >= l && elem[0:l] == "auth/" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					// Leaf node.
-					switch r.Method {
-					case "GET":
-						s.handleLoginRequest([0]string{}, elemIsEscaped, w, r)
-					case "POST":
-						s.handleLoginSubmitRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, notAllowedParams{
-							allowedMethods: "GET,POST",
-							allowedHeaders: rn3AllowedHeaders,
-							acceptPost:     "application/x-www-form-urlencoded",
-							acceptPatch:    "",
-						})
+					break
+				}
+				switch elem[0] {
+				case '2': // Prefix: "2fa"
+
+					if l := len("2fa"); len(elem) >= l && elem[0:l] == "2fa" {
+						elem = elem[l:]
+					} else {
+						break
 					}
 
-					return
+					if len(elem) == 0 {
+						switch r.Method {
+						case "GET":
+							s.handleTwoFactorFormRequest([0]string{}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleTwoFactorSubmitRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, notAllowedParams{
+								allowedMethods: "GET,POST",
+								allowedHeaders: rn8AllowedHeaders,
+								acceptPost:     "application/x-www-form-urlencoded",
+								acceptPatch:    "",
+							})
+						}
+
+						return
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/setup"
+
+						if l := len("/setup"); len(elem) >= l && elem[0:l] == "/setup" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "GET":
+								s.handleTwoFactorSetupFormRequest([0]string{}, elemIsEscaped, w, r)
+							case "POST":
+								s.handleTwoFactorSetupSubmitRequest([0]string{}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, notAllowedParams{
+									allowedMethods: "GET,POST",
+									allowedHeaders: rn9AllowedHeaders,
+									acceptPost:     "application/x-www-form-urlencoded",
+									acceptPatch:    "",
+								})
+							}
+
+							return
+						}
+
+					}
+
+				case 'l': // Prefix: "login"
+
+					if l := len("login"); len(elem) >= l && elem[0:l] == "login" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "GET":
+							s.handleLoginRequest([0]string{}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleLoginSubmitRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, notAllowedParams{
+								allowedMethods: "GET,POST",
+								allowedHeaders: rn3AllowedHeaders,
+								acceptPost:     "application/x-www-form-urlencoded",
+								acceptPatch:    "",
+							})
+						}
+
+						return
+					}
+
 				}
 
 			case 'd': // Prefix: "dashboard"
@@ -304,38 +379,121 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 			}
 			switch elem[0] {
-			case 'a': // Prefix: "auth/login"
+			case 'a': // Prefix: "auth/"
 
-				if l := len("auth/login"); len(elem) >= l && elem[0:l] == "auth/login" {
+				if l := len("auth/"); len(elem) >= l && elem[0:l] == "auth/" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					// Leaf node.
-					switch method {
-					case "GET":
-						r.name = LoginOperation
-						r.summary = ""
-						r.operationID = "login"
-						r.operationGroup = ""
-						r.pathPattern = "/auth/login"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "POST":
-						r.name = LoginSubmitOperation
-						r.summary = ""
-						r.operationID = "loginSubmit"
-						r.operationGroup = ""
-						r.pathPattern = "/auth/login"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
+					break
+				}
+				switch elem[0] {
+				case '2': // Prefix: "2fa"
+
+					if l := len("2fa"); len(elem) >= l && elem[0:l] == "2fa" {
+						elem = elem[l:]
+					} else {
+						break
 					}
+
+					if len(elem) == 0 {
+						switch method {
+						case "GET":
+							r.name = TwoFactorFormOperation
+							r.summary = ""
+							r.operationID = "twoFactorForm"
+							r.operationGroup = ""
+							r.pathPattern = "/auth/2fa"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "POST":
+							r.name = TwoFactorSubmitOperation
+							r.summary = ""
+							r.operationID = "twoFactorSubmit"
+							r.operationGroup = ""
+							r.pathPattern = "/auth/2fa"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/setup"
+
+						if l := len("/setup"); len(elem) >= l && elem[0:l] == "/setup" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "GET":
+								r.name = TwoFactorSetupFormOperation
+								r.summary = ""
+								r.operationID = "twoFactorSetupForm"
+								r.operationGroup = ""
+								r.pathPattern = "/auth/2fa/setup"
+								r.args = args
+								r.count = 0
+								return r, true
+							case "POST":
+								r.name = TwoFactorSetupSubmitOperation
+								r.summary = ""
+								r.operationID = "twoFactorSetupSubmit"
+								r.operationGroup = ""
+								r.pathPattern = "/auth/2fa/setup"
+								r.args = args
+								r.count = 0
+								return r, true
+							default:
+								return
+							}
+						}
+
+					}
+
+				case 'l': // Prefix: "login"
+
+					if l := len("login"); len(elem) >= l && elem[0:l] == "login" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "GET":
+							r.name = LoginOperation
+							r.summary = ""
+							r.operationID = "login"
+							r.operationGroup = ""
+							r.pathPattern = "/auth/login"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "POST":
+							r.name = LoginSubmitOperation
+							r.summary = ""
+							r.operationID = "loginSubmit"
+							r.operationGroup = ""
+							r.pathPattern = "/auth/login"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
 				}
 
 			case 'd': // Prefix: "dashboard"

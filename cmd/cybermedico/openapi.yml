@@ -59,6 +59,66 @@ paths:
           $ref: "#/components/responses/303"
         "default":
           $ref: "#/components/responses/default"
+  /auth/2fa:
+    get:
+      operationId: twoFactorForm
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "303":
+          $ref: "#/components/responses/303"
+        "default":
+          $ref: "#/components/responses/default"
+    post:
+      operationId: twoFactorSubmit
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                totp_code:
+                  type: string
+              required:
+                - totp_code
+      responses:
+        "303":
+          $ref: "#/components/responses/303"
+        "200":
+          $ref: "#/components/responses/200"
+        "default":
+          $ref: "#/components/responses/default"
+  /auth/2fa/setup:
+    get:
+      operationId: twoFactorSetupForm
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "303":
+          $ref: "#/components/responses/303"
+        "default":
+          $ref: "#/components/responses/default"
+    post:
+      operationId: twoFactorSetupSubmit
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                totp_code:
+                  type: string
+              required:
+                - totp_code
+      responses:
+        "303":
+          $ref: "#/components/responses/303"
+        "200":
+          $ref: "#/components/responses/200"
+        "default":
+          $ref: "#/components/responses/default"
   /logout:
     get:
       security:
