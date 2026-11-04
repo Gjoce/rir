@@ -4,6 +4,8 @@ package ogen
 
 import (
 	"io"
+
+	ht "github.com/ogen-go/ogen/http"
 )
 
 type Default struct {
@@ -294,17 +296,18 @@ func (s *TwoFactorSubmitReq) SetTotpCode(val string) {
 }
 
 type WrittenOrderSubmitReq struct {
-	PatientName      OptString `json:"patient_name"`
-	PatientSurname   OptString `json:"patient_surname"`
-	PatientAge       OptString `json:"patient_age"`
-	PatientEmail     OptString `json:"patient_email"`
-	PatientPhone     OptString `json:"patient_phone"`
-	MedicalProblem   OptString `json:"medical_problem"`
-	PatientDiagnosis OptString `json:"patient_diagnosis"`
-	Medication       OptString `json:"medication"`
-	Allergies        OptString `json:"allergies"`
-	NeedTranslator   OptBool   `json:"need_translator"`
-	TermsAccepted    OptBool   `json:"terms_accepted"`
+	PatientName      OptString          `json:"patient_name"`
+	PatientSurname   OptString          `json:"patient_surname"`
+	PatientAge       OptString          `json:"patient_age"`
+	PatientEmail     OptString          `json:"patient_email"`
+	PatientPhone     OptString          `json:"patient_phone"`
+	MedicalProblem   OptString          `json:"medical_problem"`
+	PatientDiagnosis OptString          `json:"patient_diagnosis"`
+	Medication       OptString          `json:"medication"`
+	Allergies        OptString          `json:"allergies"`
+	NeedTranslator   OptBool            `json:"need_translator"`
+	TermsAccepted    OptBool            `json:"terms_accepted"`
+	Attachments      []ht.MultipartFile `json:"attachments"`
 }
 
 // GetPatientName returns the value of PatientName.
@@ -362,6 +365,11 @@ func (s *WrittenOrderSubmitReq) GetTermsAccepted() OptBool {
 	return s.TermsAccepted
 }
 
+// GetAttachments returns the value of Attachments.
+func (s *WrittenOrderSubmitReq) GetAttachments() []ht.MultipartFile {
+	return s.Attachments
+}
+
 // SetPatientName sets the value of PatientName.
 func (s *WrittenOrderSubmitReq) SetPatientName(val OptString) {
 	s.PatientName = val
@@ -415,4 +423,9 @@ func (s *WrittenOrderSubmitReq) SetNeedTranslator(val OptBool) {
 // SetTermsAccepted sets the value of TermsAccepted.
 func (s *WrittenOrderSubmitReq) SetTermsAccepted(val OptBool) {
 	s.TermsAccepted = val
+}
+
+// SetAttachments sets the value of Attachments.
+func (s *WrittenOrderSubmitReq) SetAttachments(val []ht.MultipartFile) {
+	s.Attachments = val
 }

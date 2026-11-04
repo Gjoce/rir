@@ -647,6 +647,30 @@ func (s *Server) decodeWrittenOrderSubmitRequest(r *http.Request) (
 				}
 			}
 		}
+		{
+			if err := func() error {
+				files, ok := r.MultipartForm.File["attachments"]
+				_ = ok
+				request.Attachments = make([]ht.MultipartFile, 0, len(files))
+				for _, fh := range files {
+					f, err := fh.Open()
+					if err != nil {
+						return errors.Wrap(err, "open")
+					}
+					closers = append(closers, f.Close)
+
+					request.Attachments = append(request.Attachments, ht.MultipartFile{
+						Name:   fh.Filename,
+						File:   f,
+						Size:   fh.Size,
+						Header: fh.Header,
+					})
+				}
+				return nil
+			}(); err != nil {
+				return req, rawBody, close, errors.Wrap(err, "decode \"attachments\"")
+			}
+		}
 		return &request, rawBody, close, nil
 	default:
 		return req, rawBody, close, validate.InvalidContentType(ct)

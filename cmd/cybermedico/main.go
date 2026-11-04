@@ -34,6 +34,9 @@ import (
 	"github.com/riverqueue/river/rivermigrate"
 )
 
+// maxRequestBytes fits the largest valid order: 5 attachments of 10 MB and the form fields.
+const maxRequestBytes = 52 * 1024 * 1024
+
 //go:embed static
 var staticFiles embed.FS
 
@@ -55,16 +58,14 @@ func main() {
 
 	mailer := initializeMailer()
 
-	// Nothing uses the service until attachment uploads, but starting it already
-	// fails fast when the buckets are not accessible.
-	initializeStorage(ctx)
+	storageService := initializeStorage(ctx)
 
 	riverClient := initializeRiver(ctx, dbPool, &mailer)
 	defer shutdownRiver(ctx, riverClient)
 
 	authService, _ := initializeAuth(ctx, dbPool)
 
-	htmlServer := initializeHTMLServer(dbPool, authService)
+	htmlServer := initializeHTMLServer(dbPool, authService, storageService)
 	httpServer := initializeHTTPServer(htmlServer, authService)
 	startHTTPServer(httpServer)
 
@@ -354,7 +355,7 @@ func initializeAuth(ctx context.Context, db *pgxpool.Pool) (*html.AuthService, a
 	return authService, authorizer
 }
 
-func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService) *ogen.Server {
+func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, storageService *storage.Service) *ogen.Server {
 	authHandler := html.NewAuthHandler(dbPool, authService)
 
 	htmlServer, err := ogen.NewServer(struct {
@@ -367,7 +368,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService) *
 	}{
 		html.NewRootHandler(dbPool),
 		html.NewSpecialistsHandler(dbPool),
-		html.NewOrdersHandler(dbPool),
+		html.NewOrdersHandler(dbPool, storageService),
 		html.ThemeHandler{},
 		authHandler,
 		html.NewDashboardHandler(authService),
@@ -395,8 +396,10 @@ func initializeHTTPServer(htmlServer *ogen.Server, authService *html.AuthService
 	}
 
 	return &http.Server{
-		Addr:              ":" + port,
-		Handler:           mux,
+		Addr: ":" + port,
+		// Multipart uploads are written to disk before a handler can check them, and
+		// the order form is public, so the limit has to apply before parsing.
+		Handler:           http.MaxBytesHandler(mux, maxRequestBytes),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 }
