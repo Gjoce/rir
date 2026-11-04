@@ -11,28 +11,31 @@ import (
 )
 
 var (
-	rn5AllowedHeaders = map[string]string{
+	rn7AllowedHeaders = map[string]string{
 		"GET": "Datastar-Request",
 	}
-	rn15AllowedHeaders = map[string]string{
+	rn17AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
-	rn16AllowedHeaders = map[string]string{
+	rn18AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
-	rn7AllowedHeaders = map[string]string{
+	rn9AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
-	rn4AllowedHeaders = map[string]string{
+	rn6AllowedHeaders = map[string]string{
 		"GET": "Datastar-Request",
 	}
 	rn3AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
-	rn17AllowedHeaders = map[string]string{
+	rn5AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
 	rn19AllowedHeaders = map[string]string{
+		"POST": "Content-Type",
+	}
+	rn21AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
 )
@@ -91,7 +94,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				default:
 					s.notAllowed(w, r, notAllowedParams{
 						allowedMethods: "GET",
-						allowedHeaders: rn5AllowedHeaders,
+						allowedHeaders: rn7AllowedHeaders,
 						acceptPost:     "",
 						acceptPatch:    "",
 					})
@@ -129,7 +132,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						default:
 							s.notAllowed(w, r, notAllowedParams{
 								allowedMethods: "GET,POST",
-								allowedHeaders: rn15AllowedHeaders,
+								allowedHeaders: rn17AllowedHeaders,
 								acceptPost:     "application/x-www-form-urlencoded",
 								acceptPatch:    "",
 							})
@@ -156,7 +159,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							default:
 								s.notAllowed(w, r, notAllowedParams{
 									allowedMethods: "GET,POST",
-									allowedHeaders: rn16AllowedHeaders,
+									allowedHeaders: rn18AllowedHeaders,
 									acceptPost:     "application/x-www-form-urlencoded",
 									acceptPatch:    "",
 								})
@@ -185,7 +188,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						default:
 							s.notAllowed(w, r, notAllowedParams{
 								allowedMethods: "GET,POST",
-								allowedHeaders: rn7AllowedHeaders,
+								allowedHeaders: rn9AllowedHeaders,
 								acceptPost:     "application/x-www-form-urlencoded",
 								acceptPatch:    "",
 							})
@@ -211,7 +214,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					default:
 						s.notAllowed(w, r, notAllowedParams{
 							allowedMethods: "GET",
-							allowedHeaders: rn4AllowedHeaders,
+							allowedHeaders: rn6AllowedHeaders,
 							acceptPost:     "",
 							acceptPatch:    "",
 						})
@@ -255,35 +258,80 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/answer"
+					case '/': // Prefix: "/"
 
-						if l := len("/answer"); len(elem) >= l && elem[0:l] == "/answer" {
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
-							// Leaf node.
-							switch r.Method {
-							case "GET":
-								s.handleConsultationAnswerFormRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							case "POST":
-								s.handleConsultationAnswerSubmitRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, notAllowedParams{
-									allowedMethods: "GET,POST",
-									allowedHeaders: rn3AllowedHeaders,
-									acceptPost:     "application/json",
-									acceptPatch:    "",
-								})
+							break
+						}
+						switch elem[0] {
+						case 'a': // Prefix: "answer"
+
+							if l := len("answer"); len(elem) >= l && elem[0:l] == "answer" {
+								elem = elem[l:]
+							} else {
+								break
 							}
 
-							return
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleConsultationAnswerFormRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								case "POST":
+									s.handleConsultationAnswerSubmitRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, notAllowedParams{
+										allowedMethods: "GET,POST",
+										allowedHeaders: rn3AllowedHeaders,
+										acceptPost:     "application/json",
+										acceptPatch:    "",
+									})
+								}
+
+								return
+							}
+
+						case 's': // Prefix: "schedule"
+
+							if l := len("schedule"); len(elem) >= l && elem[0:l] == "schedule" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleConsultationScheduleFormRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								case "POST":
+									s.handleConsultationScheduleSubmitRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, notAllowedParams{
+										allowedMethods: "GET,POST",
+										allowedHeaders: rn5AllowedHeaders,
+										acceptPost:     "application/x-www-form-urlencoded",
+										acceptPatch:    "",
+									})
+								}
+
+								return
+							}
+
 						}
 
 					}
@@ -434,7 +482,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							default:
 								s.notAllowed(w, r, notAllowedParams{
 									allowedMethods: "GET,POST",
-									allowedHeaders: rn17AllowedHeaders,
+									allowedHeaders: rn19AllowedHeaders,
 									acceptPost:     "multipart/form-data",
 									acceptPatch:    "",
 								})
@@ -465,7 +513,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							default:
 								s.notAllowed(w, r, notAllowedParams{
 									allowedMethods: "GET,POST",
-									allowedHeaders: rn19AllowedHeaders,
+									allowedHeaders: rn21AllowedHeaders,
 									acceptPost:     "multipart/form-data",
 									acceptPatch:    "",
 								})
@@ -800,38 +848,86 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						}
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/answer"
+					case '/': // Prefix: "/"
 
-						if l := len("/answer"); len(elem) >= l && elem[0:l] == "/answer" {
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
-							// Leaf node.
-							switch method {
-							case "GET":
-								r.name = ConsultationAnswerFormOperation
-								r.summary = ""
-								r.operationID = "consultation_answer_form"
-								r.operationGroup = ""
-								r.pathPattern = "/consultations/{id}/answer"
-								r.args = args
-								r.count = 1
-								return r, true
-							case "POST":
-								r.name = ConsultationAnswerSubmitOperation
-								r.summary = ""
-								r.operationID = "consultation_answer_submit"
-								r.operationGroup = ""
-								r.pathPattern = "/consultations/{id}/answer"
-								r.args = args
-								r.count = 1
-								return r, true
-							default:
-								return
+							break
+						}
+						switch elem[0] {
+						case 'a': // Prefix: "answer"
+
+							if l := len("answer"); len(elem) >= l && elem[0:l] == "answer" {
+								elem = elem[l:]
+							} else {
+								break
 							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch method {
+								case "GET":
+									r.name = ConsultationAnswerFormOperation
+									r.summary = ""
+									r.operationID = "consultation_answer_form"
+									r.operationGroup = ""
+									r.pathPattern = "/consultations/{id}/answer"
+									r.args = args
+									r.count = 1
+									return r, true
+								case "POST":
+									r.name = ConsultationAnswerSubmitOperation
+									r.summary = ""
+									r.operationID = "consultation_answer_submit"
+									r.operationGroup = ""
+									r.pathPattern = "/consultations/{id}/answer"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+
+						case 's': // Prefix: "schedule"
+
+							if l := len("schedule"); len(elem) >= l && elem[0:l] == "schedule" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch method {
+								case "GET":
+									r.name = ConsultationScheduleFormOperation
+									r.summary = ""
+									r.operationID = "consultation_schedule_form"
+									r.operationGroup = ""
+									r.pathPattern = "/consultations/{id}/schedule"
+									r.args = args
+									r.count = 1
+									return r, true
+								case "POST":
+									r.name = ConsultationScheduleSubmitOperation
+									r.summary = ""
+									r.operationID = "consultation_schedule_submit"
+									r.operationGroup = ""
+									r.pathPattern = "/consultations/{id}/schedule"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+
 						}
 
 					}

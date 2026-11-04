@@ -20,6 +20,14 @@ type Handler interface {
 	//
 	// GET /consultations/{id}
 	ConsultationForm(ctx context.Context, params ConsultationFormParams) (ConsultationFormRes, error)
+	// ConsultationScheduleForm implements consultation_schedule_form operation.
+	//
+	// GET /consultations/{id}/schedule
+	ConsultationScheduleForm(ctx context.Context, params ConsultationScheduleFormParams) (ConsultationScheduleFormRes, error)
+	// ConsultationScheduleSubmit implements consultation_schedule_submit operation.
+	//
+	// POST /consultations/{id}/schedule
+	ConsultationScheduleSubmit(ctx context.Context, req *ConsultationScheduleSubmitReq, params ConsultationScheduleSubmitParams) (ConsultationScheduleSubmitRes, error)
 	// ConsultationsForm implements consultations_form operation.
 	//
 	// GET /consultations

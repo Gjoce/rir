@@ -30,6 +30,32 @@ func encodeConsultationAnswerSubmitRequest(
 	return nil
 }
 
+func encodeConsultationScheduleSubmitRequest(
+	req *ConsultationScheduleSubmitReq,
+	r *http.Request,
+) error {
+	const contentType = "application/x-www-form-urlencoded"
+	request := req
+
+	q := uri.NewFormEncoder(map[string]string{})
+	{
+		// Encode "date" form field.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "date",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(request.Date))
+		}); err != nil {
+			return errors.Wrap(err, "encode query")
+		}
+	}
+	encoded := q.Values().Encode()
+	ht.SetBody(r, strings.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeLoginSubmitRequest(
 	req *LoginSubmitReq,
 	r *http.Request,

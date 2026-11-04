@@ -690,3 +690,201 @@ func (h ConsultationsHandler) ConsultationAnswerSubmit(ctx context.Context, requ
 
 	return nil, herrors.ErrNoop
 }
+
+const (
+	maxScheduleAhead       = 72 * time.Hour
+	maxScheduleAheadUrgent = 24 * time.Hour
+)
+
+type ScheduleConsultation struct {
+	ID                      string
+	PatientName             string
+	PatientSurname          string
+	PatientAge              int
+	ConsultationType        string
+	ConsultationStatus      string
+	Urgent                  bool
+	Price                   float64
+	PreferredTime           string
+	VideoRequiresResponseBy *time.Time
+	ScheduledAt             string
+	ScheduledAtErr          string
+}
+
+func (s ScheduleConsultation) Valid() bool {
+	return s.ScheduledAtErr == ""
+}
+
+// loadScheduleConsultation loads what the form shows. It is used to show the form and
+// to show it again with an error.
+func (h ConsultationsHandler) loadScheduleConsultation(ctx context.Context, id string, scheduleCons *ScheduleConsultation) error {
+	err := h.db.QueryRow(ctx, `
+		SELECT c.id, c.patient_name, c.patient_surname, c.patient_age, c.consultation_type, c.consultation_status, c.urgent, c.price,
+			vc.preferred_time, vc.requires_response_by_schedule
+		FROM consultations c
+		JOIN video_consultations vc ON vc.consultation_id = c.id
+		WHERE c.id = @id
+		AND c.consultation_status = 'pending'
+		AND c.consultation_type = 'video'
+	`, pgx.NamedArgs{"id": id}).Scan(
+		&scheduleCons.ID,
+		&scheduleCons.PatientName,
+		&scheduleCons.PatientSurname,
+		&scheduleCons.PatientAge,
+		&scheduleCons.ConsultationType,
+		&scheduleCons.ConsultationStatus,
+		&scheduleCons.Urgent,
+		&scheduleCons.Price,
+		&scheduleCons.PreferredTime,
+		&scheduleCons.VideoRequiresResponseBy,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to query consultation schedule: %w", err)
+	}
+
+	return nil
+}
+
+func (h ConsultationsHandler) ConsultationScheduleForm(ctx context.Context, params api.ConsultationScheduleFormParams) (api.ConsultationScheduleFormRes, error) {
+	var doctorID, consultationStatus, consultationType string
+
+	err := h.db.QueryRow(ctx, `
+		SELECT doctor_id, consultation_status, consultation_type FROM consultations
+		WHERE id = @id
+	`, pgx.NamedArgs{"id": params.ID.String()}).Scan(&doctorID, &consultationStatus, &consultationType)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, herrors.HtmlError{Code: http.StatusNotFound, Msg: "Consultation not found", ButtonLink: "/consultations"}
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to query consultation owner: %w", err)
+	}
+
+	allowed, err := h.authService.IsAllowed(ctx, "schedule_consultation", authorization.Target{
+		UserID:             doctorID,
+		ConsultationStatus: consultationStatus,
+		ConsultationType:   consultationType,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if !allowed {
+		return nil, herrors.HtmlError{
+			Code:       http.StatusForbidden,
+			Msg:        "You don't have permission to schedule this consultation",
+			ButtonLink: "/",
+		}
+	}
+
+	var scheduleCons ScheduleConsultation
+	if err := h.loadScheduleConsultation(ctx, params.ID.String(), &scheduleCons); err != nil {
+		return nil, err
+	}
+
+	var buff bytes.Buffer
+
+	return &api.R200{
+		Data: &buff,
+	}, ScheduleConsultationForm(scheduleCons).Render(ctx, &buff)
+}
+
+func (h ConsultationsHandler) ConsultationScheduleSubmit(ctx context.Context, request *api.ConsultationScheduleSubmitReq, params api.ConsultationScheduleSubmitParams) (api.ConsultationScheduleSubmitRes, error) {
+	var doctorID, consultationStatus, consultationType string
+	var urgent bool
+
+	err := h.db.QueryRow(ctx, `
+		SELECT doctor_id, consultation_status, consultation_type, urgent FROM consultations
+		WHERE id = @id
+	`, pgx.NamedArgs{"id": params.ID.String()}).Scan(&doctorID, &consultationStatus, &consultationType, &urgent)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, herrors.HtmlError{Code: http.StatusNotFound, Msg: "Consultation not found", ButtonLink: "/consultations"}
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to query consultation owner: %w", err)
+	}
+
+	allowed, err := h.authService.IsAllowed(ctx, "schedule_consultation", authorization.Target{
+		UserID:             doctorID,
+		ConsultationStatus: consultationStatus,
+		ConsultationType:   consultationType,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if !allowed {
+		return nil, herrors.HtmlError{
+			Code:       http.StatusForbidden,
+			Msg:        "You don't have permission to schedule this consultation",
+			ButtonLink: "/",
+		}
+	}
+
+	var scheduleCons ScheduleConsultation
+	var scheduledAt time.Time
+
+	if request.Date == "" {
+		scheduleCons.ScheduledAtErr = "Please provide a schedule"
+	} else {
+		scheduledAt, err = time.Parse(time.RFC3339, request.Date)
+		if err != nil {
+			scheduleCons.ScheduledAtErr = "Invalid date format"
+		} else if scheduledAt.Before(time.Now()) {
+			scheduleCons.ScheduledAtErr = "Scheduled time needs to be in the future"
+		} else if urgent && scheduledAt.After(time.Now().Add(maxScheduleAheadUrgent)) {
+			scheduleCons.ScheduledAtErr = "Urgent consultations must be scheduled within the next 24 hours"
+		} else if !urgent && scheduledAt.After(time.Now().Add(maxScheduleAhead)) {
+			scheduleCons.ScheduledAtErr = "Consultations must be scheduled within the next 72 hours"
+		}
+	}
+
+	if !scheduleCons.Valid() {
+		if err := h.loadScheduleConsultation(ctx, params.ID.String(), &scheduleCons); err != nil {
+			return nil, err
+		}
+
+		var buff bytes.Buffer
+
+		return &api.R200{
+			Data: &buff,
+		}, ScheduleConsultationForm(scheduleCons).Render(ctx, &buff)
+	}
+
+	tx, err := h.db.Begin(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer func() {
+		if err := tx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+			log.Logger.Error("failed to rollback transaction", "error", err)
+		}
+	}()
+
+	// The status condition makes this safe against a double click or a second tab:
+	// only one request can set the appointment.
+	tag, err := tx.Exec(ctx, `
+		UPDATE consultations
+		SET consultation_status = 'scheduled'
+		WHERE id = @id AND consultation_status = 'pending'
+	`, pgx.NamedArgs{"id": params.ID.String()})
+	if err != nil {
+		return nil, fmt.Errorf("failed to update consultation status: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return nil, herrors.HtmlError{Code: http.StatusConflict, Msg: "This consultation was already scheduled", ButtonLink: fmt.Sprintf("/consultations/%s", params.ID.String())}
+	}
+
+	// A trigger sets the deadline for the opinion from scheduled_at.
+	_, err = tx.Exec(ctx, `
+		UPDATE video_consultations
+		SET scheduled_at = @scheduled_at
+		WHERE consultation_id = @id
+	`, pgx.NamedArgs{"scheduled_at": scheduledAt, "id": params.ID.String()})
+	if err != nil {
+		return nil, fmt.Errorf("failed to update video consultation: %w", err)
+	}
+
+	if err = tx.Commit(ctx); err != nil {
+		return nil, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return &api.R303{Location: api.NewOptString(fmt.Sprintf("/consultations/%s", params.ID.String()))}, nil
+}
