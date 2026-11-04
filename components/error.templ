@@ -1,0 +1,13 @@
+package components
+
+templ Error(title, body, buttonText, buttonLink string) {
+    <article style="margin: auto; max-width: 600px; text-align: center;">
+        <header>
+            <h1>{ title }</h1>
+        </header>
+        <div>
+            <p>{ body }</p>
+            <a href={ templ.SafeURL(buttonLink) } role="button">{ buttonText }</a>
+        </div>
+    </article>
+}

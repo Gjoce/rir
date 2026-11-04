@@ -1,0 +1,46 @@
+package components
+
+import "cybermedico/cmd/cybermedico/api/util"
+
+templ Navbar() {
+    <nav>
+        <ul>
+            <li>
+                <a href="/">
+                    if util.GetTheme(ctx) == "dark" {
+                        <img src="/static/logo.png" alt="CyberMedico logo" style="height: 3rem;"/>
+                    } else if util.GetTheme(ctx) == "light" {
+                        <img src="/static/logo.svg" alt="CyberMedico logo" style="height: 3rem;"/>
+                    } else {
+                        <img id="logo" src="/static/logo.svg" alt="CyberMedico logo" style="height: 3rem;"/>
+                        <style>
+                            @media (prefers-color-scheme: dark) {
+                                #logo { content: url('/static/logo.png'); }
+                            }
+                        </style>
+                    }
+                </a>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <details class="dropdown" style="margin: 0;">
+                    <summary aria-label="Theme">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v2"/>
+                            <path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/>
+                            <path d="M16 12a4 4 0 0 0-4-4"/>
+                            <path d="m19 5-1.256 1.256"/>
+                            <path d="M20 12h2"/>
+                        </svg>
+                    </summary>
+                    <ul dir="rtl">
+                        <li><a href="/themes/auto">Auto</a></li>
+                        <li><a href="/themes/light">Light</a></li>
+                        <li><a href="/themes/dark">Dark</a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </nav>
+}

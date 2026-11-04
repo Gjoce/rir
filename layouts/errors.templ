@@ -1,0 +1,21 @@
+package layouts
+
+import (
+    "cybermedico/cmd/cybermedico/api/util"
+    "cybermedico/components"
+)
+
+templ Error(title, body, buttonText, buttonLink string) {
+    <!DOCTYPE html>
+    <html lang="en" if util.GetTheme(ctx) != "auto" { data-theme={ util.GetTheme(ctx) } }>
+        @head()
+        <body class="container">
+            <header>
+                @components.Navbar()
+            </header>
+            <main>
+                @components.Error(title, body, buttonText, buttonLink)
+            </main>
+        </body>
+    </html>
+}

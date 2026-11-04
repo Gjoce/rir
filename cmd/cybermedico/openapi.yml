@@ -1,0 +1,61 @@
+openapi: "3.1.1"
+servers:
+  - url: http://localhost:8080
+    description: URL used for local development
+info:
+  version: 1.0.0
+  title: CyberMedico HyperMedia API
+paths:
+  /:
+    get:
+      operationId: root
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "default":
+          $ref: "#/components/responses/default"
+  /themes/{theme}:
+    get:
+      operationId: themes
+      parameters:
+        - name: theme
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "303":
+          $ref: "#/components/responses/303"
+        "default":
+          $ref: "#/components/responses/default"
+  /dashboard:
+    get:
+      operationId: dashboard
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "default":
+          $ref: "#/components/responses/default"
+components:
+  responses:
+    "200":
+      description: OK
+      content:
+        text/html:
+          schema:
+            type: string
+    "303":
+      description: See Other
+      headers:
+        Location:
+          schema:
+            type: string
+        Set-Cookie:
+          schema:
+            type: string
+    default:
+      description: Unexpected error
+      content:
+        text/html:
+          schema:
+            type: string
