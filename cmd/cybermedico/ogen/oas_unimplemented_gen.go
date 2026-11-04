@@ -54,3 +54,31 @@ func (UnimplementedHandler) Root(ctx context.Context) (r RootRes, _ error) {
 func (UnimplementedHandler) Themes(ctx context.Context, params ThemesParams) (r ThemesRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
+
+// TwoFactorForm implements twoFactorForm operation.
+//
+// GET /auth/2fa
+func (UnimplementedHandler) TwoFactorForm(ctx context.Context) (r TwoFactorFormRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// TwoFactorSetupForm implements twoFactorSetupForm operation.
+//
+// GET /auth/2fa/setup
+func (UnimplementedHandler) TwoFactorSetupForm(ctx context.Context) (r TwoFactorSetupFormRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// TwoFactorSetupSubmit implements twoFactorSetupSubmit operation.
+//
+// POST /auth/2fa/setup
+func (UnimplementedHandler) TwoFactorSetupSubmit(ctx context.Context, req *TwoFactorSetupSubmitReq) (r TwoFactorSetupSubmitRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// TwoFactorSubmit implements twoFactorSubmit operation.
+//
+// POST /auth/2fa
+func (UnimplementedHandler) TwoFactorSubmit(ctx context.Context, req *TwoFactorSubmitReq) (r TwoFactorSubmitRes, _ error) {
+	return r, ht.ErrNotImplemented
+}

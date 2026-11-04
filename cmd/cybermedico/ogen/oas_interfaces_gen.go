@@ -24,3 +24,19 @@ type RootRes interface {
 type ThemesRes interface {
 	themesRes()
 }
+
+type TwoFactorFormRes interface {
+	twoFactorFormRes()
+}
+
+type TwoFactorSetupFormRes interface {
+	twoFactorSetupFormRes()
+}
+
+type TwoFactorSetupSubmitRes interface {
+	twoFactorSetupSubmitRes()
+}
+
+type TwoFactorSubmitRes interface {
+	twoFactorSubmitRes()
+}
