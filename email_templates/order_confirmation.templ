@@ -1,0 +1,35 @@
+package email_templates
+
+templ OrderConfirmation(patientName string, doctorName string, deadline string, isVideo bool) {
+    if isVideo {
+        @EmailHead("Your video consultation was received", "en") {
+            @orderConfirmationContent(patientName, doctorName, deadline, isVideo)
+        }
+    } else {
+        @EmailHead("Your written consultation was received", "en") {
+            @orderConfirmationContent(patientName, doctorName, deadline, isVideo)
+        }
+    }
+}
+
+templ orderConfirmationContent(patientName string, doctorName string, deadline string, isVideo bool) {
+    <div class="title">
+        if isVideo {
+            Your video consultation was received
+        } else {
+            Your written consultation was received
+        }
+    </div>
+    <div class="content">
+        <p>Dear <strong>{ patientName }</strong>,</p>
+        <p>Thank you for using the <strong>CyberMedico</strong> platform. Your consultation with <strong>{ doctorName }</strong> was received.</p>
+        if isVideo {
+            <p>You will receive the date, time and link for the video call in a separate email. The doctor will set them by:</p>
+        } else {
+            <p>The doctor will send you a written opinion by email by:</p>
+        }
+        <div class="datetime-block"><span>{ deadline }</span></div>
+    </div>
+    @EmailHelper()
+    @EmailFooter()
+}
