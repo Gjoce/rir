@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"cybermedico/authorization"
 	"cybermedico/cmd/cybermedico/api/log"
 	"cybermedico/cmd/cybermedico/api/util"
 	herrors "cybermedico/cmd/cybermedico/api/errors"
@@ -34,6 +35,19 @@ var errNotLoggedIn = errors.New("user not found in session")
 
 type AuthService struct {
 	SessionManager *scs.SessionManager
+	authorizer     authorization.Authorizer
+}
+
+func (as *AuthService) IsAllowed(ctx context.Context, operationID string, target authorization.Target) (bool, error) {
+	role, ok := as.SessionManager.Get(ctx, SessionKeyRoles).(string)
+	if !ok {
+		role = ""
+	}
+
+	return as.authorizer.IsAllowed(ctx, operationID, authorization.Caller{
+		UserID: as.SessionManager.GetString(ctx, SessionKeyUserID),
+		Role:   role,
+	}, target)
 }
 
 type AuthHandler struct {
@@ -48,14 +62,17 @@ func NewAuthHandler(db *pgxpool.Pool, authService *AuthService) AuthHandler {
 	}
 }
 
-func NewAuthService(db *pgxpool.Pool) *AuthService {
+func NewAuthService(db *pgxpool.Pool, authorizer authorization.Authorizer) (*AuthService, error) {
 	sessionManager := scs.New()
 	sessionManager.Store = pgxstore.New(db)
 	sessionManager.Lifetime = 24 * time.Hour
 	sessionManager.Cookie.Secure = true
 	sessionManager.Cookie.Name = "cybermedico_session"
 
-	return &AuthService{SessionManager: sessionManager}
+	return &AuthService{
+		SessionManager: sessionManager,
+		authorizer:     authorizer,
+	}, nil
 }
 
 // SessionMiddleware loads session data and injects user info into the request context.

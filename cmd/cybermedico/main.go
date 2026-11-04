@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"cybermedico/authorization"
 	"cybermedico/cmd/cybermedico/api/errors"
 	"cybermedico/cmd/cybermedico/api/html"
 	"cybermedico/cmd/cybermedico/api/log"
@@ -61,7 +62,7 @@ func main() {
 	riverClient := initializeRiver(ctx, dbPool, &mailer)
 	defer shutdownRiver(ctx, riverClient)
 
-	authService := html.NewAuthService(dbPool)
+	authService, _ := initializeAuth(ctx, dbPool)
 
 	htmlServer := initializeHTMLServer(dbPool, authService)
 	httpServer := initializeHTTPServer(htmlServer, authService)
@@ -337,6 +338,22 @@ func shutdownRiver(ctx context.Context, riverClient *river.Client[pgx.Tx]) {
 	}
 }
 
+func initializeAuth(ctx context.Context, db *pgxpool.Pool) (*html.AuthService, authorization.Authorizer) {
+	authorizer, err := authorization.NewAuthorizer(ctx, db)
+	if err != nil {
+		log.Logger.Error("Failed to initialize Authorizer", "error", err)
+		panic(err)
+	}
+
+	authService, err := html.NewAuthService(db, authorizer)
+	if err != nil {
+		log.Logger.Error("Failed to initialize AuthService", "error", err)
+		panic(err)
+	}
+
+	return authService, authorizer
+}
+
 func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService) *ogen.Server {
 	authHandler := html.NewAuthHandler(dbPool, authService)
 
@@ -349,7 +366,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService) *
 		html.RootHandler{},
 		html.ThemeHandler{},
 		authHandler,
-		html.DashboardHandler{},
+		html.NewDashboardHandler(authService),
 	},
 		authHandler,
 		ogen.WithErrorHandler(errors.ErrorHandler),
