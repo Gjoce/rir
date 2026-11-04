@@ -41,6 +41,35 @@ templ Navbar() {
                     </ul>
                 </details>
             </li>
+            if util.GetUserID(ctx) != "" {
+                <li>
+                    <a role="button" data-tooltip="Logout" onclick="document.getElementById('logout-modal').showModal()" style="margin: 0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m16 17 5-5-5-5"/>
+                            <path d="M21 12H9"/>
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        </svg>
+                    </a>
+                </li>
+            }
         </ul>
     </nav>
+    if util.GetUserID(ctx) != "" {
+        <dialog id="logout-modal">
+            <article>
+                <header>
+                    <button
+                        aria-label="Close"
+                        class="close"
+                        onclick="document.getElementById('logout-modal').close()"
+                    ></button>
+                    <strong>Confirm Logout</strong>
+                </header>
+                <p>Are you sure you want to log out?</p>
+                <footer>
+                    <a href="/logout" role="button">Logout</a>
+                </footer>
+            </article>
+        </dialog>
+    }
 }

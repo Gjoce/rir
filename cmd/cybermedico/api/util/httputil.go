@@ -6,7 +6,16 @@ import (
 	"strings"
 )
 
-type requestCtxKey struct{}
+type (
+	requestCtxKey struct{}
+	contextKey    string
+)
+
+const (
+	UserRoleContextKey  contextKey = "role"
+	UserEmailContextKey contextKey = "email"
+	UserIDContextKey    contextKey = "user_id"
+)
 
 // ThemeCookie stores the chosen theme in its own cookie because public pages
 // have to remember it for patients, who never log in.
@@ -24,6 +33,12 @@ func RequestFromContext(ctx context.Context) *http.Request {
 	r, _ := ctx.Value(requestCtxKey{}).(*http.Request)
 
 	return r
+}
+
+func GetUserID(ctx context.Context) string {
+	userID, _ := ctx.Value(UserIDContextKey).(string)
+
+	return userID
 }
 
 func IsValidTheme(theme string) bool {

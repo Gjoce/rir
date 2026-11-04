@@ -1,0 +1,15 @@
+package layouts
+
+import "cybermedico/cmd/cybermedico/api/util"
+
+templ Login() {
+    <!DOCTYPE html>
+    <html lang="en" if util.GetTheme(ctx) != "auto" { data-theme={ util.GetTheme(ctx) } }>
+        @head()
+        <body class="container">
+            <main>
+                { children...}
+            </main>
+        </body>
+    </html>
+}

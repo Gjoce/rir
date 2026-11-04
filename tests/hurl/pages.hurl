@@ -5,13 +5,6 @@ HTTP 200
 body contains "CyberMedico"
 body not contains "Panel"
 
-# Dashboard page uses the dashboard layout
-GET {{host}}/dashboard
-HTTP 200
-[Asserts]
-body contains "Panel"
-body contains "href=\"/consultations\""
-
 # Choosing a theme stores it and returns to the same page
 GET {{host}}/themes/dark
 Referer: {{host}}/dashboard

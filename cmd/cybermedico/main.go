@@ -61,8 +61,10 @@ func main() {
 	riverClient := initializeRiver(ctx, dbPool, &mailer)
 	defer shutdownRiver(ctx, riverClient)
 
-	htmlServer := initializeHTMLServer()
-	httpServer := initializeHTTPServer(htmlServer)
+	authService := html.NewAuthService(dbPool)
+
+	htmlServer := initializeHTMLServer(dbPool, authService)
+	httpServer := initializeHTTPServer(htmlServer, authService)
 	startHTTPServer(httpServer)
 
 	waitForShutdown()
@@ -335,16 +337,21 @@ func shutdownRiver(ctx context.Context, riverClient *river.Client[pgx.Tx]) {
 	}
 }
 
-func initializeHTMLServer() *ogen.Server {
+func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService) *ogen.Server {
+	authHandler := html.NewAuthHandler(dbPool, authService)
+
 	htmlServer, err := ogen.NewServer(struct {
 		html.RootHandler
 		html.ThemeHandler
+		html.AuthHandler
 		html.DashboardHandler
 	}{
 		html.RootHandler{},
 		html.ThemeHandler{},
+		authHandler,
 		html.DashboardHandler{},
 	},
+		authHandler,
 		ogen.WithErrorHandler(errors.ErrorHandler),
 		ogen.WithNotFound(errors.NotFoundHandler),
 	)
@@ -356,9 +363,9 @@ func initializeHTMLServer() *ogen.Server {
 	return htmlServer
 }
 
-func initializeHTTPServer(htmlServer *ogen.Server) *http.Server {
+func initializeHTTPServer(htmlServer *ogen.Server, authService *html.AuthService) *http.Server {
 	mux := http.NewServeMux()
-	mux.Handle("/", util.InjectRequestToContext(htmlServer))
+	mux.Handle("/", authService.SessionMiddleware(util.InjectRequestToContext(htmlServer)))
 	mux.Handle("/static/", http.FileServer(http.FS(staticFiles)))
 
 	port := os.Getenv("PORT")

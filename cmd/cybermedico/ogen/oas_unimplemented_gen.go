@@ -20,6 +20,27 @@ func (UnimplementedHandler) Dashboard(ctx context.Context) (r DashboardRes, _ er
 	return r, ht.ErrNotImplemented
 }
 
+// Login implements login operation.
+//
+// GET /auth/login
+func (UnimplementedHandler) Login(ctx context.Context) (r LoginRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// LoginSubmit implements loginSubmit operation.
+//
+// POST /auth/login
+func (UnimplementedHandler) LoginSubmit(ctx context.Context, req *LoginSubmitReq) (r LoginSubmitRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// Logout implements logout operation.
+//
+// GET /logout
+func (UnimplementedHandler) Logout(ctx context.Context) (r LogoutRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // Root implements root operation.
 //
 // GET /

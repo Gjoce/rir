@@ -1,0 +1,39 @@
+package html
+
+import (
+    "cybermedico/layouts"
+    "cybermedico/components"
+)
+
+templ login(loginData loginData) {
+    @layouts.Login() {
+       <article>
+            @components.HeadingGroup(components.Config{
+                Description: "Welcome back! Please enter your credentials to log in.",
+                Breadcrumbs: []components.Breadcrumb{
+                    {Title: "Login"},
+                },
+            })
+            <div>
+                <form method="POST" action="/auth/login" novalidate>
+                    @components.Input(components.InputConfig{
+                        Type: components.EmailInput,
+                        Name: "email",
+                        Label: "Email:",
+                        Placeholder: "you@example.com",
+                        Value: loginData.Email,
+                    })
+                    @components.Input(components.InputConfig{
+                        Type: components.PasswordInput,
+                        Name: "password",
+                        Label: "Password:",
+                    })
+                    if loginData.EmailErr != "" {
+                        <span style="color: var(--pico-del-color);">{ loginData.EmailErr }</span>
+                    }
+                    <button style="margin-top: var(--pico-spacing);" type="submit">Login</button>
+                </form>
+            </div>
+        </article>
+    }
+}

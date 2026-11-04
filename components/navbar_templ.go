@@ -48,9 +48,25 @@ func Navbar() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</a></li></ul><ul><li><details class=\"dropdown\" style=\"margin: 0;\"><summary aria-label=\"Theme\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 2v2\"></path> <path d=\"M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715\"></path> <path d=\"M16 12a4 4 0 0 0-4-4\"></path> <path d=\"m19 5-1.256 1.256\"></path> <path d=\"M20 12h2\"></path></svg></summary><ul dir=\"rtl\"><li><a href=\"/themes/auto\">Auto</a></li><li><a href=\"/themes/light\">Light</a></li><li><a href=\"/themes/dark\">Dark</a></li></ul></details></li></ul></nav>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</a></li></ul><ul><li><details class=\"dropdown\" style=\"margin: 0;\"><summary aria-label=\"Theme\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 2v2\"></path> <path d=\"M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715\"></path> <path d=\"M16 12a4 4 0 0 0-4-4\"></path> <path d=\"m19 5-1.256 1.256\"></path> <path d=\"M20 12h2\"></path></svg></summary><ul dir=\"rtl\"><li><a href=\"/themes/auto\">Auto</a></li><li><a href=\"/themes/light\">Light</a></li><li><a href=\"/themes/dark\">Dark</a></li></ul></details></li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
+		}
+		if util.GetUserID(ctx) != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<li><a role=\"button\" data-tooltip=\"Logout\" onclick=\"document.getElementById('logout-modal').showModal()\" style=\"margin: 0;\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m16 17 5-5-5-5\"></path> <path d=\"M21 12H9\"></path> <path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"></path></svg></a></li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</ul></nav>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if util.GetUserID(ctx) != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<dialog id=\"logout-modal\"><article><header><button aria-label=\"Close\" class=\"close\" onclick=\"document.getElementById('logout-modal').close()\"></button> <strong>Confirm Logout</strong></header><p>Are you sure you want to log out?</p><footer><a href=\"/logout\" role=\"button\">Logout</a></footer></article></dialog>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		return nil
 	})

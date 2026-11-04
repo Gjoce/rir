@@ -44,6 +44,15 @@ templ head() {
             border: 2px solid var(--pico-contrast-background);
             height: 3px;
         }
+
+        nav li :where(.breadcrumb-responsive) {
+            display: inline-block;
+            margin: calc(var(--pico-nav-link-spacing-vertical) * -1) calc(var(--pico-nav-link-spacing-horizontal) * -1);
+            padding: var(--pico-nav-link-spacing-vertical) var(--pico-nav-link-spacing-horizontal);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
         </style>
     </head>
 }
