@@ -7,7 +7,7 @@ header "Location" == "/auth/login"
 # So does sending an answer
 POST {{host}}/consultations/55555555-5555-5555-5555-555555555557/answer
 Content-Type: application/json
-{"answer":"<p>Not logged in</p>"}
+{"answer":"<p>Not logged in</p>","totp_code":"000000"}
 HTTP 303
 [Asserts]
 header "Location" == "/auth/login"
