@@ -14,8 +14,7 @@ templ EmailHead(title string, lang string) {
                 body { margin: 0; padding: 0; background-color: #f4f6f8; font-family: 'Segoe UI', sans-serif; color: #2c3e50; }
                 .wrapper { padding: 40px 15px; }
                 .email-wrapper { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 35px 30px; border-radius: 12px; }
-                .logo { text-align: center; margin-bottom: 10px; }
-                .logo img { max-width: 180px; height: auto; }
+                .logo { text-align: center; margin-bottom: 10px; font-size: 24px; font-weight: 600; color: #1a73e8; }
                 .title { font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 25px; color: #1a73e8; }
                 .content { font-size: 15px; line-height: 1.7; }
                 .opinion-box { background-color: #e8f4fc; padding: 20px; border-radius: 6px; margin: 20px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 14px; white-space: pre-line; }
@@ -38,9 +37,7 @@ templ EmailHead(title string, lang string) {
         <body>
             <div class="wrapper">
                 <div class="email-wrapper">
-                    <div class="logo">
-                        <img src="../cmd/cybermedico/static/email_logo.png" alt="CyberMedico Logo"/>
-                    </div>
+                    <div class="logo">CyberMedico</div>
                     { children... }
                 </div>
             </div>

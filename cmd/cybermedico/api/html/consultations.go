@@ -10,6 +10,7 @@ import (
 	api "cybermedico/cmd/cybermedico/ogen"
 	"cybermedico/cmd/cybermedico/signing"
 	"cybermedico/cmd/cybermedico/storage"
+	"cybermedico/workers"
 	"errors"
 	"fmt"
 	"html"
@@ -21,6 +22,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/microcosm-cc/bluemonday"
+	"github.com/riverqueue/river"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
@@ -33,10 +35,11 @@ type ConsultationsHandler struct {
 	db          *pgxpool.Pool
 	authService *AuthService
 	storage     *storage.Service
+	riverClient *river.Client[pgx.Tx]
 }
 
-func NewConsultationsHandler(db *pgxpool.Pool, authService *AuthService, storageService *storage.Service) ConsultationsHandler {
-	return ConsultationsHandler{db: db, authService: authService, storage: storageService}
+func NewConsultationsHandler(db *pgxpool.Pool, authService *AuthService, storageService *storage.Service, riverClient *river.Client[pgx.Tx]) ConsultationsHandler {
+	return ConsultationsHandler{db: db, authService: authService, storage: storageService, riverClient: riverClient}
 }
 
 type Consultations struct {
@@ -880,6 +883,10 @@ func (h ConsultationsHandler) ConsultationScheduleSubmit(ctx context.Context, re
 	`, pgx.NamedArgs{"scheduled_at": scheduledAt, "id": params.ID.String()})
 	if err != nil {
 		return nil, fmt.Errorf("failed to update video consultation: %w", err)
+	}
+
+	if _, err = h.riverClient.InsertTx(ctx, tx, workers.ScheduledVideoEmailArgs{ConsultationID: params.ID.String()}, &river.InsertOpts{MaxAttempts: 5}); err != nil {
+		return nil, fmt.Errorf("failed to enqueue scheduled video email: %w", err)
 	}
 
 	if err = tx.Commit(ctx); err != nil {

@@ -1,0 +1,24 @@
+package email_templates
+
+templ ScheduledVideoConsultation(doctorName string, dateTime string, joinLink string) {
+    @EmailHead("Your video consultation is scheduled", "en") {
+        <div class="title">Your video consultation is scheduled</div>
+
+        <div class="content">
+            <p>Hello,</p>
+            <p><strong>{ doctorName }</strong> has scheduled your video consultation.</p>
+        </div>
+
+        <div class="datetime-block">
+            Scheduled for:<br/>
+            <span>{ dateTime }</span>
+        </div>
+
+        <div class="content" style="text-align: center;">
+            <p>Use the button below to join the video call. This link is personal, so please don't share it.</p>
+        </div>
+        @EmailVideoJoin(joinLink)
+        @EmailHelper()
+        @EmailFooter()
+    }
+}

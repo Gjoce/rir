@@ -61,7 +61,7 @@ func EmailHead(title string, lang string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><style>\n                body { margin: 0; padding: 0; background-color: #f4f6f8; font-family: 'Segoe UI', sans-serif; color: #2c3e50; }\n                .wrapper { padding: 40px 15px; }\n                .email-wrapper { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 35px 30px; border-radius: 12px; }\n                .logo { text-align: center; margin-bottom: 10px; }\n                .logo img { max-width: 180px; height: auto; }\n                .title { font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 25px; color: #1a73e8; }\n                .content { font-size: 15px; line-height: 1.7; }\n                .opinion-box { background-color: #e8f4fc; padding: 20px; border-radius: 6px; margin: 20px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 14px; white-space: pre-line; }\n                .credentials-box { background-color: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #1a73e8; }\n                .credential-row { margin: 14px 0; }\n                .credential-label { font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }\n                .credential-value { font-family: monospace; font-size: 15px; background: #e8f4fc; padding: 6px 10px; border-radius: 4px; display: inline-block; margin-top: 4px; letter-spacing: 0.08em; }\n                .warning-box { background-color: #fff3cd; padding: 15px 18px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #ffc107; font-size: 14px; }\n                .button-wrapper { text-align: center; margin: 30px 0; }\n                .button { background-color: #1a73e8; color: white; padding: 14px 28px; border-radius: 6px; font-size: 16px; text-decoration: none; display: inline-block; }\n                .footer { text-align: center; font-size: 12px; color: #7a7a7a; margin-top: 35px; }\n                a { color: #1a73e8; text-decoration: none; }\n                .datetime-block { font-size: 15px; text-align: center; margin: 30px 0; color: #2c3e50; }\n                .datetime-block span { font-size: 20px; font-weight: bold; display: block; margin-top: 6px; }\n                .info-box { background-color: #f1f5f9; padding: 15px 20px; border-radius: 6px; margin: 20px 0; font-size: 14px; }\n                .info-box p { margin: 6px 0; }\n                .highlight { font-size: 16px; font-weight: bold; color: #2c3e50; margin: 20px 0; }\n            </style></head><body><div class=\"wrapper\"><div class=\"email-wrapper\"><div class=\"logo\"><img src=\"../cmd/cybermedico/static/email_logo.png\" alt=\"CyberMedico Logo\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><style>\n                body { margin: 0; padding: 0; background-color: #f4f6f8; font-family: 'Segoe UI', sans-serif; color: #2c3e50; }\n                .wrapper { padding: 40px 15px; }\n                .email-wrapper { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 35px 30px; border-radius: 12px; }\n                .logo { text-align: center; margin-bottom: 10px; font-size: 24px; font-weight: 600; color: #1a73e8; }\n                .title { font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 25px; color: #1a73e8; }\n                .content { font-size: 15px; line-height: 1.7; }\n                .opinion-box { background-color: #e8f4fc; padding: 20px; border-radius: 6px; margin: 20px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 14px; white-space: pre-line; }\n                .credentials-box { background-color: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #1a73e8; }\n                .credential-row { margin: 14px 0; }\n                .credential-label { font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }\n                .credential-value { font-family: monospace; font-size: 15px; background: #e8f4fc; padding: 6px 10px; border-radius: 4px; display: inline-block; margin-top: 4px; letter-spacing: 0.08em; }\n                .warning-box { background-color: #fff3cd; padding: 15px 18px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #ffc107; font-size: 14px; }\n                .button-wrapper { text-align: center; margin: 30px 0; }\n                .button { background-color: #1a73e8; color: white; padding: 14px 28px; border-radius: 6px; font-size: 16px; text-decoration: none; display: inline-block; }\n                .footer { text-align: center; font-size: 12px; color: #7a7a7a; margin-top: 35px; }\n                a { color: #1a73e8; text-decoration: none; }\n                .datetime-block { font-size: 15px; text-align: center; margin: 30px 0; color: #2c3e50; }\n                .datetime-block span { font-size: 20px; font-weight: bold; display: block; margin-top: 6px; }\n                .info-box { background-color: #f1f5f9; padding: 15px 20px; border-radius: 6px; margin: 20px 0; font-size: 14px; }\n                .info-box p { margin: 6px 0; }\n                .highlight { font-size: 16px; font-weight: bold; color: #2c3e50; margin: 20px 0; }\n            </style></head><body><div class=\"wrapper\"><div class=\"email-wrapper\"><div class=\"logo\">CyberMedico</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -101,7 +101,7 @@ func EmailFooter() templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(time.Now().Year()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 53, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 50, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -164,7 +164,7 @@ func EmailLogin(loginLink string) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL(loginLink)).ResolveURL(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 67, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 64, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -202,7 +202,7 @@ func EmailVideoJoin(JoinURL string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL(JoinURL)).ResolveURL(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 73, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 70, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
@@ -240,7 +240,7 @@ func EmailConsultationInfo(patientName, emergencyStatus string) templ.Component 
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(patientName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 79, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 76, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -253,7 +253,7 @@ func EmailConsultationInfo(patientName, emergencyStatus string) templ.Component 
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(emergencyStatus)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 81, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 78, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -291,7 +291,7 @@ func EmailConsultationInfoDoctor(patientName, emergencyStatus, preferredTime str
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(patientName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 87, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 84, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -304,7 +304,7 @@ func EmailConsultationInfoDoctor(patientName, emergencyStatus, preferredTime str
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(emergencyStatus)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 89, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 86, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -317,7 +317,7 @@ func EmailConsultationInfoDoctor(patientName, emergencyStatus, preferredTime str
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(preferredTime)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 90, Col: 69}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `email_templates/head.templ`, Line: 87, Col: 69}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
