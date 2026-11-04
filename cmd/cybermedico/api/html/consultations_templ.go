@@ -10,6 +10,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"cybermedico/cmd/cybermedico/api/util"
 	"cybermedico/components"
 	"cybermedico/layouts"
 	"encoding/json"
@@ -87,7 +88,7 @@ func ConsultationsForm(comp templ.Component, currentType string, canViewNotAtten
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("'%s'", currentType)).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 45, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 46, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
@@ -271,7 +272,11 @@ func ConsultationsForm(comp templ.Component, currentType string, canViewNotAtten
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<script>\n                (function() {\n                    function formatTimeLeft(expiresAt) {\n                        if (!expiresAt) {\n                            return \"-\";\n                        }\n                        const then = new Date(expiresAt);\n                        if (Number.isNaN(then.valueOf())) {\n                            return \"-\";\n                        }\n                        const now = new Date();\n                        if (then < now) {\n                            return \"Expired\";\n                        }\n\n                        const durationMs = then - now;\n                        const durationSeconds = Math.floor(durationMs / 1000);\n\n                        const days = Math.floor(durationSeconds / 86400);\n                        const hours = Math.floor(durationSeconds / 3600) % 24;\n                        const minutes = Math.floor(durationSeconds / 60) % 60;\n                        const seconds = durationSeconds % 60;\n\n                        if (days > 0) {\n                            return `${days}d ${hours}h ${minutes}m`;\n                        } else if (hours > 0) {\n                            return `${hours}h ${minutes}m ${seconds}s`;\n                        } else if (minutes > 0) {\n                            return `${minutes}m ${seconds}s`;\n                        } else {\n                            return `${seconds}s`;\n                        }\n                    }\n\n                    function updateCountdowns() {\n                        document.querySelectorAll('.countdown-timer[data-expires-at]').forEach(function(el) {\n                            el.textContent = formatTimeLeft(el.dataset.expiresAt);\n                        });\n                    }\n\n                    updateCountdowns();\n                    setInterval(updateCountdowns, 1000);\n                })();\n            </script></article>")
+			templ_7745c5c3_Err = components.CountdownScript().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -310,7 +315,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templruntime.NewAttributeExpression(string(filtersJson)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 138, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 96, Col: 79}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -366,7 +371,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("window.location='/consultations/%s'", consultation.ID)).Resolve(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 162, Col: 115}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 120, Col: 115}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 				if templ_7745c5c3_Err != nil {
@@ -379,7 +384,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(consultation.PatientName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 163, Col: 62}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 121, Col: 62}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -392,7 +397,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 				var templ_7745c5c3_Var17 string
 				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(consultation.PatientSurname)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 163, Col: 94}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 121, Col: 94}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 				if templ_7745c5c3_Err != nil {
@@ -405,7 +410,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(consultation.DoctorDisplayName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 164, Col: 69}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 122, Col: 69}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -418,7 +423,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(consultation.PatientEmail)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 165, Col: 63}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 123, Col: 63}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -431,7 +436,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 				var templ_7745c5c3_Var20 string
 				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(consultationType(consultation.ConsultationType))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 166, Col: 85}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 124, Col: 85}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 				if templ_7745c5c3_Err != nil {
@@ -459,7 +464,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 				var templ_7745c5c3_Var21 string
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(consultation.Price)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 176, Col: 56}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 134, Col: 56}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
@@ -472,7 +477,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 				var templ_7745c5c3_Var22 string
 				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(consultation.CreatedAt.Format("02-01-2006"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 177, Col: 82}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 135, Col: 82}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 				if templ_7745c5c3_Err != nil {
@@ -520,7 +525,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 				var templ_7745c5c3_Var23 string
 				templ_7745c5c3_Var23, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("$page = %d; @get('/consultations')", filters.Page-1)).Resolve(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 197, Col: 109}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 155, Col: 109}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var23)
 				if templ_7745c5c3_Err != nil {
@@ -538,7 +543,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 			var templ_7745c5c3_Var24 string
 			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(filters.Page)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 201, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 159, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 			if templ_7745c5c3_Err != nil {
@@ -551,7 +556,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(pageCount)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 201, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 159, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {
@@ -569,7 +574,7 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 				var templ_7745c5c3_Var26 string
 				templ_7745c5c3_Var26, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("$page = %d; @get('/consultations')", filters.Page+1)).Resolve(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 203, Col: 109}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 161, Col: 109}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var26)
 				if templ_7745c5c3_Err != nil {
@@ -588,6 +593,427 @@ func ConsultationsSSE(consultations []Consultations, filters ConsultationFilters
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func ConsultationFormHtml(consultation Consultation, role string, canAnswerConsultation, canJoinVideoCall bool) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Var28 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = components.HeadingGroup(components.Config{
+				Description: "Detailed information about the consultation, including patient details, medical information, attachments, and timestamps.",
+				Breadcrumbs: []components.Breadcrumb{
+					{Title: "Consultations", URL: "/consultations"},
+					{Title: consultation.PatientName},
+				},
+				ScheduledAt: func() string {
+					if consultation.ScheduledAt != nil && consultation.ConsultationStatus == "scheduled" {
+						return consultation.ScheduledAt.Format("02-01-2006 15:04")
+					}
+					return ""
+				}(),
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<article>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if consultation.ConsultationStatus == "pending" || consultation.ConsultationStatus == "scheduled" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<p>Time left: <strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = components.CountdownTimer(components.CountdownConfig{
+					ExpiresAt:                  consultation.ExpiresAt,
+					VideoExpiresAt:             consultation.VideoExpiresAt,
+					RequiresResponseBySchedule: consultation.VideoRequiresResponseBy,
+					ConsultationID:             consultation.ID,
+					ConsultationType:           consultation.ConsultationType,
+					ConsultationStatus:         consultation.ConsultationStatus,
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</strong></p>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = components.CountdownScript().Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<div class=\"grid\"><div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input(components.InputConfig{
+				Label:    "Patient name",
+				Value:    consultation.PatientName,
+				Type:     components.TextInput,
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input(components.InputConfig{
+				Label:    "Patient age",
+				Value:    fmt.Sprintf("%d", consultation.PatientAge),
+				Type:     components.NumberInput,
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input(components.InputConfig{
+				Label:    "Urgent",
+				Value:    fmt.Sprintf("%t", consultation.Urgent),
+				Type:     components.TextInput,
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input(components.InputConfig{
+				Label:    "Consultation type",
+				Value:    consultationType(consultation.ConsultationType),
+				Type:     components.TextInput,
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</div><div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input(components.InputConfig{
+				Label:    "Patient surname",
+				Value:    consultation.PatientSurname,
+				Type:     components.TextInput,
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input(components.InputConfig{
+				Label:    "Patient place of living",
+				Value:    util.Deref(consultation.PatientPlaceOfLiving, "/"),
+				Type:     components.TextInput,
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input(components.InputConfig{
+				Label:    "Translator needed",
+				Value:    fmt.Sprintf("%t", consultation.NeedTranslator),
+				Type:     components.TextInput,
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input(components.InputConfig{
+				Label:    "Consultation status",
+				Value:    consultationStatus(consultation.ConsultationStatus),
+				Type:     components.TextInput,
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</div></div></article>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.HeadingGroup(components.Config{
+				Description: "Medical information provided by the patient during the consultation request, including symptoms, diagnosis, allergies, and medications.",
+				Breadcrumbs: []components.Breadcrumb{
+					{Title: "Medical information"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<article>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.TextArea(components.TextAreaConfig{
+				Label:    "Medical problem",
+				Value:    consultation.MedicalProblem,
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.TextArea(components.TextAreaConfig{
+				Label:    "Patient diagnosis",
+				Value:    util.Deref(consultation.PatientDiagnosis, "/"),
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.TextArea(components.TextAreaConfig{
+				Label:    "Patient allergies",
+				Value:    util.Deref(consultation.Allergies, "/"),
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.TextArea(components.TextAreaConfig{
+				Label:    "Patient medications",
+				Value:    util.Deref(consultation.Medication, "/"),
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</article>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if len(consultation.Attachments) > 0 {
+				templ_7745c5c3_Err = components.HeadingGroup(components.Config{
+					Description: "Attachments related to the consultation, such as medical reports, images, or documents provided by the patient.",
+					Breadcrumbs: []components.Breadcrumb{
+						{Title: "Attachments"},
+					},
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<article><ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, v := range consultation.Attachments {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><a href=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var29 string
+					templ_7745c5c3_Var29, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(v.URL)).ResolveURL(ctx)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 295, Col: 54}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var30 string
+					templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(v.Filename)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 295, Col: 69}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</a></li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "</ul></article>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.HeadingGroup(components.Config{
+				Description: "Metadata about the consultation.",
+				Breadcrumbs: []components.Breadcrumb{
+					{Title: "Metadata"},
+				},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "<article><div class=\"grid\"><div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input(components.InputConfig{
+				Label:    "Created at",
+				Value:    consultation.CreatedAt.Format("02-01-2006 15:04"),
+				Type:     components.TextInput,
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</div><div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input(components.InputConfig{
+				Label: "Finished at",
+				Value: func() string {
+					if consultation.FinishedAt != nil {
+						return consultation.FinishedAt.Format("02-01-2006 15:04")
+					}
+					return "/"
+				}(),
+				Type:     components.TextInput,
+				ReadOnly: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "</div></div></article>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if consultation.ConsultationStatus == "finished" && consultation.DoctorAnswer != nil {
+				templ_7745c5c3_Err = components.HeadingGroup(components.Config{
+					Breadcrumbs: []components.Breadcrumb{
+						{Title: "Doctor's answer"},
+					},
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "<article>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templ.Raw(*consultation.DoctorAnswer).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "</article>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = layouts.Dashboard(consultationActions(consultation, role, canAnswerConsultation, canJoinVideoCall)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var28), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func consultationActions(consultation Consultation, role string, canAnswer, canJoinVideoCall bool) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		ctx = templ.ClearChildren(ctx)
+		if role == "doctor" && consultation.ConsultationStatus != "finished" {
+			if consultation.ConsultationStatus == "pending" && consultation.ConsultationType == "video" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "<ul><li><a href=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var32 string
+				templ_7745c5c3_Var32, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL(fmt.Sprintf("/consultations/%s/schedule", consultation.ID))).ResolveURL(ctx)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 349, Col: 103}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var32)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "\" role=\"button\" class=\"secondary\">Schedule</a></li></ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if canJoinVideoCall {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "<ul><li><a href=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var33 string
+				templ_7745c5c3_Var33, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL("/consultations/" + consultation.ID + "/video")).ResolveURL(ctx)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 356, Col: 87}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var33)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "\" role=\"button\">Join video consultation</a></li></ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else if canAnswer {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "<ul><li><a href=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var34 string
+				templ_7745c5c3_Var34, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL(fmt.Sprintf("/consultations/%s/answer", consultation.ID))).ResolveURL(ctx)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/consultations.templ`, Line: 364, Col: 101}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var34)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "\" role=\"button\" class=\"secondary\">Write answer</a></li></ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
 		}
 		return nil
 	})
