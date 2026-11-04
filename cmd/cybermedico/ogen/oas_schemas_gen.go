@@ -51,6 +51,7 @@ func (*DefaultStatusCode) loginRes()                {}
 func (*DefaultStatusCode) loginSubmitRes()          {}
 func (*DefaultStatusCode) logoutRes()               {}
 func (*DefaultStatusCode) rootRes()                 {}
+func (*DefaultStatusCode) specialistRes()           {}
 func (*DefaultStatusCode) themesRes()               {}
 func (*DefaultStatusCode) twoFactorFormRes()        {}
 func (*DefaultStatusCode) twoFactorSetupFormRes()   {}
@@ -192,6 +193,7 @@ func (*R200) dashboardRes()            {}
 func (*R200) loginRes()                {}
 func (*R200) loginSubmitRes()          {}
 func (*R200) rootRes()                 {}
+func (*R200) specialistRes()           {}
 func (*R200) twoFactorFormRes()        {}
 func (*R200) twoFactorSetupFormRes()   {}
 func (*R200) twoFactorSetupSubmitRes() {}

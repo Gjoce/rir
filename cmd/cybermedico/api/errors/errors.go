@@ -49,6 +49,16 @@ func ErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, e
 	buttonText := "Go back"
 	buttonLink := "/"
 
+	// Requests the generated code can't parse, like a malformed id in the URL, are
+	// the caller's mistake and not a server error.
+	var paramsErr *ogenerrors.DecodeParamsError
+	var requestErr *ogenerrors.DecodeRequestError
+	if errors.As(err, &paramsErr) || errors.As(err, &requestErr) {
+		code = http.StatusBadRequest
+		title = http.StatusText(code)
+		body = "This request is not valid."
+	}
+
 	var htmlErr HtmlError
 	if errors.As(err, &htmlErr) {
 		if htmlErr.Code != 0 {

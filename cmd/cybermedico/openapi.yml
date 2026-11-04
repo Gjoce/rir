@@ -19,6 +19,16 @@ paths:
           $ref: "#/components/responses/200"
         "default":
           $ref: "#/components/responses/default"
+  /specialists/{id}:
+    get:
+      operationId: specialist
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "default":
+          $ref: "#/components/responses/default"
   /themes/{theme}:
     get:
       operationId: themes
@@ -150,6 +160,14 @@ components:
       type: apiKey
       in: cookie
       name: cybermedico_session
+  parameters:
+    UUID:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   responses:
     "200":
       description: OK

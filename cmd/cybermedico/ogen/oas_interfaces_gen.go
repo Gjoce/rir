@@ -21,6 +21,10 @@ type RootRes interface {
 	rootRes()
 }
 
+type SpecialistRes interface {
+	specialistRes()
+}
+
 type ThemesRes interface {
 	themesRes()
 }

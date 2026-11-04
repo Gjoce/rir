@@ -14,10 +14,10 @@ var (
 	rn2AllowedHeaders = map[string]string{
 		"GET": "Datastar-Request",
 	}
-	rn8AllowedHeaders = map[string]string{
+	rn10AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
-	rn9AllowedHeaders = map[string]string{
+	rn11AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
 	rn3AllowedHeaders = map[string]string{
@@ -117,7 +117,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						default:
 							s.notAllowed(w, r, notAllowedParams{
 								allowedMethods: "GET,POST",
-								allowedHeaders: rn8AllowedHeaders,
+								allowedHeaders: rn10AllowedHeaders,
 								acceptPost:     "application/x-www-form-urlencoded",
 								acceptPatch:    "",
 							})
@@ -144,7 +144,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							default:
 								s.notAllowed(w, r, notAllowedParams{
 									allowedMethods: "GET,POST",
-									allowedHeaders: rn9AllowedHeaders,
+									allowedHeaders: rn11AllowedHeaders,
 									acceptPost:     "application/x-www-form-urlencoded",
 									acceptPatch:    "",
 								})
@@ -222,6 +222,42 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					switch r.Method {
 					case "GET":
 						s.handleLogoutRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, notAllowedParams{
+							allowedMethods: "GET",
+							allowedHeaders: nil,
+							acceptPost:     "",
+							acceptPatch:    "",
+						})
+					}
+
+					return
+				}
+
+			case 's': // Prefix: "specialists/"
+
+				if l := len("specialists/"); len(elem) >= l && elem[0:l] == "specialists/" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				// Param: "id"
+				// Leaf parameter, slashes are prohibited
+				idx := strings.IndexByte(elem, '/')
+				if idx >= 0 {
+					break
+				}
+				args[0] = elem
+				elem = ""
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "GET":
+						s.handleSpecialistRequest([1]string{
+							args[0],
+						}, elemIsEscaped, w, r)
 					default:
 						s.notAllowed(w, r, notAllowedParams{
 							allowedMethods: "GET",
@@ -543,6 +579,40 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						r.pathPattern = "/logout"
 						r.args = args
 						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+
+			case 's': // Prefix: "specialists/"
+
+				if l := len("specialists/"); len(elem) >= l && elem[0:l] == "specialists/" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				// Param: "id"
+				// Leaf parameter, slashes are prohibited
+				idx := strings.IndexByte(elem, '/')
+				if idx >= 0 {
+					break
+				}
+				args[0] = elem
+				elem = ""
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch method {
+					case "GET":
+						r.name = SpecialistOperation
+						r.summary = ""
+						r.operationID = "specialist"
+						r.operationGroup = ""
+						r.pathPattern = "/specialists/{id}"
+						r.args = args
+						r.count = 1
 						return r, true
 					default:
 						return

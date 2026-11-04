@@ -28,6 +28,10 @@ type Handler interface {
 	//
 	// GET /
 	Root(ctx context.Context, params RootParams) (RootRes, error)
+	// Specialist implements specialist operation.
+	//
+	// GET /specialists/{id}
+	Specialist(ctx context.Context, params SpecialistParams) (SpecialistRes, error)
 	// Themes implements themes operation.
 	//
 	// GET /themes/{theme}
