@@ -7,8 +7,9 @@ import (
 )
 
 type (
-	requestCtxKey struct{}
-	contextKey    string
+	requestCtxKey  struct{}
+	responseCtxKey struct{}
+	contextKey     string
 )
 
 const (
@@ -24,6 +25,7 @@ const ThemeCookie = "cybermedico_theme"
 func InjectRequestToContext(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), requestCtxKey{}, r)
+		ctx = context.WithValue(ctx, responseCtxKey{}, w)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -33,6 +35,12 @@ func RequestFromContext(ctx context.Context) *http.Request {
 	r, _ := ctx.Value(requestCtxKey{}).(*http.Request)
 
 	return r
+}
+
+func ResponseFromContext(ctx context.Context) http.ResponseWriter {
+	w, _ := ctx.Value(responseCtxKey{}).(http.ResponseWriter)
+
+	return w
 }
 
 func GetUserID(ctx context.Context) string {

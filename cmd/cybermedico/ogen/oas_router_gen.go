@@ -11,6 +11,9 @@ import (
 )
 
 var (
+	rn2AllowedHeaders = map[string]string{
+		"GET": "Datastar-Request",
+	}
 	rn8AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
@@ -76,7 +79,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				default:
 					s.notAllowed(w, r, notAllowedParams{
 						allowedMethods: "GET",
-						allowedHeaders: nil,
+						allowedHeaders: rn2AllowedHeaders,
 						acceptPost:     "",
 						acceptPatch:    "",
 					})

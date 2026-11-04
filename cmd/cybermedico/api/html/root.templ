@@ -1,12 +1,72 @@
 package html
 
-import "cybermedico/layouts"
+import (
+    "cybermedico/components"
+    "cybermedico/layouts"
+    "encoding/json"
+    "strings"
+)
 
-templ RootHtml() {
+templ RootHtml(comp templ.Component, specializations []string, filters PublicDoctorsFilters) {
     @layouts.Public() {
+        {{ filtersJson, _ := json.Marshal(filters) }}
         <hgroup>
-            <h2>CyberMedico</h2>
-            <p>Online consultations with medical specialists, from your home.</p>
+            <h2>Choose a specialist</h2>
+            <p>Order a written or video consultation from your home.</p>
         </hgroup>
+        <div data-signals__ifmissing={ string(filtersJson) } data-on:change="@get('/')" style="max-width: 24rem;">
+            @components.Select(components.SelectConfig{
+                Label: "Specialization",
+                Name: "specialization",
+                Valid: true,
+                Options: specializationOptions(specializations),
+            })
+        </div>
+        @comp
     }
+}
+
+templ PublicDoctorsSSE(doctors []PublicDoctor, filters PublicDoctorsFilters) {
+    <div id="public-doctors">
+        if len(doctors) == 0 {
+            @components.MessageCard() {
+                <p>No doctors are currently available.</p>
+                <a href="/">Show all doctors</a>
+            }
+        } else {
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: var(--pico-spacing);">
+                for _, doctor := range doctors {
+                    <article style="margin: 0;">
+                        <img
+                            src={ doctor.PhotoUrl }
+                            alt={ doctor.DisplayName }
+                            style="width: 100%; height: 14rem; object-fit: contain; border-radius: var(--pico-border-radius); display: block; margin-bottom: var(--pico-spacing);"
+                        />
+                        <hgroup>
+                            <h4>{ doctor.DisplayName }</h4>
+                            if doctor.Subspecialization != "" {
+                                <p style="font-style: italic;"><small>{ doctor.Subspecialization }</small></p>
+                            }
+                        </hgroup>
+                        <p><kbd>{ doctor.Specialization }</kbd></p>
+                        <address>{ doctor.Workplace }</address>
+                        <p style="text-transform: capitalize;"><small>{ strings.Join(doctor.Languages, ", ") }</small></p>
+                        <footer style="display: flex; justify-content: space-between;">
+                            <span>Written: <strong>{ doctor.PriceWritten } €</strong></span>
+                            <span>Video: <strong>{ doctor.PriceVideo } €</strong></span>
+                        </footer>
+                    </article>
+                }
+            </div>
+        }
+    </div>
+}
+
+func specializationOptions(specializations []string) []components.SelectOption {
+    options := []components.SelectOption{{Value: "", Label: "All specializations"}}
+    for _, specialization := range specializations {
+        options = append(options, components.SelectOption{Value: specialization, Label: specialization})
+    }
+
+    return options
 }

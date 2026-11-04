@@ -48,7 +48,7 @@ type Invoker interface {
 	// Root invokes root operation.
 	//
 	// GET /
-	Root(ctx context.Context) (RootRes, error)
+	Root(ctx context.Context, params RootParams) (RootRes, error)
 	// Themes invokes themes operation.
 	//
 	// GET /themes/{theme}
@@ -496,12 +496,12 @@ func (c *Client) sendLogout(ctx context.Context) (res LogoutRes, err error) {
 // Root invokes root operation.
 //
 // GET /
-func (c *Client) Root(ctx context.Context) (RootRes, error) {
-	res, err := c.sendRoot(ctx)
+func (c *Client) Root(ctx context.Context, params RootParams) (RootRes, error) {
+	res, err := c.sendRoot(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendRoot(ctx context.Context) (res RootRes, err error) {
+func (c *Client) sendRoot(ctx context.Context, params RootParams) (res RootRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("root"),
 		semconv.HTTPRequestMethodKey.String("GET"),
@@ -546,6 +546,23 @@ func (c *Client) sendRoot(ctx context.Context) (res RootRes, err error) {
 	r, err := ht.NewRequest(ctx, "GET", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "EncodeHeaderParams"
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Datastar-Request",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.DatastarRequest.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
 	}
 
 	stage = "SendRequest"

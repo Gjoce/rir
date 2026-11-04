@@ -704,8 +704,22 @@ func (s *Server) handleRootRequest(args [0]string, argsEscaped bool, w http.Resp
 
 			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
 		}
-		err error
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: RootOperation,
+			ID:   "root",
+		}
 	)
+	params, err := decodeRootParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
 
 	var rawBody []byte
 
@@ -718,13 +732,18 @@ func (s *Server) handleRootRequest(args [0]string, argsEscaped bool, w http.Resp
 			OperationID:      "root",
 			Body:             nil,
 			RawBody:          rawBody,
-			Params:           middleware.Parameters{},
-			Raw:              r,
+			Params: middleware.Parameters{
+				{
+					Name: "Datastar-Request",
+					In:   "header",
+				}: params.DatastarRequest,
+			},
+			Raw: r,
 		}
 
 		type (
 			Request  = struct{}
-			Params   = struct{}
+			Params   = RootParams
 			Response = RootRes
 		)
 		response, err = middleware.HookMiddleware[
@@ -734,14 +753,14 @@ func (s *Server) handleRootRequest(args [0]string, argsEscaped bool, w http.Resp
 		](
 			m,
 			mreq,
-			nil,
+			unpackRootParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.Root(ctx)
+				response, err = s.h.Root(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.Root(ctx)
+		response, err = s.h.Root(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)

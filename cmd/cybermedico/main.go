@@ -363,7 +363,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService) *
 		html.AuthHandler
 		html.DashboardHandler
 	}{
-		html.RootHandler{},
+		html.NewRootHandler(dbPool),
 		html.ThemeHandler{},
 		authHandler,
 		html.NewDashboardHandler(authService),
