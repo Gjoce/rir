@@ -1,0 +1,97 @@
+package html
+
+import (
+    "cybermedico/components"
+    "cybermedico/layouts"
+    "fmt"
+)
+
+templ WrittenOrderHtml(doctor orderDoctor, order consultationOrder) {
+    @layouts.Public() {
+        @components.HeadingGroup(components.Config{
+            Breadcrumbs: []components.Breadcrumb{
+                {Title: "Doctors", URL: "/"},
+                {Title: doctor.DisplayName, URL: fmt.Sprintf("/specialists/%s", doctor.ID)},
+                {Title: "Written consultation"},
+            },
+            Description: "Describe your problem and the doctor will send you a written opinion by email within 72 hours.",
+        })
+        <article>
+            <header>
+                <strong>{ doctor.DisplayName }</strong> · { doctor.Specialization } · Price: <strong>{ doctor.Price } €</strong>
+            </header>
+            <div>
+                <form method="POST" action={ templ.SafeURL(fmt.Sprintf("/specialists/%s/written", doctor.ID)) } enctype="multipart/form-data" novalidate>
+                    @orderFields(order)
+                    <button type="submit">Submit consultation</button>
+                </form>
+            </div>
+        </article>
+    }
+}
+
+templ orderFields(order consultationOrder) {
+    <div class="grid">
+        @components.Input(components.InputConfig{
+            Type: components.TextInput, Name: "patient_name", Label: "Name", Required: true,
+            Value: order.PatientName, Valid: order.PatientNameErr == "", ValidationText: order.PatientNameErr,
+        })
+        @components.Input(components.InputConfig{
+            Type: components.TextInput, Name: "patient_surname", Label: "Surname", Required: true,
+            Value: order.PatientSurname, Valid: order.PatientSurnameErr == "", ValidationText: order.PatientSurnameErr,
+        })
+    </div>
+    <div class="grid">
+        @components.Input(components.InputConfig{
+            // Not a number input: its data-bind turns an empty field into 0, which would pass as a real age.
+            Type: components.TextInput, Name: "patient_age", Label: "Age", Required: true,
+            Value: order.PatientAge, Valid: order.PatientAgeErr == "", ValidationText: order.PatientAgeErr,
+        })
+        @components.Input(components.InputConfig{
+            Type: components.EmailInput, Name: "patient_email", Label: "Email", Required: true,
+            Value: order.PatientEmail, Valid: order.PatientEmailErr == "", ValidationText: order.PatientEmailErr,
+        })
+        @components.Input(components.InputConfig{
+            Type: components.TelInput, Name: "patient_phone", Label: "Phone", Required: true,
+            Value: order.PatientPhone, Valid: order.PatientPhoneErr == "", ValidationText: order.PatientPhoneErr,
+        })
+    </div>
+    @components.TextArea(components.TextAreaConfig{
+        Name: "medical_problem", Label: "Description of the problem", Required: true, Rows: 5,
+        Value: order.MedicalProblem, Valid: order.MedicalProblemErr == "", ValidationText: order.MedicalProblemErr,
+    })
+    @components.TextArea(components.TextAreaConfig{
+        Name: "patient_diagnosis", Label: "Diagnosis, if you already have one", Rows: 2,
+        Value: order.Diagnosis, Valid: order.DiagnosisErr == "", ValidationText: order.DiagnosisErr,
+    })
+    <div class="grid">
+        @components.TextArea(components.TextAreaConfig{
+            Name: "medication", Label: "Medication", Rows: 2,
+            Value: order.Medication, Valid: order.MedicationErr == "", ValidationText: order.MedicationErr,
+        })
+        @components.TextArea(components.TextAreaConfig{
+            Name: "allergies", Label: "Allergies", Rows: 2,
+            Value: order.Allergies, Valid: order.AllergiesErr == "", ValidationText: order.AllergiesErr,
+        })
+    </div>
+    @components.Input(components.InputConfig{
+        Type: components.CheckboxInput, Name: "need_translator", Label: "I need a translator", Value: "true", Checked: order.NeedTranslator,
+    })
+    @components.Input(components.InputConfig{
+        Type: components.CheckboxInput, Name: "terms_accepted", Label: "I accept the terms of use", Value: "true", Required: true, Checked: order.TermsAccepted,
+    })
+    if order.TermsAcceptedErr != "" {
+        <p><small style="color: var(--pico-del-color);">{ order.TermsAcceptedErr }</small></p>
+    }
+    <hr/>
+}
+
+templ OrderSubmittedHtml() {
+    @layouts.Public() {
+        <article style="text-align: center;">
+            <h2>Your consultation has been submitted</h2>
+            <p>The doctor will send you an opinion by email.</p>
+            <a href="/" role="button">Back to doctors</a>
+        </article>
+    }
+}

@@ -14,13 +14,16 @@ var (
 	rn2AllowedHeaders = map[string]string{
 		"GET": "Datastar-Request",
 	}
-	rn10AllowedHeaders = map[string]string{
-		"POST": "Content-Type",
-	}
 	rn11AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
+	rn12AllowedHeaders = map[string]string{
+		"POST": "Content-Type",
+	}
 	rn3AllowedHeaders = map[string]string{
+		"POST": "Content-Type",
+	}
+	rn13AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
 )
@@ -117,7 +120,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						default:
 							s.notAllowed(w, r, notAllowedParams{
 								allowedMethods: "GET,POST",
-								allowedHeaders: rn10AllowedHeaders,
+								allowedHeaders: rn11AllowedHeaders,
 								acceptPost:     "application/x-www-form-urlencoded",
 								acceptPatch:    "",
 							})
@@ -144,7 +147,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							default:
 								s.notAllowed(w, r, notAllowedParams{
 									allowedMethods: "GET,POST",
-									allowedHeaders: rn11AllowedHeaders,
+									allowedHeaders: rn12AllowedHeaders,
 									acceptPost:     "application/x-www-form-urlencoded",
 									acceptPatch:    "",
 								})
@@ -234,6 +237,31 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
+			case 'o': // Prefix: "order-submitted"
+
+				if l := len("order-submitted"); len(elem) >= l && elem[0:l] == "order-submitted" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "GET":
+						s.handleOrderSubmittedRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, notAllowedParams{
+							allowedMethods: "GET",
+							allowedHeaders: nil,
+							acceptPost:     "",
+							acceptPatch:    "",
+						})
+					}
+
+					return
+				}
+
 			case 's': // Prefix: "specialists/"
 
 				if l := len("specialists/"); len(elem) >= l && elem[0:l] == "specialists/" {
@@ -243,16 +271,15 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 
 				// Param: "id"
-				// Leaf parameter, slashes are prohibited
+				// Match until "/"
 				idx := strings.IndexByte(elem, '/')
-				if idx >= 0 {
-					break
+				if idx < 0 {
+					idx = len(elem)
 				}
-				args[0] = elem
-				elem = ""
+				args[0] = elem[:idx]
+				elem = elem[idx:]
 
 				if len(elem) == 0 {
-					// Leaf node.
 					switch r.Method {
 					case "GET":
 						s.handleSpecialistRequest([1]string{
@@ -268,6 +295,39 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					}
 
 					return
+				}
+				switch elem[0] {
+				case '/': // Prefix: "/written"
+
+					if l := len("/written"); len(elem) >= l && elem[0:l] == "/written" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "GET":
+							s.handleWrittenOrderFormRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleWrittenOrderSubmitRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, notAllowedParams{
+								allowedMethods: "GET,POST",
+								allowedHeaders: rn13AllowedHeaders,
+								acceptPost:     "multipart/form-data",
+								acceptPatch:    "",
+							})
+						}
+
+						return
+					}
+
 				}
 
 			case 't': // Prefix: "themes/"
@@ -585,6 +645,31 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					}
 				}
 
+			case 'o': // Prefix: "order-submitted"
+
+				if l := len("order-submitted"); len(elem) >= l && elem[0:l] == "order-submitted" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch method {
+					case "GET":
+						r.name = OrderSubmittedOperation
+						r.summary = ""
+						r.operationID = "order_submitted"
+						r.operationGroup = ""
+						r.pathPattern = "/order-submitted"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+
 			case 's': // Prefix: "specialists/"
 
 				if l := len("specialists/"); len(elem) >= l && elem[0:l] == "specialists/" {
@@ -594,16 +679,15 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 
 				// Param: "id"
-				// Leaf parameter, slashes are prohibited
+				// Match until "/"
 				idx := strings.IndexByte(elem, '/')
-				if idx >= 0 {
-					break
+				if idx < 0 {
+					idx = len(elem)
 				}
-				args[0] = elem
-				elem = ""
+				args[0] = elem[:idx]
+				elem = elem[idx:]
 
 				if len(elem) == 0 {
-					// Leaf node.
 					switch method {
 					case "GET":
 						r.name = SpecialistOperation
@@ -617,6 +701,42 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					default:
 						return
 					}
+				}
+				switch elem[0] {
+				case '/': // Prefix: "/written"
+
+					if l := len("/written"); len(elem) >= l && elem[0:l] == "/written" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "GET":
+							r.name = WrittenOrderFormOperation
+							r.summary = ""
+							r.operationID = "written_order_form"
+							r.operationGroup = ""
+							r.pathPattern = "/specialists/{id}/written"
+							r.args = args
+							r.count = 1
+							return r, true
+						case "POST":
+							r.name = WrittenOrderSubmitOperation
+							r.summary = ""
+							r.operationID = "written_order_submit"
+							r.operationGroup = ""
+							r.pathPattern = "/specialists/{id}/written"
+							r.args = args
+							r.count = 1
+							return r, true
+						default:
+							return
+						}
+					}
+
 				}
 
 			case 't': // Prefix: "themes/"

@@ -80,7 +80,7 @@ INSERT INTO doctor_language (doctor_id, language_id) VALUES
 
 INSERT INTO consultations (
     id, patient_id, doctor_id, consultation_type, consultation_status,
-    consultation_payment_status, price, price_mkd, urgent, need_translator,
+    consultation_payment_status, price, urgent, need_translator,
     terms_accepted, email_sent_patient, signature_doctor_url,
     patient_name, patient_surname, patient_age, patient_phone, patient_email,
     patient_place_of_living, how_did_you_find_out, medical_problem,
@@ -90,7 +90,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-555555555551',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222221',
-    'video', 'pending', 'paid', 150.00, 9000.00, TRUE, FALSE, TRUE, TRUE, NULL,
+    'video', 'pending', 'paid', 150.00, TRUE, FALSE, TRUE, TRUE, NULL,
     'Mary', 'Johnson', 45, '+38970123456', 'mary.johnson@example.com', 'Skopje', 'Google search',
     'Persistent chest tightness and shortness of breath for the past two weeks, worsening with physical activity. Episodes of palpitations lasting 5–10 minutes.',
     NULL, 'Penicillin', 'Salbutamol inhaler 100mcg as needed', NULL, NOW() - INTERVAL '2 days'
@@ -98,7 +98,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-555555555552',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222221',
-    'video', 'finished', 'paid', 150.00, 9000.00, FALSE, FALSE, TRUE, TRUE,
+    'video', 'finished', 'paid', 150.00, FALSE, FALSE, TRUE, TRUE,
     'https://storage.cybermedico.com/signature-carter-552.png',
     'Thomas', 'Walker', 58, '+38971234567', 'thomas.walker@example.com', 'Kumanovo', 'Referred by GP',
     'Hypertension poorly controlled despite current medication. Blood pressure readings averaging 158/96 mmHg at home over past four weeks.',
@@ -108,7 +108,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-555555555553',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222221',
-    'video', 'scheduled', 'paid', 150.00, 9000.00, FALSE, FALSE, TRUE, TRUE, NULL,
+    'video', 'scheduled', 'paid', 150.00, FALSE, FALSE, TRUE, TRUE, NULL,
     'Laura', 'Anderson', 52, '+38972345678', 'laura.anderson@example.com', 'Ohrid', 'Facebook ad',
     'Intermittent chest pain at rest, not clearly related to exertion. Associated with mild sweating and nausea on two occasions.',
     NULL, 'None', 'Aspirin 100mg once daily', NULL, NOW() - INTERVAL '22 days'
@@ -117,7 +117,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-555555555554',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222',
-    'video', 'pending', 'paid', 130.00, 7800.00, TRUE, FALSE, TRUE, FALSE, NULL,
+    'video', 'pending', 'paid', 130.00, TRUE, FALSE, TRUE, FALSE, NULL,
     'Anna', 'Roberts', 28, '+38973456789', 'anna.roberts@example.com', 'Bitola', 'Referred by friend',
     'Sudden onset severe headache described as the worst headache of her life, accompanied by neck stiffness and mild fever since yesterday morning.',
     NULL, 'Codeine', 'None', NULL, NOW() - INTERVAL '18 days'
@@ -125,7 +125,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-555555555555',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222',
-    'video', 'finished', 'paid', 130.00, 7800.00, FALSE, FALSE, TRUE, TRUE,
+    'video', 'finished', 'paid', 130.00, FALSE, FALSE, TRUE, TRUE,
     'https://storage.cybermedico.com/signature-wilson-555.png',
     'Daniel', 'Hughes', 35, '+38974567890', 'daniel.hughes@example.com', 'Štip', 'Instagram',
     'Episodes of uncontrolled shaking of the right hand lasting 2–3 minutes, occurring twice weekly for two months. No loss of consciousness.',
@@ -135,7 +135,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-555555555556',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222',
-    'video', 'pending', 'pending', 130.00, 7800.00, FALSE, TRUE, TRUE, FALSE, NULL,
+    'video', 'pending', 'pending', 130.00, FALSE, TRUE, TRUE, FALSE, NULL,
     'Lydia', 'Morgan', 44, '+38975678901', 'lydia.morgan@example.com', 'Gostivar', 'TV advertisement',
     'Chronic daily headaches for three months, predominantly frontal, with associated visual disturbances described as zigzag lines before the pain onset.',
     NULL, 'Ibuprofen (GI intolerance)', 'Sumatriptan 50mg as needed', NULL, NOW() - INTERVAL '15 days'
@@ -144,7 +144,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-555555555557',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222223',
-    'written', 'pending', 'paid', 55.00, 3300.00, FALSE, FALSE, TRUE, FALSE, NULL,
+    'written', 'pending', 'paid', 55.00, FALSE, FALSE, TRUE, FALSE, NULL,
     'Brian', 'Taylor', 54, '+38976789012', 'brian.taylor@example.com', 'Strumica', 'Google search',
     'Elevated fasting blood glucose readings at home ranging 7.2–8.9 mmol/L over the past month. No previous diagnosis of diabetes. Family history of type 2 diabetes on both parents.',
     NULL, 'Aspirin', 'Metformin 500mg twice daily (self-prescribed)', NULL, NOW() - INTERVAL '10 days'
@@ -152,7 +152,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-555555555558',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222223',
-    'written', 'finished', 'paid', 55.00, 3300.00, FALSE, FALSE, TRUE, TRUE,
+    'written', 'finished', 'paid', 55.00, FALSE, FALSE, TRUE, TRUE,
     'https://storage.cybermedico.com/signature-mitchell-558.png',
     'Megan', 'Clark', 42, '+38977890123', 'megan.clark@example.com', 'Prilep', 'Doctor recommendation',
     'Persistent fatigue, unexplained weight gain of 8kg over three months, cold intolerance, dry skin, and constipation. No known thyroid history.',
@@ -162,7 +162,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-555555555559',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222223',
-    'written', 'pending', 'paid', 55.00, 3300.00, FALSE, FALSE, TRUE, FALSE, NULL,
+    'written', 'pending', 'paid', 55.00, FALSE, FALSE, TRUE, FALSE, NULL,
     'Helen', 'Turner', 38, '+38978901234', 'helen.turner@example.com', 'Tetovo', 'Referred by GP',
     'Recent lab results showing TSH 0.02 mIU/L with elevated free T4. Experiencing tremors, weight loss of 5kg in six weeks, and heart palpitations.',
     NULL, 'None', 'None', NULL, NOW() - INTERVAL '5 days'
@@ -171,7 +171,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-55555555555a',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222224',
-    'written', 'pending', 'paid', 65.00, 3900.00, FALSE, FALSE, TRUE, FALSE, NULL,
+    'written', 'pending', 'paid', 65.00, FALSE, FALSE, TRUE, FALSE, NULL,
     'Steven', 'Harris', 32, '+38979012345', 'steven.harris@example.com', 'Veles', 'Facebook ad',
     'Recurring lower back pain radiating down the left leg to the calf, starting after lifting heavy furniture three months ago. Worsens with sitting for more than 30 minutes.',
     NULL, 'None', 'Ibuprofen 400mg three times daily, Diazepam 5mg at night', NULL, NOW() - INTERVAL '4 days'
@@ -179,7 +179,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-55555555555b',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222224',
-    'written', 'finished', 'paid', 65.00, 3900.00, FALSE, FALSE, TRUE, TRUE,
+    'written', 'finished', 'paid', 65.00, FALSE, FALSE, TRUE, TRUE,
     'https://storage.cybermedico.com/signature-bennett-55b.png',
     'Nicholas', 'Evans', 61, '+38970123456', 'nicholas.evans@example.com', 'Kavadarci', 'Google search',
     'Bilateral knee pain worsening over two years, crepitus on movement, morning stiffness lasting about 20 minutes. Difficulty climbing stairs.',
@@ -189,7 +189,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-55555555555c',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222224',
-    'written', 'pending', 'pending', 65.00, 3900.00, TRUE, FALSE, TRUE, FALSE, NULL,
+    'written', 'pending', 'pending', 65.00, TRUE, FALSE, TRUE, FALSE, NULL,
     'Katherine', 'Lewis', 29, '+38971234567', 'katherine.lewis@example.com', 'Negotino', 'Instagram',
     'Acute onset neck pain and stiffness following a rear-end car accident four days ago. Pain radiates to the right shoulder. Mild headache since the incident.',
     NULL, 'None', 'Ibuprofen 600mg twice daily', NULL, NOW() - INTERVAL '1 day'
@@ -197,7 +197,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-55555555555d',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222224',
-    'written', 'not_attended', 'paid', 65.00, 3900.00, FALSE, TRUE, TRUE, FALSE, NULL,
+    'written', 'not_attended', 'paid', 65.00, FALSE, TRUE, TRUE, FALSE, NULL,
     'Martin', 'Green', 40, '+38972345678', 'martin.green@example.com', 'Skopje', 'Google search',
     'Chronic lower back pain with intermittent numbness in the left leg. Pain worsens with prolonged sitting and standing.',
     NULL, 'None', 'Ibuprofen 600mg twice daily', NULL, NOW()

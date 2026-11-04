@@ -50,6 +50,7 @@ func (*DefaultStatusCode) dashboardRes()            {}
 func (*DefaultStatusCode) loginRes()                {}
 func (*DefaultStatusCode) loginSubmitRes()          {}
 func (*DefaultStatusCode) logoutRes()               {}
+func (*DefaultStatusCode) orderSubmittedRes()       {}
 func (*DefaultStatusCode) rootRes()                 {}
 func (*DefaultStatusCode) specialistRes()           {}
 func (*DefaultStatusCode) themesRes()               {}
@@ -57,6 +58,8 @@ func (*DefaultStatusCode) twoFactorFormRes()        {}
 func (*DefaultStatusCode) twoFactorSetupFormRes()   {}
 func (*DefaultStatusCode) twoFactorSetupSubmitRes() {}
 func (*DefaultStatusCode) twoFactorSubmitRes()      {}
+func (*DefaultStatusCode) writtenOrderFormRes()     {}
+func (*DefaultStatusCode) writtenOrderSubmitRes()   {}
 
 type LoginSubmitReq struct {
 	Email    string `json:"email"`
@@ -192,12 +195,15 @@ func (s R200) Read(p []byte) (n int, err error) {
 func (*R200) dashboardRes()            {}
 func (*R200) loginRes()                {}
 func (*R200) loginSubmitRes()          {}
+func (*R200) orderSubmittedRes()       {}
 func (*R200) rootRes()                 {}
 func (*R200) specialistRes()           {}
 func (*R200) twoFactorFormRes()        {}
 func (*R200) twoFactorSetupFormRes()   {}
 func (*R200) twoFactorSetupSubmitRes() {}
 func (*R200) twoFactorSubmitRes()      {}
+func (*R200) writtenOrderFormRes()     {}
+func (*R200) writtenOrderSubmitRes()   {}
 
 // Ref: #/components/responses/303
 type R303 struct {
@@ -232,6 +238,7 @@ func (*R303) twoFactorFormRes()        {}
 func (*R303) twoFactorSetupFormRes()   {}
 func (*R303) twoFactorSetupSubmitRes() {}
 func (*R303) twoFactorSubmitRes()      {}
+func (*R303) writtenOrderSubmitRes()   {}
 
 type SessionCookie struct {
 	APIKey string
@@ -284,4 +291,128 @@ func (s *TwoFactorSubmitReq) GetTotpCode() string {
 // SetTotpCode sets the value of TotpCode.
 func (s *TwoFactorSubmitReq) SetTotpCode(val string) {
 	s.TotpCode = val
+}
+
+type WrittenOrderSubmitReq struct {
+	PatientName      OptString `json:"patient_name"`
+	PatientSurname   OptString `json:"patient_surname"`
+	PatientAge       OptString `json:"patient_age"`
+	PatientEmail     OptString `json:"patient_email"`
+	PatientPhone     OptString `json:"patient_phone"`
+	MedicalProblem   OptString `json:"medical_problem"`
+	PatientDiagnosis OptString `json:"patient_diagnosis"`
+	Medication       OptString `json:"medication"`
+	Allergies        OptString `json:"allergies"`
+	NeedTranslator   OptBool   `json:"need_translator"`
+	TermsAccepted    OptBool   `json:"terms_accepted"`
+}
+
+// GetPatientName returns the value of PatientName.
+func (s *WrittenOrderSubmitReq) GetPatientName() OptString {
+	return s.PatientName
+}
+
+// GetPatientSurname returns the value of PatientSurname.
+func (s *WrittenOrderSubmitReq) GetPatientSurname() OptString {
+	return s.PatientSurname
+}
+
+// GetPatientAge returns the value of PatientAge.
+func (s *WrittenOrderSubmitReq) GetPatientAge() OptString {
+	return s.PatientAge
+}
+
+// GetPatientEmail returns the value of PatientEmail.
+func (s *WrittenOrderSubmitReq) GetPatientEmail() OptString {
+	return s.PatientEmail
+}
+
+// GetPatientPhone returns the value of PatientPhone.
+func (s *WrittenOrderSubmitReq) GetPatientPhone() OptString {
+	return s.PatientPhone
+}
+
+// GetMedicalProblem returns the value of MedicalProblem.
+func (s *WrittenOrderSubmitReq) GetMedicalProblem() OptString {
+	return s.MedicalProblem
+}
+
+// GetPatientDiagnosis returns the value of PatientDiagnosis.
+func (s *WrittenOrderSubmitReq) GetPatientDiagnosis() OptString {
+	return s.PatientDiagnosis
+}
+
+// GetMedication returns the value of Medication.
+func (s *WrittenOrderSubmitReq) GetMedication() OptString {
+	return s.Medication
+}
+
+// GetAllergies returns the value of Allergies.
+func (s *WrittenOrderSubmitReq) GetAllergies() OptString {
+	return s.Allergies
+}
+
+// GetNeedTranslator returns the value of NeedTranslator.
+func (s *WrittenOrderSubmitReq) GetNeedTranslator() OptBool {
+	return s.NeedTranslator
+}
+
+// GetTermsAccepted returns the value of TermsAccepted.
+func (s *WrittenOrderSubmitReq) GetTermsAccepted() OptBool {
+	return s.TermsAccepted
+}
+
+// SetPatientName sets the value of PatientName.
+func (s *WrittenOrderSubmitReq) SetPatientName(val OptString) {
+	s.PatientName = val
+}
+
+// SetPatientSurname sets the value of PatientSurname.
+func (s *WrittenOrderSubmitReq) SetPatientSurname(val OptString) {
+	s.PatientSurname = val
+}
+
+// SetPatientAge sets the value of PatientAge.
+func (s *WrittenOrderSubmitReq) SetPatientAge(val OptString) {
+	s.PatientAge = val
+}
+
+// SetPatientEmail sets the value of PatientEmail.
+func (s *WrittenOrderSubmitReq) SetPatientEmail(val OptString) {
+	s.PatientEmail = val
+}
+
+// SetPatientPhone sets the value of PatientPhone.
+func (s *WrittenOrderSubmitReq) SetPatientPhone(val OptString) {
+	s.PatientPhone = val
+}
+
+// SetMedicalProblem sets the value of MedicalProblem.
+func (s *WrittenOrderSubmitReq) SetMedicalProblem(val OptString) {
+	s.MedicalProblem = val
+}
+
+// SetPatientDiagnosis sets the value of PatientDiagnosis.
+func (s *WrittenOrderSubmitReq) SetPatientDiagnosis(val OptString) {
+	s.PatientDiagnosis = val
+}
+
+// SetMedication sets the value of Medication.
+func (s *WrittenOrderSubmitReq) SetMedication(val OptString) {
+	s.Medication = val
+}
+
+// SetAllergies sets the value of Allergies.
+func (s *WrittenOrderSubmitReq) SetAllergies(val OptString) {
+	s.Allergies = val
+}
+
+// SetNeedTranslator sets the value of NeedTranslator.
+func (s *WrittenOrderSubmitReq) SetNeedTranslator(val OptBool) {
+	s.NeedTranslator = val
+}
+
+// SetTermsAccepted sets the value of TermsAccepted.
+func (s *WrittenOrderSubmitReq) SetTermsAccepted(val OptBool) {
+	s.TermsAccepted = val
 }

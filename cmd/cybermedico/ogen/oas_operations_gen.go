@@ -10,6 +10,7 @@ const (
 	LoginOperation                OperationName = "Login"
 	LoginSubmitOperation          OperationName = "LoginSubmit"
 	LogoutOperation               OperationName = "Logout"
+	OrderSubmittedOperation       OperationName = "OrderSubmitted"
 	RootOperation                 OperationName = "Root"
 	SpecialistOperation           OperationName = "Specialist"
 	ThemesOperation               OperationName = "Themes"
@@ -17,4 +18,6 @@ const (
 	TwoFactorSetupFormOperation   OperationName = "TwoFactorSetupForm"
 	TwoFactorSetupSubmitOperation OperationName = "TwoFactorSetupSubmit"
 	TwoFactorSubmitOperation      OperationName = "TwoFactorSubmit"
+	WrittenOrderFormOperation     OperationName = "WrittenOrderForm"
+	WrittenOrderSubmitOperation   OperationName = "WrittenOrderSubmit"
 )

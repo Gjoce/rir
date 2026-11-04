@@ -24,6 +24,10 @@ type Handler interface {
 	//
 	// GET /logout
 	Logout(ctx context.Context) (LogoutRes, error)
+	// OrderSubmitted implements order_submitted operation.
+	//
+	// GET /order-submitted
+	OrderSubmitted(ctx context.Context) (OrderSubmittedRes, error)
 	// Root implements root operation.
 	//
 	// GET /
@@ -52,6 +56,14 @@ type Handler interface {
 	//
 	// POST /auth/2fa
 	TwoFactorSubmit(ctx context.Context, req *TwoFactorSubmitReq) (TwoFactorSubmitRes, error)
+	// WrittenOrderForm implements written_order_form operation.
+	//
+	// GET /specialists/{id}/written
+	WrittenOrderForm(ctx context.Context, params WrittenOrderFormParams) (WrittenOrderFormRes, error)
+	// WrittenOrderSubmit implements written_order_submit operation.
+	//
+	// POST /specialists/{id}/written
+	WrittenOrderSubmit(ctx context.Context, req *WrittenOrderSubmitReq, params WrittenOrderSubmitParams) (WrittenOrderSubmitRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

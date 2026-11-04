@@ -41,6 +41,13 @@ func (UnimplementedHandler) Logout(ctx context.Context) (r LogoutRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
+// OrderSubmitted implements order_submitted operation.
+//
+// GET /order-submitted
+func (UnimplementedHandler) OrderSubmitted(ctx context.Context) (r OrderSubmittedRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // Root implements root operation.
 //
 // GET /
@@ -87,5 +94,19 @@ func (UnimplementedHandler) TwoFactorSetupSubmit(ctx context.Context, req *TwoFa
 //
 // POST /auth/2fa
 func (UnimplementedHandler) TwoFactorSubmit(ctx context.Context, req *TwoFactorSubmitReq) (r TwoFactorSubmitRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// WrittenOrderForm implements written_order_form operation.
+//
+// GET /specialists/{id}/written
+func (UnimplementedHandler) WrittenOrderForm(ctx context.Context, params WrittenOrderFormParams) (r WrittenOrderFormRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// WrittenOrderSubmit implements written_order_submit operation.
+//
+// POST /specialists/{id}/written
+func (UnimplementedHandler) WrittenOrderSubmit(ctx context.Context, req *WrittenOrderSubmitReq, params WrittenOrderSubmitParams) (r WrittenOrderSubmitRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

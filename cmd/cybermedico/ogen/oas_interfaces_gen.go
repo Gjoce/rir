@@ -17,6 +17,10 @@ type LogoutRes interface {
 	logoutRes()
 }
 
+type OrderSubmittedRes interface {
+	orderSubmittedRes()
+}
+
 type RootRes interface {
 	rootRes()
 }
@@ -43,4 +47,12 @@ type TwoFactorSetupSubmitRes interface {
 
 type TwoFactorSubmitRes interface {
 	twoFactorSubmitRes()
+}
+
+type WrittenOrderFormRes interface {
+	writtenOrderFormRes()
+}
+
+type WrittenOrderSubmitRes interface {
+	writtenOrderSubmitRes()
 }
