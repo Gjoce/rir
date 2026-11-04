@@ -27,7 +27,7 @@ type Handler interface {
 	// Root implements root operation.
 	//
 	// GET /
-	Root(ctx context.Context) (RootRes, error)
+	Root(ctx context.Context, params RootParams) (RootRes, error)
 	// Themes implements themes operation.
 	//
 	// GET /themes/{theme}

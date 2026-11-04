@@ -44,7 +44,7 @@ func (UnimplementedHandler) Logout(ctx context.Context) (r LogoutRes, _ error) {
 // Root implements root operation.
 //
 // GET /
-func (UnimplementedHandler) Root(ctx context.Context) (r RootRes, _ error) {
+func (UnimplementedHandler) Root(ctx context.Context, params RootParams) (r RootRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

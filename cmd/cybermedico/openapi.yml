@@ -9,6 +9,11 @@ paths:
   /:
     get:
       operationId: root
+      parameters:
+        - name: Datastar-Request
+          in: header
+          schema:
+            type: boolean
       responses:
         "200":
           $ref: "#/components/responses/200"
