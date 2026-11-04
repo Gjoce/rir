@@ -10,7 +10,9 @@ import (
 	"cybermedico/cmd/cybermedico/email"
 	"cybermedico/cmd/cybermedico/ogen"
 	"cybermedico/cmd/cybermedico/storage"
+	"cybermedico/video"
 	"cybermedico/workers"
+	"crypto/sha256"
 	"embed"
 	stderrors "errors"
 	"fmt"
@@ -61,7 +63,9 @@ func main() {
 
 	storageService := initializeStorage(ctx)
 
-	riverClient := initializeRiver(ctx, dbPool, &mailer)
+	videoURLBuilder := initializeVideoURLBuilder()
+
+	riverClient := initializeRiver(ctx, dbPool, &mailer, videoURLBuilder)
 	defer shutdownRiver(ctx, riverClient)
 
 	authService, _ := initializeAuth(ctx, dbPool)
@@ -291,7 +295,31 @@ func initializeStorage(ctx context.Context) *storage.Service {
 	return svc
 }
 
-func initializeRiver(ctx context.Context, dbPool *pgxpool.Pool, mailer *email.Emailer) *river.Client[pgx.Tx] {
+// initializeVideoURLBuilder reads the env vars needed to mint patient join links.
+//
+// Required env vars:
+//   - WEBRTC_JOIN_SECRET — any non-empty string; SHA-256 derives the HMAC key for patient tokens
+//   - PUBLIC_BASE_URL    — origin used to build patient email links (e.g. https://cybermedico.net)
+func initializeVideoURLBuilder() *video.URLBuilder {
+	joinSecretEnv := os.Getenv("WEBRTC_JOIN_SECRET")
+	if joinSecretEnv == "" {
+		panic("WEBRTC_JOIN_SECRET is not set")
+	}
+
+	// Derive a 32-byte HMAC key from whatever string ops provided. SHA-256
+	// gives full strength regardless of how the env var was generated.
+	joinSecretHash := sha256.Sum256([]byte(joinSecretEnv))
+
+	urlBuilder, err := video.NewURLBuilder(os.Getenv("PUBLIC_BASE_URL"), joinSecretHash[:])
+	if err != nil {
+		log.Logger.Error("Failed to initialize video URL builder", "error", err)
+		panic(err)
+	}
+
+	return urlBuilder
+}
+
+func initializeRiver(ctx context.Context, dbPool *pgxpool.Pool, mailer *email.Emailer, videoURLBuilder *video.URLBuilder) *river.Client[pgx.Tx] {
 	migrator, err := rivermigrate.New(riverpgxv5.New(dbPool), nil)
 	if err != nil {
 		log.Logger.Error("Failed to create River migrator", "error", err)
@@ -313,6 +341,7 @@ func initializeRiver(ctx context.Context, dbPool *pgxpool.Pool, mailer *email.Em
 
 	river.AddWorker(riverWorkers, doctorAnswerEmailWorker)
 	river.AddWorker(riverWorkers, orderConfirmationEmailWorker)
+	river.AddWorker(riverWorkers, workers.NewScheduledVideoEmailWorker(dbPool, mailer, videoURLBuilder, log.Logger))
 
 	riverClient, err := river.NewClient(riverpgxv5.New(dbPool), &river.Config{
 		Logger: log.Logger,
@@ -377,7 +406,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 		html.ThemeHandler{},
 		authHandler,
 		html.NewDashboardHandler(authService),
-		html.NewConsultationsHandler(dbPool, authService, storageService),
+		html.NewConsultationsHandler(dbPool, authService, storageService, riverClient),
 	},
 		authHandler,
 		ogen.WithErrorHandler(errors.ErrorHandler),
