@@ -18,6 +18,8 @@ const (
 	TwoFactorSetupFormOperation   OperationName = "TwoFactorSetupForm"
 	TwoFactorSetupSubmitOperation OperationName = "TwoFactorSetupSubmit"
 	TwoFactorSubmitOperation      OperationName = "TwoFactorSubmit"
+	VideoOrderFormOperation       OperationName = "VideoOrderForm"
+	VideoOrderSubmitOperation     OperationName = "VideoOrderSubmit"
 	WrittenOrderFormOperation     OperationName = "WrittenOrderForm"
 	WrittenOrderSubmitOperation   OperationName = "WrittenOrderSubmit"
 )

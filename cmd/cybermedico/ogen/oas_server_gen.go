@@ -56,6 +56,14 @@ type Handler interface {
 	//
 	// POST /auth/2fa
 	TwoFactorSubmit(ctx context.Context, req *TwoFactorSubmitReq) (TwoFactorSubmitRes, error)
+	// VideoOrderForm implements video_order_form operation.
+	//
+	// GET /specialists/{id}/video
+	VideoOrderForm(ctx context.Context, params VideoOrderFormParams) (VideoOrderFormRes, error)
+	// VideoOrderSubmit implements video_order_submit operation.
+	//
+	// POST /specialists/{id}/video
+	VideoOrderSubmit(ctx context.Context, req *ConsultationOrderFormMultipart, params VideoOrderSubmitParams) (VideoOrderSubmitRes, error)
 	// WrittenOrderForm implements written_order_form operation.
 	//
 	// GET /specialists/{id}/written
@@ -63,7 +71,7 @@ type Handler interface {
 	// WrittenOrderSubmit implements written_order_submit operation.
 	//
 	// POST /specialists/{id}/written
-	WrittenOrderSubmit(ctx context.Context, req *WrittenOrderSubmitReq, params WrittenOrderSubmitParams) (WrittenOrderSubmitRes, error)
+	WrittenOrderSubmit(ctx context.Context, req *ConsultationOrderFormMultipart, params WrittenOrderSubmitParams) (WrittenOrderSubmitRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

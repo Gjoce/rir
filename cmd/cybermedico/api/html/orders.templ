@@ -7,21 +7,29 @@ import (
 )
 
 templ WrittenOrderHtml(doctor orderDoctor, order consultationOrder) {
+    @orderPage(doctor, order, "Written consultation", "Describe your problem and the doctor will send you a written opinion by email within 72 hours.")
+}
+
+templ VideoOrderHtml(doctor orderDoctor, order consultationOrder) {
+    @orderPage(doctor, order, "Video consultation", "Order a video call with the doctor. The doctor will set the exact time within 12 hours, or within 8 hours if it is urgent.")
+}
+
+templ orderPage(doctor orderDoctor, order consultationOrder, title string, description string) {
     @layouts.Public() {
         @components.HeadingGroup(components.Config{
             Breadcrumbs: []components.Breadcrumb{
                 {Title: "Doctors", URL: "/"},
                 {Title: doctor.DisplayName, URL: fmt.Sprintf("/specialists/%s", doctor.ID)},
-                {Title: "Written consultation"},
+                {Title: title},
             },
-            Description: "Describe your problem and the doctor will send you a written opinion by email within 72 hours.",
+            Description: description,
         })
         <article>
             <header>
                 <strong>{ doctor.DisplayName }</strong> · { doctor.Specialization } · Price: <strong>{ doctor.Price } €</strong>
             </header>
             <div>
-                <form method="POST" action={ templ.SafeURL(fmt.Sprintf("/specialists/%s/written", doctor.ID)) } enctype="multipart/form-data" novalidate>
+                <form method="POST" action={ templ.SafeURL(fmt.Sprintf("/specialists/%s/%s", doctor.ID, order.ConsultationType)) } enctype="multipart/form-data" novalidate>
                     @orderFields(order)
                     <button type="submit">Submit consultation</button>
                 </form>
@@ -89,6 +97,20 @@ templ orderFields(order consultationOrder) {
         />
         <small id="attachments-error">{ order.AttachmentsErr }</small>
     </label>
+    if order.ConsultationType == consultationTypeVideo {
+        @components.Select(components.SelectConfig{
+            Name: "preferred_time", Label: "Preferred part of the day", Required: true, Placeholder: "Choose",
+            Options: []components.SelectOption{
+                {Value: "morning", Label: "Morning"},
+                {Value: "afternoon", Label: "Afternoon"},
+                {Value: "evening", Label: "Evening"},
+            },
+            Value: order.PreferredTime, Valid: order.PreferredTimeErr == "", ValidationText: order.PreferredTimeErr,
+        })
+        @components.Input(components.InputConfig{
+            Type: components.CheckboxInput, Name: "urgent", Label: "This is urgent (the doctor sets the time within 8 hours)", Value: "true", Checked: order.Urgent,
+        })
+    }
     @components.Input(components.InputConfig{
         Type: components.CheckboxInput, Name: "need_translator", Label: "I need a translator", Value: "true", Checked: order.NeedTranslator,
     })
@@ -105,7 +127,7 @@ templ OrderSubmittedHtml() {
     @layouts.Public() {
         <article style="text-align: center;">
             <h2>Your consultation has been submitted</h2>
-            <p>The doctor will send you an opinion by email.</p>
+            <p>We will email you the next steps.</p>
             <a href="/" role="button">Back to doctors</a>
         </article>
     }

@@ -34,6 +34,9 @@ const (
 	maxAttachmentSize     = 10 * 1024 * 1024 // 10 MB
 	maxAttachmentCount    = 5
 	maxAttachmentNameSize = 255
+
+	consultationTypeWritten = "written"
+	consultationTypeVideo   = "video"
 )
 
 var attachmentExtensions = map[string]string{
@@ -146,6 +149,10 @@ type orderDoctor struct {
 }
 
 type consultationOrder struct {
+	ConsultationType string
+	PreferredTime    string
+	Urgent           bool
+
 	PatientName    string
 	PatientSurname string
 	PatientAge     string
@@ -169,12 +176,13 @@ type consultationOrder struct {
 	AllergiesErr      string
 	TermsAcceptedErr  string
 	AttachmentsErr    string
+	PreferredTimeErr  string
 }
 
 func (o consultationOrder) Valid() bool {
 	return o.PatientNameErr == "" && o.PatientSurnameErr == "" && o.PatientAgeErr == "" &&
 		o.PatientEmailErr == "" && o.PatientPhoneErr == "" && o.MedicalProblemErr == "" &&
-		o.DiagnosisErr == "" && o.MedicationErr == "" && o.AllergiesErr == "" && o.TermsAcceptedErr == "" && o.AttachmentsErr == ""
+		o.DiagnosisErr == "" && o.MedicationErr == "" && o.AllergiesErr == "" && o.TermsAcceptedErr == "" && o.AttachmentsErr == "" && o.PreferredTimeErr == ""
 }
 
 // validate fills the error fields. The name and phone can't contain line breaks
@@ -225,6 +233,14 @@ func (o *consultationOrder) validate() {
 	o.MedicationErr = optionalText("Medication", o.Medication)
 	o.AllergiesErr = optionalText("Allergies", o.Allergies)
 
+	if o.ConsultationType == consultationTypeVideo {
+		switch o.PreferredTime {
+		case "morning", "afternoon", "evening":
+		default:
+			o.PreferredTimeErr = "Choose the part of the day that suits you"
+		}
+	}
+
 	if !o.TermsAccepted {
 		o.TermsAcceptedErr = "You have to accept the terms of use"
 	}
@@ -258,51 +274,104 @@ func (h OrdersHandler) loadOrderDoctor(ctx context.Context, doctorID uuid.UUID, 
 }
 
 func (h OrdersHandler) WrittenOrderForm(ctx context.Context, params api.WrittenOrderFormParams) (api.WrittenOrderFormRes, error) {
-	doctor, err := h.loadOrderDoctor(ctx, params.ID, "written")
+	doctor, err := h.loadOrderDoctor(ctx, params.ID, consultationTypeWritten)
 	if err != nil {
 		return nil, err
 	}
 
 	var buff bytes.Buffer
 
-	return &api.R200{Data: &buff}, WrittenOrderHtml(doctor, consultationOrder{}).Render(ctx, &buff)
+	return &api.R200{Data: &buff}, WrittenOrderHtml(doctor, consultationOrder{ConsultationType: consultationTypeWritten}).Render(ctx, &buff)
 }
 
-func (h OrdersHandler) WrittenOrderSubmit(ctx context.Context, request *api.WrittenOrderSubmitReq, params api.WrittenOrderSubmitParams) (api.WrittenOrderSubmitRes, error) {
-	doctor, err := h.loadOrderDoctor(ctx, params.ID, "written")
+func (h OrdersHandler) WrittenOrderSubmit(ctx context.Context, request *api.ConsultationOrderFormMultipart, params api.WrittenOrderSubmitParams) (api.WrittenOrderSubmitRes, error) {
+	doctor, err := h.loadOrderDoctor(ctx, params.ID, consultationTypeWritten)
 	if err != nil {
 		return nil, err
 	}
 
+	order, attachments := checkOrder(request, consultationTypeWritten)
+	if !order.Valid() {
+		var buff bytes.Buffer
+
+		return &api.R200{Data: &buff}, WrittenOrderHtml(doctor, order).Render(ctx, &buff)
+	}
+
+	if err := h.saveOrder(ctx, doctor, order, attachments); err != nil {
+		return nil, err
+	}
+
+	return &api.R303{Location: api.NewOptString("/order-submitted")}, nil
+}
+
+func (h OrdersHandler) VideoOrderForm(ctx context.Context, params api.VideoOrderFormParams) (api.VideoOrderFormRes, error) {
+	doctor, err := h.loadOrderDoctor(ctx, params.ID, consultationTypeVideo)
+	if err != nil {
+		return nil, err
+	}
+
+	var buff bytes.Buffer
+
+	return &api.R200{Data: &buff}, VideoOrderHtml(doctor, consultationOrder{ConsultationType: consultationTypeVideo}).Render(ctx, &buff)
+}
+
+func (h OrdersHandler) VideoOrderSubmit(ctx context.Context, request *api.ConsultationOrderFormMultipart, params api.VideoOrderSubmitParams) (api.VideoOrderSubmitRes, error) {
+	doctor, err := h.loadOrderDoctor(ctx, params.ID, consultationTypeVideo)
+	if err != nil {
+		return nil, err
+	}
+
+	order, attachments := checkOrder(request, consultationTypeVideo)
+	if !order.Valid() {
+		var buff bytes.Buffer
+
+		return &api.R200{Data: &buff}, VideoOrderHtml(doctor, order).Render(ctx, &buff)
+	}
+
+	if err := h.saveOrder(ctx, doctor, order, attachments); err != nil {
+		return nil, err
+	}
+
+	return &api.R303{Location: api.NewOptString("/order-submitted")}, nil
+}
+
+// checkOrder reads and validates the form that both kinds of consultation share.
+func checkOrder(request *api.ConsultationOrderFormMultipart, consultationType string) (consultationOrder, []orderAttachment) {
 	order := consultationOrder{
-		PatientName:    strings.TrimSpace(request.PatientName.Or("")),
-		PatientSurname: strings.TrimSpace(request.PatientSurname.Or("")),
-		PatientAge:     strings.TrimSpace(request.PatientAge.Or("")),
-		PatientEmail:   strings.TrimSpace(request.PatientEmail.Or("")),
-		PatientPhone:   strings.TrimSpace(request.PatientPhone.Or("")),
-		MedicalProblem: strings.TrimSpace(request.MedicalProblem.Or("")),
-		Diagnosis:      strings.TrimSpace(request.PatientDiagnosis.Or("")),
-		Medication:     strings.TrimSpace(request.Medication.Or("")),
-		Allergies:      strings.TrimSpace(request.Allergies.Or("")),
-		NeedTranslator: request.NeedTranslator.Or(false),
-		TermsAccepted:  request.TermsAccepted.Or(false),
+		ConsultationType: consultationType,
+		PatientName:      strings.TrimSpace(request.PatientName.Or("")),
+		PatientSurname:   strings.TrimSpace(request.PatientSurname.Or("")),
+		PatientAge:       strings.TrimSpace(request.PatientAge.Or("")),
+		PatientEmail:     strings.TrimSpace(request.PatientEmail.Or("")),
+		PatientPhone:     strings.TrimSpace(request.PatientPhone.Or("")),
+		MedicalProblem:   strings.TrimSpace(request.MedicalProblem.Or("")),
+		Diagnosis:        strings.TrimSpace(request.PatientDiagnosis.Or("")),
+		Medication:       strings.TrimSpace(request.Medication.Or("")),
+		Allergies:        strings.TrimSpace(request.Allergies.Or("")),
+		NeedTranslator:   request.NeedTranslator.Or(false),
+		TermsAccepted:    request.TermsAccepted.Or(false),
+	}
+
+	// Only video consultations can be urgent or have a preferred time, whatever a
+	// request for a written one sends.
+	if consultationType == consultationTypeVideo {
+		order.PreferredTime = request.PreferredTime.Or("")
+		order.Urgent = request.Urgent.Or(false)
 	}
 	order.validate()
 
 	attachments, attachmentsErr := validateAttachments(request.Attachments)
 	order.AttachmentsErr = attachmentsErr
 
-	if !order.Valid() {
-		// A browser can't keep chosen files when the form is shown again.
-		if order.AttachmentsErr == "" && len(request.Attachments) > 0 {
-			order.AttachmentsErr = "Your files were not saved. Choose them again."
-		}
-
-		var buff bytes.Buffer
-
-		return &api.R200{Data: &buff}, WrittenOrderHtml(doctor, order).Render(ctx, &buff)
+	// A browser can't keep chosen files when the form is shown again.
+	if !order.Valid() && order.AttachmentsErr == "" && len(request.Attachments) > 0 {
+		order.AttachmentsErr = "Your files were not saved. Choose them again."
 	}
 
+	return order, attachments
+}
+
+func (h OrdersHandler) saveOrder(ctx context.Context, doctor orderDoctor, order consultationOrder, attachments []orderAttachment) error {
 	consultationID := uuid.New().String()
 
 	// Files go to storage before the transaction opens, so a slow upload doesn't hold
@@ -315,12 +384,12 @@ func (h OrdersHandler) WrittenOrderSubmit(ctx context.Context, request *api.Writ
 	}()
 
 	if err := h.uploadAttachments(ctx, consultationID, attachments); err != nil {
-		return nil, err
+		return err
 	}
 
 	tx, err := h.db.Begin(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to begin transaction: %w", err)
+		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
 	defer func() {
 		if err := tx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
@@ -332,13 +401,14 @@ func (h OrdersHandler) WrittenOrderSubmit(ctx context.Context, request *api.Writ
 	tag, err := tx.Exec(ctx, `
 		INSERT INTO consultations (
 			id, doctor_id, consultation_type, consultation_status, consultation_payment_status,
-			price, need_translator, terms_accepted,
+			price, urgent, need_translator, terms_accepted,
 			patient_name, patient_surname, patient_age, patient_phone, patient_email,
 			medical_problem, patient_diagnosis, allergies, medication
 		)
 		SELECT
-			@id, p.id, 'written', 'pending', 'pending',
-			p.consultation_price_written, @need_translator, @terms_accepted,
+			@id, p.id, @consultation_type::consultation_type, 'pending', 'pending',
+			CASE WHEN @consultation_type = 'video' THEN p.consultation_price_video ELSE p.consultation_price_written END,
+			@urgent, @need_translator, @terms_accepted,
 			@patient_name, @patient_surname, @patient_age, @patient_phone, @patient_email,
 			@medical_problem, NULLIF(@patient_diagnosis, ''), NULLIF(@allergies, ''), NULLIF(@medication, '')
 		FROM doctor_profile p
@@ -346,6 +416,8 @@ func (h OrdersHandler) WrittenOrderSubmit(ctx context.Context, request *api.Writ
 	`, pgx.NamedArgs{
 		"id":                consultationID,
 		"doctor_id":         doctor.ID,
+		"consultation_type": order.ConsultationType,
+		"urgent":            order.Urgent,
 		"need_translator":   order.NeedTranslator,
 		"terms_accepted":    order.TermsAccepted,
 		"patient_name":      order.PatientName,
@@ -359,17 +431,27 @@ func (h OrdersHandler) WrittenOrderSubmit(ctx context.Context, request *api.Writ
 		"medication":        order.Medication,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to insert consultation: %w", err)
+		return fmt.Errorf("failed to insert consultation: %w", err)
 	}
 	if tag.RowsAffected() == 0 {
-		return nil, herrors.HtmlError{Code: http.StatusNotFound, Msg: "This doctor is not available.", ButtonText: "Show all doctors", ButtonLink: "/"}
+		return herrors.HtmlError{Code: http.StatusNotFound, Msg: "This doctor is not available.", ButtonText: "Show all doctors", ButtonLink: "/"}
 	}
 
-	if _, err = tx.Exec(ctx,
-		`INSERT INTO written_consultations (consultation_id) VALUES (@consultation_id)`,
-		pgx.NamedArgs{"consultation_id": consultationID},
-	); err != nil {
-		return nil, fmt.Errorf("failed to insert consultation details: %w", err)
+	// These run after the consultation is inserted: the trigger on video_consultations
+	// reads its urgent flag to set the deadline for scheduling.
+	if order.ConsultationType == consultationTypeVideo {
+		_, err = tx.Exec(ctx,
+			`INSERT INTO video_consultations (consultation_id, preferred_time) VALUES (@consultation_id, @preferred_time)`,
+			pgx.NamedArgs{"consultation_id": consultationID, "preferred_time": order.PreferredTime},
+		)
+	} else {
+		_, err = tx.Exec(ctx,
+			`INSERT INTO written_consultations (consultation_id) VALUES (@consultation_id)`,
+			pgx.NamedArgs{"consultation_id": consultationID},
+		)
+	}
+	if err != nil {
+		return fmt.Errorf("failed to insert consultation details: %w", err)
 	}
 
 	for _, a := range attachments {
@@ -383,16 +465,16 @@ func (h OrdersHandler) WrittenOrderSubmit(ctx context.Context, request *api.Writ
 			"content_type":      a.mimeType,
 			"size_bytes":        a.size,
 		}); err != nil {
-			return nil, fmt.Errorf("failed to insert attachment: %w", err)
+			return fmt.Errorf("failed to insert attachment: %w", err)
 		}
 	}
 
 	if err = tx.Commit(ctx); err != nil {
-		return nil, fmt.Errorf("failed to commit consultation: %w", err)
+		return fmt.Errorf("failed to commit consultation: %w", err)
 	}
 	committed = true
 
-	return &api.R303{Location: api.NewOptString("/order-submitted")}, nil
+	return nil
 }
 
 func (h OrdersHandler) OrderSubmitted(ctx context.Context) (api.OrderSubmittedRes, error) {
