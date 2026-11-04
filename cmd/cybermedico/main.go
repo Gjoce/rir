@@ -6,11 +6,14 @@ import (
 	"cybermedico/cmd/cybermedico/api/html"
 	"cybermedico/cmd/cybermedico/api/log"
 	"cybermedico/cmd/cybermedico/api/util"
+	"cybermedico/cmd/cybermedico/email"
 	"cybermedico/cmd/cybermedico/ogen"
+	"cybermedico/workers"
 	"embed"
 	stderrors "errors"
 	"fmt"
 	"net/http"
+	"net/smtp"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -21,8 +24,12 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
+	"github.com/riverqueue/river"
+	"github.com/riverqueue/river/riverdriver/riverpgxv5"
+	"github.com/riverqueue/river/rivermigrate"
 )
 
 //go:embed static
@@ -43,6 +50,11 @@ func main() {
 		log.Logger.Warn("Failed to apply seed data", "error", err)
 	}
 	defer dbPool.Close()
+
+	mailer := initializeMailer()
+
+	riverClient := initializeRiver(ctx, dbPool, &mailer)
+	defer shutdownRiver(ctx, riverClient)
 
 	htmlServer := initializeHTMLServer()
 	httpServer := initializeHTTPServer(htmlServer)
@@ -193,6 +205,109 @@ func getLatestMigrationVersion() (uint, error) {
 	}
 
 	return latestVersion, nil
+}
+
+func initializeMailer() email.Emailer {
+	smtpHost := os.Getenv("SMTP_HOST")
+	smtpPort := os.Getenv("SMTP_PORT")
+	emailSenderName := os.Getenv("EMAIL_SENDER_NAME")
+	emailSenderAddress := os.Getenv("EMAIL_SENDER_ADDRESS")
+	smtpUsername := os.Getenv("SMTP_USERNAME")
+	smtpPassword := os.Getenv("SMTP_PASSWORD")
+
+	emailConfigured := smtpHost != "" && smtpPort != "" && emailSenderAddress != ""
+
+	if !emailConfigured {
+		log.Logger.Warn("SMTP not configured, emails will be dropped")
+	}
+
+	var auth smtp.Auth = nil
+	if smtpUsername != "" && smtpPassword != "" && smtpHost != "" {
+		auth = smtp.PlainAuth("", smtpUsername, smtpPassword, smtpHost)
+	}
+
+	mailer := email.Emailer{
+		Address: func() string {
+			if smtpHost == "" {
+				smtpHost = "localhost"
+			}
+			if smtpPort == "" {
+				smtpPort = "1025"
+			}
+
+			return smtpHost + ":" + smtpPort
+		}(),
+		Sender: email.EmailAddress{
+			Name: func() string {
+				if emailSenderName == "" {
+					emailSenderName = "CyberMedico"
+				}
+
+				return emailSenderName
+			}(),
+			Email: func() string {
+				if emailSenderAddress == "" {
+					emailSenderAddress = "noreply@cybermedico.local"
+				}
+
+				return emailSenderAddress
+			}(),
+		},
+		Auth: auth,
+	}
+
+	log.Logger.Info("Initialized mailer", "smtp_address", mailer.Address, "sender_email", mailer.Sender.Email)
+
+	return mailer
+}
+
+func initializeRiver(ctx context.Context, dbPool *pgxpool.Pool, mailer *email.Emailer) *river.Client[pgx.Tx] {
+	migrator, err := rivermigrate.New(riverpgxv5.New(dbPool), nil)
+	if err != nil {
+		log.Logger.Error("Failed to create River migrator", "error", err)
+		panic(fmt.Errorf("failed to create river migrator: %w", err))
+	}
+
+	_, err = migrator.Migrate(ctx, rivermigrate.DirectionUp, &rivermigrate.MigrateOpts{})
+	if err != nil {
+		log.Logger.Error("River migration error", "error", err)
+		panic(fmt.Errorf("river migration error: %w", err))
+	}
+	log.Logger.Info("River migrations applied successfully")
+
+	riverWorkers := river.NewWorkers()
+
+	doctorAnswerEmailWorker := workers.NewDoctorAnswerEmailWorker(mailer, log.Logger)
+
+	river.AddWorker(riverWorkers, doctorAnswerEmailWorker)
+
+	riverClient, err := river.NewClient(riverpgxv5.New(dbPool), &river.Config{
+		Logger: log.Logger,
+		Queues: map[string]river.QueueConfig{
+			river.QueueDefault: {MaxWorkers: 10},
+		},
+		Workers: riverWorkers,
+	})
+	if err != nil {
+		log.Logger.Error("Failed to create River client", "error", err)
+		panic(fmt.Errorf("failed to create River client: %w", err))
+	}
+
+	if err := riverClient.Start(ctx); err != nil {
+		log.Logger.Error("Failed to start River client", "error", err)
+		panic(fmt.Errorf("failed to start River client: %w", err))
+	}
+	log.Logger.Info("River client started successfully")
+
+	return riverClient
+}
+
+func shutdownRiver(ctx context.Context, riverClient *river.Client[pgx.Tx]) {
+	if err := riverClient.Stop(ctx); err != nil {
+		log.Logger.Error("Failed to stop river client", "error", err)
+	} else {
+		log.Logger.Info("River client stopped successfully")
+	}
 }
 
 func initializeHTMLServer() *ogen.Server {

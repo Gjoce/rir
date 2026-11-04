@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+type LoggerType = slog.Logger
+
 var Logger *slog.Logger
 
 func init() {
