@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
@@ -38,6 +39,9 @@ func main() {
 	}
 
 	dbPool := initializeDatabase()
+	if err := runSeeds(dbPool); err != nil {
+		log.Logger.Warn("Failed to apply seed data", "error", err)
+	}
 	defer dbPool.Close()
 
 	htmlServer := initializeHTMLServer()
@@ -75,6 +79,38 @@ func setupDB() (*pgxpool.Pool, error) {
 	}
 
 	return dbPool, nil
+}
+
+func runSeeds(dbPool *pgxpool.Pool) error {
+	seedFilePath := os.Getenv("CYBERMEDICO_SEED_FILE")
+	if seedFilePath == "" {
+		return fmt.Errorf("CYBERMEDICO_SEED_FILE not found")
+	}
+	// Prevent path traversal
+	currentDir, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("failed to get current directory: %w", err)
+	}
+	absSeedPath, err := filepath.Abs(seedFilePath)
+	if err != nil {
+		return fmt.Errorf("failed to get absolute path for seed file: %w", err)
+	}
+	if !strings.HasPrefix(absSeedPath, currentDir+string(filepath.Separator)) {
+		return fmt.Errorf("seed file path is outside allowed directory")
+	}
+	seedSQL, err := os.ReadFile(absSeedPath) // #nosec G703,G304
+	if err != nil {
+		return fmt.Errorf("failed to read seed file from %s: %w", seedFilePath, err)
+	}
+
+	_, err = dbPool.Exec(context.Background(), string(seedSQL))
+	if err != nil {
+		return fmt.Errorf("failed to execute seed sql: %w", err)
+	}
+
+	log.Logger.Info("Seed file applied successfully")
+
+	return nil
 }
 
 func runMigrations() error {
