@@ -13,6 +13,20 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
+// ConsultationAnswerForm implements consultation_answer_form operation.
+//
+// GET /consultations/{id}/answer
+func (UnimplementedHandler) ConsultationAnswerForm(ctx context.Context, params ConsultationAnswerFormParams) (r ConsultationAnswerFormRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ConsultationAnswerSubmit implements consultation_answer_submit operation.
+//
+// POST /consultations/{id}/answer
+func (UnimplementedHandler) ConsultationAnswerSubmit(ctx context.Context, req *ConsultationAnswerSubmitReq, params ConsultationAnswerSubmitParams) (r ConsultationAnswerSubmitRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // ConsultationForm implements consultation_form operation.
 //
 // GET /consultations/{id}

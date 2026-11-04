@@ -1,0 +1,177 @@
+package components
+
+import (
+    "fmt"
+    "strconv"
+)
+
+type QuillConfig struct {
+    Name string
+    Label string
+    Value string
+    Required bool
+    Height int
+    Placeholder string
+    HelperText string
+    Valid bool
+    ValidationText string
+}
+
+templ Quill(config QuillConfig) {
+    <label>
+        { config.Label }
+        if config.Required {
+            <span style="color: var(--pico-primary)">*</span>
+        }
+    </label>
+    <div class="quill-editor-wrapper">
+        <div
+            id={ "quill-editor-" + config.Name }
+            class="quill-editor"
+            if config.Height > 0 {
+                style={ "height: " + strconv.Itoa(config.Height) + "px;" }
+            }
+        ></div>
+    </div>
+    <input
+        type="hidden"
+        if config.Name != "" {
+            name = { config.Name }
+        }
+        if config.Name != "" {
+            data-bind= { config.Name }
+        }
+        id={ config.Name }
+        value={ config.Value }
+        if config.HelperText != "" {
+            aria-describedby={ fmt.Sprintf("%s-helper", config.Name) }
+        }
+        if !config.Valid && config.ValidationText !="" {
+            aria-invalid="true"
+        }
+    />
+    if config.HelperText != "" {
+        <small
+            id={ config.Name + "-helper" }
+            data-text={ fmt.Sprintf("($%s === `%s`) && `%s`", config.Name, config.Value, config.HelperText) }
+        ></small>
+    }
+    if !config.Valid && config.ValidationText != "" {
+        <small>{ config.ValidationText }</small>
+    }
+    <style>
+        .ql-editor {
+            font-size: 16px !important;
+        }
+
+        .ql-editor.ql-blank::before {
+            color: #999999;
+            font-style: italic;
+            content: attr(data-placeholder);
+        }
+
+        html[data-theme='dark'] .ql-snow .ql-fill,
+        html[data-theme='dark'] .ql-snow, .ql-stroke.ql-fill {
+            fill: #ffffff;
+        }
+
+        html[data-theme='dark'] .ql-snow, .ql-stroke {
+            stroke: #ffffff
+        }
+
+        .quill-editor-wrapper {
+            margin-bottom: var(--pico-spacing);
+            background-color: var(--pico-form-element-background-color)
+        }
+
+        .ql-toolbar.ql-snow {
+            border: var(--pico-form-element-border-color) solid 1px;
+            border-radius: var(--pico-border-radius) var(--pico-border-radius) 0 0;
+        }
+
+        .ql-container.ql-snow {
+            border: var(--pico-form-element-border-color) solid 1px;
+            border-radius: 0 0 var(--pico-border-radius) var(--pico-border-radius);
+        }
+    </style>
+    <script>
+        (function() {
+            if (window.Quill) {
+                const name = "{{ config.Name }}";
+                const editorId = "quill-editor-" + name;
+                const inputId = name;
+
+                const editorElement = document.getElementById(editorId);
+                if (!editorElement) {
+                    console.error('Quill editor element not found', editorId);
+                    return;
+                }
+                if (editorElement.quillInstance) {
+                    return;
+                }
+
+                var Delta = Quill.import('delta');
+                const quill = new Quill('#' + editorId, {
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline', 'blockquote'],
+                            [{'header': 1}, {'header': 2}],
+                            [{'list': 'ordered'}, {'list': 'bullet'}],
+                        ],
+                        clipboard: {
+                            matchers: [
+                                [Node.ELEMENT_NODE, function (node, delta) {
+                                    const ops = delta.ops.map(op => {
+                                        return {
+                                            insert: op.insert
+                                        };
+                                    });
+                                    return new Delta(ops);
+                                }]
+                            ]
+                        }
+                    },
+                    theme: 'snow',
+                    placeholder: '{{ config.Placeholder }}' || 'Enter text here...'
+                });
+
+                editorElement.quillInstance = quill;
+
+                if ("{{ config.Value }}") {
+                    quill.root.innerHTML = "{{ config.Value }}";
+                }
+
+                // Semantic HTML has real <ul> and <ol> lists, which also work outside the
+                // editor, such as in an email. It marks spaces as &nbsp;, which would stop
+                // long lines from wrapping, so those go back to normal spaces.
+                function flush() {
+                    const el = document.getElementById(inputId);
+                    if (!el) {
+                        return;
+                    }
+                    const isEmpty = quill.getLength() <= 1;
+                    const content = isEmpty ? '' : quill.getSemanticHTML().replaceAll('&nbsp;', ' ');
+                    if (el.value !== content) {
+                        el.value = content;
+                        el.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                }
+
+                let syncTimeout;
+                quill.on('text-change', function() {
+                    clearTimeout(syncTimeout);
+                    syncTimeout = setTimeout(flush, 150);
+                });
+
+                // Leaving the editor flushes right away, so clicking Submit straight
+                // after typing can't send text that is still waiting to sync.
+                quill.on('selection-change', function(range) {
+                    if (!range) {
+                        clearTimeout(syncTimeout);
+                        flush();
+                    }
+                });
+            }
+        })();
+    </script>
+}

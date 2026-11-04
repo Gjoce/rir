@@ -8,6 +8,20 @@ import (
 	ht "github.com/ogen-go/ogen/http"
 )
 
+type ConsultationAnswerSubmitReq struct {
+	Answer string `json:"answer"`
+}
+
+// GetAnswer returns the value of Answer.
+func (s *ConsultationAnswerSubmitReq) GetAnswer() string {
+	return s.Answer
+}
+
+// SetAnswer sets the value of Answer.
+func (s *ConsultationAnswerSubmitReq) SetAnswer(val string) {
+	s.Answer = val
+}
+
 // Ref: #/components/schemas/ConsultationOrderForm
 type ConsultationOrderFormMultipart struct {
 	PatientName      OptString `json:"patient_name"`
@@ -208,24 +222,26 @@ func (s *DefaultStatusCode) SetResponse(val Default) {
 	s.Response = val
 }
 
-func (*DefaultStatusCode) consultationFormRes()     {}
-func (*DefaultStatusCode) consultationsFormRes()    {}
-func (*DefaultStatusCode) dashboardRes()            {}
-func (*DefaultStatusCode) loginRes()                {}
-func (*DefaultStatusCode) loginSubmitRes()          {}
-func (*DefaultStatusCode) logoutRes()               {}
-func (*DefaultStatusCode) orderSubmittedRes()       {}
-func (*DefaultStatusCode) rootRes()                 {}
-func (*DefaultStatusCode) specialistRes()           {}
-func (*DefaultStatusCode) themesRes()               {}
-func (*DefaultStatusCode) twoFactorFormRes()        {}
-func (*DefaultStatusCode) twoFactorSetupFormRes()   {}
-func (*DefaultStatusCode) twoFactorSetupSubmitRes() {}
-func (*DefaultStatusCode) twoFactorSubmitRes()      {}
-func (*DefaultStatusCode) videoOrderFormRes()       {}
-func (*DefaultStatusCode) videoOrderSubmitRes()     {}
-func (*DefaultStatusCode) writtenOrderFormRes()     {}
-func (*DefaultStatusCode) writtenOrderSubmitRes()   {}
+func (*DefaultStatusCode) consultationAnswerFormRes()   {}
+func (*DefaultStatusCode) consultationAnswerSubmitRes() {}
+func (*DefaultStatusCode) consultationFormRes()         {}
+func (*DefaultStatusCode) consultationsFormRes()        {}
+func (*DefaultStatusCode) dashboardRes()                {}
+func (*DefaultStatusCode) loginRes()                    {}
+func (*DefaultStatusCode) loginSubmitRes()              {}
+func (*DefaultStatusCode) logoutRes()                   {}
+func (*DefaultStatusCode) orderSubmittedRes()           {}
+func (*DefaultStatusCode) rootRes()                     {}
+func (*DefaultStatusCode) specialistRes()               {}
+func (*DefaultStatusCode) themesRes()                   {}
+func (*DefaultStatusCode) twoFactorFormRes()            {}
+func (*DefaultStatusCode) twoFactorSetupFormRes()       {}
+func (*DefaultStatusCode) twoFactorSetupSubmitRes()     {}
+func (*DefaultStatusCode) twoFactorSubmitRes()          {}
+func (*DefaultStatusCode) videoOrderFormRes()           {}
+func (*DefaultStatusCode) videoOrderSubmitRes()         {}
+func (*DefaultStatusCode) writtenOrderFormRes()         {}
+func (*DefaultStatusCode) writtenOrderSubmitRes()       {}
 
 type LoginSubmitReq struct {
 	Email    string `json:"email"`
@@ -358,22 +374,24 @@ func (s R200) Read(p []byte) (n int, err error) {
 	return s.Data.Read(p)
 }
 
-func (*R200) consultationFormRes()     {}
-func (*R200) consultationsFormRes()    {}
-func (*R200) dashboardRes()            {}
-func (*R200) loginRes()                {}
-func (*R200) loginSubmitRes()          {}
-func (*R200) orderSubmittedRes()       {}
-func (*R200) rootRes()                 {}
-func (*R200) specialistRes()           {}
-func (*R200) twoFactorFormRes()        {}
-func (*R200) twoFactorSetupFormRes()   {}
-func (*R200) twoFactorSetupSubmitRes() {}
-func (*R200) twoFactorSubmitRes()      {}
-func (*R200) videoOrderFormRes()       {}
-func (*R200) videoOrderSubmitRes()     {}
-func (*R200) writtenOrderFormRes()     {}
-func (*R200) writtenOrderSubmitRes()   {}
+func (*R200) consultationAnswerFormRes()   {}
+func (*R200) consultationAnswerSubmitRes() {}
+func (*R200) consultationFormRes()         {}
+func (*R200) consultationsFormRes()        {}
+func (*R200) dashboardRes()                {}
+func (*R200) loginRes()                    {}
+func (*R200) loginSubmitRes()              {}
+func (*R200) orderSubmittedRes()           {}
+func (*R200) rootRes()                     {}
+func (*R200) specialistRes()               {}
+func (*R200) twoFactorFormRes()            {}
+func (*R200) twoFactorSetupFormRes()       {}
+func (*R200) twoFactorSetupSubmitRes()     {}
+func (*R200) twoFactorSubmitRes()          {}
+func (*R200) videoOrderFormRes()           {}
+func (*R200) videoOrderSubmitRes()         {}
+func (*R200) writtenOrderFormRes()         {}
+func (*R200) writtenOrderSubmitRes()       {}
 
 // Ref: #/components/responses/303
 type R303 struct {

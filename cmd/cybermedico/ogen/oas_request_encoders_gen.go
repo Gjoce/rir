@@ -3,16 +3,32 @@
 package ogen
 
 import (
+	"bytes"
 	"mime"
 	"mime/multipart"
 	"net/http"
 	"strings"
 
 	"github.com/go-faster/errors"
+	"github.com/go-faster/jx"
 	"github.com/ogen-go/ogen/conv"
 	ht "github.com/ogen-go/ogen/http"
 	"github.com/ogen-go/ogen/uri"
 )
+
+func encodeConsultationAnswerSubmitRequest(
+	req *ConsultationAnswerSubmitReq,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
 
 func encodeLoginSubmitRequest(
 	req *LoginSubmitReq,

@@ -4,6 +4,7 @@ import (
     "cybermedico/layouts"
     "cybermedico/cmd/cybermedico/api/util"
     "fmt"
+    "strconv"
     "cybermedico/components"
     "encoding/json"
 )
@@ -365,5 +366,78 @@ templ consultationActions(consultation Consultation, role string, canAnswer, can
                 </li>
             </ul>
         }
+    }
+}
+
+templ answerError(err string) {
+    <div id="answer-error">
+        if err != "" {
+            <input type="hidden"
+                aria-invalid="true"
+            />
+            <small>{ err }</small>
+        }
+    </div>
+}
+
+templ ConsultationAnswerForm(consultation answerConsultation) {
+    @layouts.Dashboard(nil) {
+        @components.HeadingGroup(components.Config{
+            Description: "Provide an answer to the patient's consultation request. Write a detailed response based on the patient's symptoms and medical information.",
+            Breadcrumbs: []components.Breadcrumb {
+                {Title: "Consultations", URL: "/consultations"},
+                {Title: consultation.PatientName, URL: fmt.Sprintf("/consultations/%s", consultation.ID)},
+                {Title: "Answer"},
+            },
+        })
+        <article>
+            <div class="overflow-auto">
+                <table class="striped" style="white-space: nowrap;">
+                    <thead>
+                        <tr>
+                            <th>Patient name</th>
+                            <th>Patient surname</th>
+                            <th>Patient age</th>
+                            <th>Consultation type</th>
+                            <th>Urgent</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{ consultation.PatientName }</td>
+                            <td>{ consultation.PatientSurname }</td>
+                            <td>{ strconv.Itoa(consultation.PatientAge) }</td> 
+                            <td>{ consultationType(consultation.ConsultationType) }</td>
+                                if consultation.Urgent {
+                                <td>
+                                    <span class="badge-true">Yes</span>
+                                </td>
+                            } else {
+                                <td>
+                                    <span class="badge-false">No</span>
+                                </td>
+                            }
+                            <td>{ consultation.Price }</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <hr/>
+            <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
+            <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+            @components.Quill(components.QuillConfig{
+                Label: "Answer",
+                Required: true,
+                Placeholder: "Based on your provided symptoms...",
+                Name: "answer",
+                Height: 200,
+                Value: consultation.Answer,
+                Valid: consultation.AnswerErr == "",
+                ValidationText: consultation.AnswerErr,
+            })
+            @answerError(consultation.AnswerErr)
+            <button type="submit" data-on:click={ fmt.Sprintf("@post('/consultations/%s/answer')", consultation.ID) }>Submit</button>
+        </article>
     }
 }

@@ -233,6 +233,40 @@ paths:
           $ref: "#/components/responses/200"
         "default":
           $ref: "#/components/responses/default"
+  /consultations/{id}/answer:
+    get:
+      security:
+        - sessionCookie: []
+      operationId: consultation_answer_form
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "default":
+          $ref: "#/components/responses/default"
+    post:
+      security:
+        - sessionCookie: []
+      operationId: consultation_answer_submit
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                answer:
+                  type: string
+              required:
+                - answer
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "default":
+          $ref: "#/components/responses/default"
   /dashboard:
     get:
       security:

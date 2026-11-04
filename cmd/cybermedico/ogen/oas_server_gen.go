@@ -8,6 +8,14 @@ import (
 
 // Handler handles operations described by OpenAPI v3 specification.
 type Handler interface {
+	// ConsultationAnswerForm implements consultation_answer_form operation.
+	//
+	// GET /consultations/{id}/answer
+	ConsultationAnswerForm(ctx context.Context, params ConsultationAnswerFormParams) (ConsultationAnswerFormRes, error)
+	// ConsultationAnswerSubmit implements consultation_answer_submit operation.
+	//
+	// POST /consultations/{id}/answer
+	ConsultationAnswerSubmit(ctx context.Context, req *ConsultationAnswerSubmitReq, params ConsultationAnswerSubmitParams) (ConsultationAnswerSubmitRes, error)
 	// ConsultationForm implements consultation_form operation.
 	//
 	// GET /consultations/{id}
