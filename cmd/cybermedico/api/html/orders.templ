@@ -74,6 +74,21 @@ templ orderFields(order consultationOrder) {
             Value: order.Allergies, Valid: order.AllergiesErr == "", ValidationText: order.AllergiesErr,
         })
     </div>
+    // Not components.Input: its data-bind would make Datastar read every file into memory.
+    <label>
+        Medical reports (up to 5 PDF, JPG or PNG files, 10 MB each)
+        <input
+            type="file"
+            name="attachments"
+            multiple
+            accept=".pdf,.jpg,.jpeg,.png"
+            if order.AttachmentsErr != "" {
+                aria-invalid="true"
+            }
+            onchange="const error = document.getElementById('attachments-error'); const files = [...this.files]; error.textContent = files.length > 5 ? 'You can attach at most 5 files.' : files.some(f => f.size > 10485760) ? 'Each file can be at most 10 MB.' : ''; if (error.textContent) { this.value = ''; this.setAttribute('aria-invalid', 'true'); } else { this.removeAttribute('aria-invalid'); }"
+        />
+        <small id="attachments-error">{ order.AttachmentsErr }</small>
+    </label>
     @components.Input(components.InputConfig{
         Type: components.CheckboxInput, Name: "need_translator", Label: "I need a translator", Value: "true", Checked: order.NeedTranslator,
     })

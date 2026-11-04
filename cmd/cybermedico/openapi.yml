@@ -74,6 +74,11 @@ paths:
                   type: boolean
                 terms_accepted:
                   type: boolean
+                attachments:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
       responses:
         "200":
           $ref: "#/components/responses/200"

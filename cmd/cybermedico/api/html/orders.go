@@ -6,10 +6,14 @@ import (
 	herrors "cybermedico/cmd/cybermedico/api/errors"
 	"cybermedico/cmd/cybermedico/api/log"
 	api "cybermedico/cmd/cybermedico/ogen"
+	"cybermedico/cmd/cybermedico/storage"
 	"errors"
 	"fmt"
+	"io"
+	"mime"
 	"net/http"
 	"net/mail"
+	"path"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -17,6 +21,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	ht "github.com/ogen-go/ogen/http"
 )
 
 const (
@@ -25,14 +30,112 @@ const (
 	maxOrderPhoneLength = 30
 	maxOrderTextLength  = 5000
 	maxPatientAge       = 120
+
+	maxAttachmentSize     = 10 * 1024 * 1024 // 10 MB
+	maxAttachmentCount    = 5
+	maxAttachmentNameSize = 255
 )
 
-type OrdersHandler struct {
-	db *pgxpool.Pool
+var attachmentExtensions = map[string]string{
+	"application/pdf": ".pdf",
+	"image/jpeg":      ".jpg",
+	"image/png":       ".png",
 }
 
-func NewOrdersHandler(db *pgxpool.Pool) OrdersHandler {
-	return OrdersHandler{db: db}
+type OrdersHandler struct {
+	db      *pgxpool.Pool
+	storage *storage.Service
+}
+
+func NewOrdersHandler(db *pgxpool.Pool, storageService *storage.Service) OrdersHandler {
+	return OrdersHandler{db: db, storage: storageService}
+}
+
+type orderAttachment struct {
+	file     io.Reader
+	s3Key    string
+	filename string
+	mimeType string
+	size     int64
+}
+
+// validateAttachments checks every file before anything is uploaded. It returns a
+// message for the form when a file is refused.
+func validateAttachments(files []ht.MultipartFile) ([]orderAttachment, string) {
+	if len(files) > maxAttachmentCount {
+		return nil, fmt.Sprintf("You can attach at most %d files. Choose your files again.", maxAttachmentCount)
+	}
+
+	attachments := make([]orderAttachment, 0, len(files))
+	for _, f := range files {
+		// Keep only the file's own name, some clients send a full path.
+		filename := path.Base(strings.ReplaceAll(f.Name, `\`, "/"))
+		if utf8.RuneCountInString(filename) > maxAttachmentNameSize {
+			filename = string([]rune(filename)[:maxAttachmentNameSize])
+		}
+
+		if f.Size > maxAttachmentSize {
+			return nil, fmt.Sprintf("%q is larger than 10 MB. Choose your files again.", filename)
+		}
+
+		// Sniff the actual content type from the first 512 bytes — do not trust the browser header.
+		sniffBuf := make([]byte, 512)
+		n, err := io.ReadFull(f.File, sniffBuf)
+		if err != nil && !errors.Is(err, io.EOF) && !errors.Is(err, io.ErrUnexpectedEOF) {
+			return nil, fmt.Sprintf("%q could not be read. Choose your files again.", filename)
+		}
+
+		mimeType, _, _ := mime.ParseMediaType(http.DetectContentType(sniffBuf[:n]))
+		if _, allowed := attachmentExtensions[mimeType]; !allowed {
+			return nil, fmt.Sprintf("%q must be a PDF, JPG or PNG file. Choose your files again.", filename)
+		}
+
+		attachments = append(attachments, orderAttachment{
+			file:     io.MultiReader(bytes.NewReader(sniffBuf[:n]), f.File),
+			filename: filename,
+			mimeType: mimeType,
+			size:     f.Size,
+		})
+	}
+
+	return attachments, ""
+}
+
+// uploadAttachments stores the files and fills in their keys. Attachments that were
+// uploaded stay in the slice even on error, so the caller can delete them.
+func (h OrdersHandler) uploadAttachments(ctx context.Context, consultationID string, attachments []orderAttachment) error {
+	for i := range attachments {
+		a := &attachments[i]
+
+		// The S3 client needs a seekable body to retry, so the file is buffered.
+		data, err := io.ReadAll(io.LimitReader(a.file, maxAttachmentSize))
+		if err != nil {
+			return fmt.Errorf("failed to read attachment %q: %w", a.filename, err)
+		}
+		a.size = int64(len(data))
+
+		// The name in storage is generated: the patient's filename is never part of a path.
+		key := fmt.Sprintf("consultations/%s/%s%s", consultationID, uuid.New().String(), attachmentExtensions[a.mimeType])
+		if err := h.storage.Upload(ctx, key, bytes.NewReader(data), a.size, a.mimeType); err != nil {
+			return fmt.Errorf("failed to upload attachment: %w", err)
+		}
+		a.s3Key = key
+	}
+
+	return nil
+}
+
+func (h OrdersHandler) deleteAttachments(ctx context.Context, attachments []orderAttachment) {
+	// Still has to run when the request that failed was cancelled.
+	ctx = context.WithoutCancel(ctx)
+	for _, a := range attachments {
+		if a.s3Key == "" {
+			continue
+		}
+		if err := h.storage.Delete(ctx, a.s3Key); err != nil {
+			log.Logger.Error("failed to delete orphaned S3 object", "key", a.s3Key, "error", err)
+		}
+	}
 }
 
 type orderDoctor struct {
@@ -65,12 +168,13 @@ type consultationOrder struct {
 	MedicationErr     string
 	AllergiesErr      string
 	TermsAcceptedErr  string
+	AttachmentsErr    string
 }
 
 func (o consultationOrder) Valid() bool {
 	return o.PatientNameErr == "" && o.PatientSurnameErr == "" && o.PatientAgeErr == "" &&
 		o.PatientEmailErr == "" && o.PatientPhoneErr == "" && o.MedicalProblemErr == "" &&
-		o.DiagnosisErr == "" && o.MedicationErr == "" && o.AllergiesErr == "" && o.TermsAcceptedErr == ""
+		o.DiagnosisErr == "" && o.MedicationErr == "" && o.AllergiesErr == "" && o.TermsAcceptedErr == "" && o.AttachmentsErr == ""
 }
 
 // validate fills the error fields. The name and phone can't contain line breaks
@@ -185,13 +289,34 @@ func (h OrdersHandler) WrittenOrderSubmit(ctx context.Context, request *api.Writ
 	}
 	order.validate()
 
+	attachments, attachmentsErr := validateAttachments(request.Attachments)
+	order.AttachmentsErr = attachmentsErr
+
 	if !order.Valid() {
+		// A browser can't keep chosen files when the form is shown again.
+		if order.AttachmentsErr == "" && len(request.Attachments) > 0 {
+			order.AttachmentsErr = "Your files were not saved. Choose them again."
+		}
+
 		var buff bytes.Buffer
 
 		return &api.R200{Data: &buff}, WrittenOrderHtml(doctor, order).Render(ctx, &buff)
 	}
 
 	consultationID := uuid.New().String()
+
+	// Files go to storage before the transaction opens, so a slow upload doesn't hold
+	// a database connection. If anything fails later, the defer removes them again.
+	committed := false
+	defer func() {
+		if !committed {
+			h.deleteAttachments(ctx, attachments)
+		}
+	}()
+
+	if err := h.uploadAttachments(ctx, consultationID, attachments); err != nil {
+		return nil, err
+	}
 
 	tx, err := h.db.Begin(ctx)
 	if err != nil {
@@ -247,9 +372,25 @@ func (h OrdersHandler) WrittenOrderSubmit(ctx context.Context, request *api.Writ
 		return nil, fmt.Errorf("failed to insert consultation details: %w", err)
 	}
 
+	for _, a := range attachments {
+		if _, err = tx.Exec(ctx, `
+			INSERT INTO consultation_attachments (consultation_id, s3_key, original_filename, content_type, size_bytes)
+			VALUES (@consultation_id, @s3_key, @original_filename, @content_type, @size_bytes)
+		`, pgx.NamedArgs{
+			"consultation_id":   consultationID,
+			"s3_key":            a.s3Key,
+			"original_filename": a.filename,
+			"content_type":      a.mimeType,
+			"size_bytes":        a.size,
+		}); err != nil {
+			return nil, fmt.Errorf("failed to insert attachment: %w", err)
+		}
+	}
+
 	if err = tx.Commit(ctx); err != nil {
 		return nil, fmt.Errorf("failed to commit consultation: %w", err)
 	}
+	committed = true
 
 	return &api.R303{Location: api.NewOptString("/order-submitted")}, nil
 }

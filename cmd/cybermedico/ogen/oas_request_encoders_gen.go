@@ -290,6 +290,16 @@ func encodeWrittenOrderSubmitRequest(
 		}
 	}
 	body, boundary := ht.CreateMultipartBody(func(w *multipart.Writer) error {
+		if err := func() error {
+			for idx, val := range request.Attachments {
+				if err := val.WriteMultipart("attachments", w); err != nil {
+					return errors.Wrapf(err, "file [%d]", idx)
+				}
+			}
+			return nil
+		}(); err != nil {
+			return errors.Wrap(err, "write \"attachments\"")
+		}
 		if err := q.WriteMultipart(w); err != nil {
 			return errors.Wrap(err, "write multipart")
 		}
