@@ -12,8 +12,11 @@ hurl = "8.1.0"
 "npm:run-pty" = "6.0.2"
 
 [tasks."docker:up"]
-description = "Start PostgreSQL, MinIO and Mailpit"
-run = "docker compose --env-file resources/config/cybermedico/compose.env up --detach --wait"
+description = "Start PostgreSQL, MinIO and Mailpit, and create the storage buckets"
+run = [
+  "docker compose --env-file resources/config/cybermedico/compose.env up --detach --wait",
+  "docker compose --env-file resources/config/cybermedico/compose.env run --rm minio-init",
+]
 
 [tasks."docker:down"]
 description = "Stop PostgreSQL, MinIO and Mailpit"

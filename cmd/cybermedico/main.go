@@ -8,6 +8,7 @@ import (
 	"cybermedico/cmd/cybermedico/api/util"
 	"cybermedico/cmd/cybermedico/email"
 	"cybermedico/cmd/cybermedico/ogen"
+	"cybermedico/cmd/cybermedico/storage"
 	"cybermedico/workers"
 	"embed"
 	stderrors "errors"
@@ -52,6 +53,10 @@ func main() {
 	defer dbPool.Close()
 
 	mailer := initializeMailer()
+
+	// Nothing uses the service until attachment uploads, but starting it already
+	// fails fast when the buckets are not accessible.
+	initializeStorage(ctx)
 
 	riverClient := initializeRiver(ctx, dbPool, &mailer)
 	defer shutdownRiver(ctx, riverClient)
@@ -259,6 +264,26 @@ func initializeMailer() email.Emailer {
 	log.Logger.Info("Initialized mailer", "smtp_address", mailer.Address, "sender_email", mailer.Sender.Email)
 
 	return mailer
+}
+
+func initializeStorage(ctx context.Context) *storage.Service {
+	svc, err := storage.New(ctx, storage.Config{
+		Endpoint:           os.Getenv("S3_ENDPOINT"),
+		Region:             os.Getenv("S3_REGION"),
+		Bucket:             os.Getenv("S3_BUCKET"),
+		AccessKey:          os.Getenv("S3_ACCESS_KEY"),
+		SecretKey:          os.Getenv("S3_SECRET_KEY"),
+		SignaturesBucket:   os.Getenv("S3_SIGNATURES_BUCKET"),
+		SignaturesKMSKeyID: os.Getenv("S3_SIGNATURES_KMS_KEY_ID"),
+	})
+	if err != nil {
+		log.Logger.Error("Failed to initialize storage service", "error", err)
+		panic(err)
+	}
+
+	log.Logger.Info("Initialized production-ready storage service")
+
+	return svc
 }
 
 func initializeRiver(ctx context.Context, dbPool *pgxpool.Pool, mailer *email.Emailer) *river.Client[pgx.Tx] {
