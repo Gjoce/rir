@@ -360,12 +360,14 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService) *
 	htmlServer, err := ogen.NewServer(struct {
 		html.RootHandler
 		html.SpecialistsHandler
+		html.OrdersHandler
 		html.ThemeHandler
 		html.AuthHandler
 		html.DashboardHandler
 	}{
 		html.NewRootHandler(dbPool),
 		html.NewSpecialistsHandler(dbPool),
+		html.NewOrdersHandler(dbPool),
 		html.ThemeHandler{},
 		authHandler,
 		html.NewDashboardHandler(authService),
