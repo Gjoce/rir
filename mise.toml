@@ -8,6 +8,7 @@ caddy = "2.11.8"
 golangci-lint = "2.15.0"
 hurl = "8.1.0"
 "go:github.com/a-h/templ/cmd/templ" = "0.3.1100"
+"go:github.com/ogen-go/ogen/cmd/ogen" = "1.24.0"
 "npm:run-pty" = "6.0.2"
 
 [tasks."docker:up"]
@@ -17,6 +18,10 @@ run = "docker compose --env-file resources/config/cybermedico/compose.env up --d
 [tasks."docker:down"]
 description = "Stop PostgreSQL, MinIO and Mailpit"
 run = "docker compose --env-file resources/config/cybermedico/compose.env down"
+
+[tasks.generate]
+description = "Generate server code from the OpenAPI spec"
+run = "ogen --target ./cmd/cybermedico/ogen --package ogen --clean ./cmd/cybermedico/openapi.yml"
 
 [tasks."templ:watch"]
 description = "Regenerate Go code when .templ files change"
@@ -38,3 +43,7 @@ run = "run-pty % mise run templ:watch % mise run api:run % mise run caddy:run"
 [tasks.lint]
 description = "Run golangci-lint and apply fixes"
 run = "golangci-lint run ./... --fix"
+
+[tasks."test:hurl"]
+description = "Run the HTTP tests against the running API"
+run = "hurl --test --variable host=http://localhost:8080 tests/hurl"

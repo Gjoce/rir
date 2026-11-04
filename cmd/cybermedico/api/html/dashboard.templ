@@ -1,0 +1,12 @@
+package html
+
+import "cybermedico/layouts"
+
+templ DashboardHtml() {
+    @layouts.Dashboard(nil) {
+        <hgroup>
+            <h2>Dashboard</h2>
+            <p>This is the main dashboard view of the platform</p>
+        </hgroup>
+    }
+}

@@ -68,6 +68,10 @@ url = "https://dl.google.com/go/go1.27.3.windows-amd64.zip"
 version = "0.3.1100"
 backend = "go:github.com/a-h/templ/cmd/templ"
 
+[[tools."go:github.com/ogen-go/ogen/cmd/ogen"]]
+version = "1.24.0"
+backend = "go:github.com/ogen-go/ogen/cmd/ogen"
+
 [[tools.golangci-lint]]
 version = "2.15.0"
 backend = "aqua:golangci/golangci-lint"

@@ -1,0 +1,49 @@
+package layouts
+
+templ head() {
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="color-scheme" content="light dark">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yohns/picocss@2.2.10/css/pico.azure.min.css">
+        <title>CyberMedico</title>
+        <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.2/bundles/datastar.js"></script>
+        <style>
+        aside nav li {
+            width: 100%;
+        }
+
+        aside nav a {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        aside nav a svg {
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+        }
+
+        aside nav .nav-section-label {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0.45;
+            padding: 0.25rem 0 0.1rem 0;
+        }
+
+        hr.custom {
+            margin: var(--pico-form-element-spacing-vertical) auto;
+            width: 80%;
+            border-radius: var(--pico-border-radius);
+            border: 2px solid var(--pico-contrast-background);
+            height: 3px;
+        }
+        </style>
+    </head>
+}

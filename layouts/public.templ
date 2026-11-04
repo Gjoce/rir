@@ -1,0 +1,23 @@
+package layouts
+
+import (
+    "cybermedico/cmd/cybermedico/api/util"
+    "cybermedico/components"
+)
+
+// Public is the shell for visitors without an account, such as patients ordering
+// a consultation. It has the top bar but no sidebar.
+templ Public() {
+    <!DOCTYPE html>
+    <html lang="en" if util.GetTheme(ctx) != "auto" { data-theme={ util.GetTheme(ctx) } }>
+        @head()
+        <body class="container">
+            <header>
+                @components.Navbar()
+            </header>
+            <main>
+                { children... }
+            </main>
+        </body>
+    </html>
+}
