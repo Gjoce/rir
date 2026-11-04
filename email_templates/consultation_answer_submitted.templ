@@ -1,0 +1,48 @@
+package email_templates
+
+templ ConsultationAnswerSubmitted(patientName string, doctorName string, opinionHTML string, unsubscribeURL string, isVideo bool) {
+    if isVideo {
+        @EmailHead("Written opinion for your video consultation", "en") {
+            @content(patientName, doctorName, opinionHTML, unsubscribeURL, isVideo)
+        }
+    } else {
+        @EmailHead("Answer to your written consultation", "en") {
+            @content(patientName, doctorName, opinionHTML, unsubscribeURL, isVideo)
+        }
+    }
+}
+
+templ content(patientName string, doctorName string, opinionHTML string, unsubscribeURL string, isVideo bool) {
+    <div class="title">
+        if isVideo {
+            Written opinion for your video consultation
+        } else {
+            Answer to your written consultation
+        }
+    </div>
+    <div class="content">
+        <p>Dear <strong>{ patientName }</strong>,</p>
+
+        if isVideo {
+            <p>Thank you for using the <strong>CyberMedico</strong> platform for your video consultation.</p>
+            <p>Below is the <strong>written opinion</strong> from doctor <strong>{ doctorName }</strong> regarding your condition:</p>
+        } else {
+            <p>Thank you for using the written consultation service on the <strong>CyberMedico</strong> platform.</p>
+            <p>Below is the <strong>answer and opinion</strong> from doctor <strong>{ doctorName }</strong> based on your question:</p>
+        }
+
+        <div class="opinion-box">
+            @templ.Raw(opinionHTML)
+        </div>
+
+        <p>If you have further questions, feel free to contact us at <a href="mailto:info@cybermedico.net">info@cybermedico.net</a>.</p>
+        <p>We would be very grateful if you could take a few moments to rate your consultation.</p>
+    </div>
+
+    <div class="button-wrapper">
+        <a href="https://www.trustpilot.com/evaluate/cybermedico.net" class="button">Rate our service</a>
+    </div>
+
+    @EmailHelper()
+    @EmailFooter()
+}

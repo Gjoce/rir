@@ -1,0 +1,92 @@
+package email_templates
+
+import "fmt"
+import "time"
+
+templ EmailHead(title string, lang string) {
+    <!DOCTYPE html>
+    <html lang={ func() string { if lang == "" { return "en" } ; return lang }() }>
+        <head>
+            <meta charset="UTF-8">
+            <title>{ title }</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body { margin: 0; padding: 0; background-color: #f4f6f8; font-family: 'Segoe UI', sans-serif; color: #2c3e50; }
+                .wrapper { padding: 40px 15px; }
+                .email-wrapper { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 35px 30px; border-radius: 12px; }
+                .logo { text-align: center; margin-bottom: 10px; }
+                .logo img { max-width: 180px; height: auto; }
+                .title { font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 25px; color: #1a73e8; }
+                .content { font-size: 15px; line-height: 1.7; }
+                .opinion-box { background-color: #e8f4fc; padding: 20px; border-radius: 6px; margin: 20px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 14px; white-space: pre-line; }
+                .credentials-box { background-color: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #1a73e8; }
+                .credential-row { margin: 14px 0; }
+                .credential-label { font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+                .credential-value { font-family: monospace; font-size: 15px; background: #e8f4fc; padding: 6px 10px; border-radius: 4px; display: inline-block; margin-top: 4px; letter-spacing: 0.08em; }
+                .warning-box { background-color: #fff3cd; padding: 15px 18px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #ffc107; font-size: 14px; }
+                .button-wrapper { text-align: center; margin: 30px 0; }
+                .button { background-color: #1a73e8; color: white; padding: 14px 28px; border-radius: 6px; font-size: 16px; text-decoration: none; display: inline-block; }
+                .footer { text-align: center; font-size: 12px; color: #7a7a7a; margin-top: 35px; }
+                a { color: #1a73e8; text-decoration: none; }
+                .datetime-block { font-size: 15px; text-align: center; margin: 30px 0; color: #2c3e50; }
+                .datetime-block span { font-size: 20px; font-weight: bold; display: block; margin-top: 6px; }
+                .info-box { background-color: #f1f5f9; padding: 15px 20px; border-radius: 6px; margin: 20px 0; font-size: 14px; }
+                .info-box p { margin: 6px 0; }
+                .highlight { font-size: 16px; font-weight: bold; color: #2c3e50; margin: 20px 0; }
+            </style>
+        </head>
+        <body>
+            <div class="wrapper">
+                <div class="email-wrapper">
+                    <div class="logo">
+                        <img src="../cmd/cybermedico/static/email_logo.png" alt="CyberMedico Logo"/>
+                    </div>
+                    { children... }
+                </div>
+            </div>
+        </body>
+    </html>
+}
+
+templ EmailFooter() {
+    <div class="footer">
+        © { fmt.Sprint(time.Now().Year()) } CyberMedico DOOEL. All rights reserved.<br/>
+        <a href="https://www.cybermedico.net">www.cybermedico.net</a>
+    </div>
+}
+
+templ EmailHelper() {
+    <div class="content">
+        <p>If you have any technical or administrative questions, feel free to contact us at <a href="mailto:info@cybermedico.net">info@cybermedico.net</a>.</p>
+        <p>Kind regards,<br/>CyberMedico Administration Team</p>
+    </div>
+}
+
+templ EmailLogin(loginLink string) {
+    <div class="button-wrapper">
+        <a href={ templ.SafeURL(loginLink) } class="button">Log in</a>
+    </div>
+}
+
+templ EmailVideoJoin(JoinURL string) {
+    <div class="button-wrapper">
+        <a href={ templ.SafeURL(JoinURL) } class="button">Join the video call</a>
+    </div>
+}
+
+templ EmailConsultationInfo(patientName, emergencyStatus string) {
+    <div class="info-box">
+        <p><strong>Patient:</strong> { patientName }</p>
+        <p><strong>Consultation type:</strong> Written consultation</p>
+        <p><strong>Urgent consultation:</strong> { emergencyStatus }</p>
+    </div>
+}
+
+templ EmailConsultationInfoDoctor(patientName, emergencyStatus, preferredTime string) {
+    <div class="info-box">
+        <p><strong>Patient:</strong> { patientName }</p>
+        <p><strong>Consultation type:</strong> Video consultation</p>
+        <p><strong>Urgent consultation:</strong> { emergencyStatus }</p>
+        <p><strong>Patient's preferred time:</strong> { preferredTime }</p>
+    </div>
+}
