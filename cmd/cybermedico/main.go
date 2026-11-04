@@ -369,6 +369,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 		html.ThemeHandler
 		html.AuthHandler
 		html.DashboardHandler
+		html.ConsultationsHandler
 	}{
 		html.NewRootHandler(dbPool),
 		html.NewSpecialistsHandler(dbPool),
@@ -376,6 +377,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 		html.ThemeHandler{},
 		authHandler,
 		html.NewDashboardHandler(authService),
+		html.NewConsultationsHandler(dbPool, authService),
 	},
 		authHandler,
 		ogen.WithErrorHandler(errors.ErrorHandler),
