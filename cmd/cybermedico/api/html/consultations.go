@@ -695,8 +695,9 @@ func (h ConsultationsHandler) ConsultationAnswerSubmit(ctx context.Context, requ
 }
 
 const (
-	maxScheduleAhead       = 72 * time.Hour
-	maxScheduleAheadUrgent = 24 * time.Hour
+	maxScheduleAhead        = 72 * time.Hour
+	maxScheduleAheadUrgent  = 24 * time.Hour
+	videoCallReminderBefore = 1 * time.Hour
 )
 
 type ScheduleConsultation struct {
@@ -887,6 +888,17 @@ func (h ConsultationsHandler) ConsultationScheduleSubmit(ctx context.Context, re
 
 	if _, err = h.riverClient.InsertTx(ctx, tx, workers.ScheduledVideoEmailArgs{ConsultationID: params.ID.String()}, &river.InsertOpts{MaxAttempts: 5}); err != nil {
 		return nil, fmt.Errorf("failed to enqueue scheduled video email: %w", err)
+	}
+
+	// A call less than an hour away gets no reminder: the patient has only just
+	// received the email above, and the reminder would say about one hour.
+	if remindAt := scheduledAt.Add(-videoCallReminderBefore); remindAt.After(time.Now()) {
+		if _, err = h.riverClient.InsertTx(ctx, tx, workers.VideoCallReminderArgs{ConsultationID: params.ID.String()}, &river.InsertOpts{
+			ScheduledAt: remindAt,
+			MaxAttempts: 5,
+		}); err != nil {
+			return nil, fmt.Errorf("failed to enqueue video call reminder: %w", err)
+		}
 	}
 
 	if err = tx.Commit(ctx); err != nil {

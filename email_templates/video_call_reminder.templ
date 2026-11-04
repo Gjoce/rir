@@ -1,0 +1,24 @@
+package email_templates
+
+templ VideoConsultationReminder(doctorName string, dateTime string, joinLink string) {
+    @EmailHead("Reminder: your video consultation", "en") {
+        <div class="title">Your video consultation starts in about 1 hour</div>
+
+        <div class="content">
+            <p>Hello,</p>
+            <p>This is a reminder that your video consultation with <strong>{ doctorName }</strong> starts in about one hour.</p>
+        </div>
+
+        <div class="datetime-block">
+            Scheduled for:<br/>
+            <span>{ dateTime }</span>
+        </div>
+
+        <div class="content" style="text-align: center;">
+            <p>Please be somewhere quiet with a good internet connection. Use the button below to join the call.</p>
+        </div>
+        @EmailVideoJoin(joinLink)
+        @EmailHelper()
+        @EmailFooter()
+    }
+}
