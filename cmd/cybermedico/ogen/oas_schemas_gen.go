@@ -208,6 +208,7 @@ func (s *DefaultStatusCode) SetResponse(val Default) {
 	s.Response = val
 }
 
+func (*DefaultStatusCode) consultationFormRes()     {}
 func (*DefaultStatusCode) consultationsFormRes()    {}
 func (*DefaultStatusCode) dashboardRes()            {}
 func (*DefaultStatusCode) loginRes()                {}
@@ -357,6 +358,7 @@ func (s R200) Read(p []byte) (n int, err error) {
 	return s.Data.Read(p)
 }
 
+func (*R200) consultationFormRes()     {}
 func (*R200) consultationsFormRes()    {}
 func (*R200) dashboardRes()            {}
 func (*R200) loginRes()                {}

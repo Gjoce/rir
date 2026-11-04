@@ -43,6 +43,14 @@ func ResponseFromContext(ctx context.Context) http.ResponseWriter {
 	return w
 }
 
+func Deref[A any](value *A, defaultValue A) A {
+	if value == nil {
+		return defaultValue
+	}
+
+	return *value
+}
+
 func GetUserID(ctx context.Context) string {
 	userID, _ := ctx.Value(UserIDContextKey).(string)
 

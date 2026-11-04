@@ -217,4 +217,29 @@ func CountdownTimer(config CountdownConfig) templ.Component {
 	})
 }
 
+func CountdownScript() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<script>\n        (function() {\n            function formatTimeLeft(expiresAt) {\n                if (!expiresAt) {\n                    return \"-\";\n                }\n                const then = new Date(expiresAt);\n                if (Number.isNaN(then.valueOf())) {\n                    return \"-\";\n                }\n                const now = new Date();\n                if (then < now) {\n                    return \"Expired\";\n                }\n\n                const durationMs = then - now;\n                const durationSeconds = Math.floor(durationMs / 1000);\n\n                const days = Math.floor(durationSeconds / 86400);\n                const hours = Math.floor(durationSeconds / 3600) % 24;\n                const minutes = Math.floor(durationSeconds / 60) % 60;\n                const seconds = durationSeconds % 60;\n\n                if (days > 0) {\n                    return `${days}d ${hours}h ${minutes}m`;\n                } else if (hours > 0) {\n                    return `${hours}h ${minutes}m ${seconds}s`;\n                } else if (minutes > 0) {\n                    return `${minutes}m ${seconds}s`;\n                } else {\n                    return `${seconds}s`;\n                }\n            }\n\n            function updateCountdowns() {\n                document.querySelectorAll('.countdown-timer[data-expires-at]').forEach(function(el) {\n                    el.textContent = formatTimeLeft(el.dataset.expiresAt);\n                });\n            }\n\n            updateCountdowns();\n            setInterval(updateCountdowns, 1000);\n        })();\n    </script>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
 var _ = templruntime.GeneratedTemplate

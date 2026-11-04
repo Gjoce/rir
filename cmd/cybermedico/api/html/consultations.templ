@@ -2,6 +2,7 @@ package html
 
 import (
     "cybermedico/layouts"
+    "cybermedico/cmd/cybermedico/api/util"
     "fmt"
     "cybermedico/components"
     "encoding/json"
@@ -85,50 +86,7 @@ templ ConsultationsForm(comp templ.Component, currentType string, canViewNotAtte
                 </div>
             </div>
             @comp
-            <script>
-                (function() {
-                    function formatTimeLeft(expiresAt) {
-                        if (!expiresAt) {
-                            return "-";
-                        }
-                        const then = new Date(expiresAt);
-                        if (Number.isNaN(then.valueOf())) {
-                            return "-";
-                        }
-                        const now = new Date();
-                        if (then < now) {
-                            return "Expired";
-                        }
-
-                        const durationMs = then - now;
-                        const durationSeconds = Math.floor(durationMs / 1000);
-
-                        const days = Math.floor(durationSeconds / 86400);
-                        const hours = Math.floor(durationSeconds / 3600) % 24;
-                        const minutes = Math.floor(durationSeconds / 60) % 60;
-                        const seconds = durationSeconds % 60;
-
-                        if (days > 0) {
-                            return `${days}d ${hours}h ${minutes}m`;
-                        } else if (hours > 0) {
-                            return `${hours}h ${minutes}m ${seconds}s`;
-                        } else if (minutes > 0) {
-                            return `${minutes}m ${seconds}s`;
-                        } else {
-                            return `${seconds}s`;
-                        }
-                    }
-
-                    function updateCountdowns() {
-                        document.querySelectorAll('.countdown-timer[data-expires-at]').forEach(function(el) {
-                            el.textContent = formatTimeLeft(el.dataset.expiresAt);
-                        });
-                    }
-
-                    updateCountdowns();
-                    setInterval(updateCountdowns, 1000);
-                })();
-            </script>
+            @components.CountdownScript()
         </article>
     }
 }
@@ -207,4 +165,205 @@ templ ConsultationsSSE(consultations []Consultations, filters ConsultationFilter
             </div>
             }
         </div>
+}
+
+templ ConsultationFormHtml(consultation Consultation, role string, canAnswerConsultation, canJoinVideoCall bool) {
+    @layouts.Dashboard(consultationActions(consultation, role, canAnswerConsultation, canJoinVideoCall)) {
+        @components.HeadingGroup(components.Config{
+            Description: "Detailed information about the consultation, including patient details, medical information, attachments, and timestamps.",
+            Breadcrumbs: []components.Breadcrumb{
+                {Title: "Consultations", URL: "/consultations"},
+                {Title: consultation.PatientName},
+            },
+            ScheduledAt: func() string {
+                if consultation.ScheduledAt != nil && consultation.ConsultationStatus == "scheduled" {
+                    return consultation.ScheduledAt.Format("02-01-2006 15:04")
+                }
+                return ""
+            }(),
+        })
+        <article>
+            if consultation.ConsultationStatus == "pending" || consultation.ConsultationStatus == "scheduled" {
+                <p>
+                    Time left:
+                    <strong>
+                        @components.CountdownTimer(components.CountdownConfig{
+                            ExpiresAt:                  consultation.ExpiresAt,
+                            VideoExpiresAt:             consultation.VideoExpiresAt,
+                            RequiresResponseBySchedule: consultation.VideoRequiresResponseBy,
+                            ConsultationID:             consultation.ID,
+                            ConsultationType:           consultation.ConsultationType,
+                            ConsultationStatus:         consultation.ConsultationStatus,
+                        })
+                    </strong>
+                </p>
+                @components.CountdownScript()
+            }
+            <div class="grid">
+                <div>
+                    @components.Input(components.InputConfig{
+                        Label: "Patient name",
+                        Value: consultation.PatientName,
+                        Type: components.TextInput,
+                        ReadOnly: true,
+                    })
+                    @components.Input(components.InputConfig{
+                        Label: "Patient age",
+                        Value: fmt.Sprintf("%d", consultation.PatientAge),
+                        Type: components.NumberInput,
+                        ReadOnly: true,
+                    })
+                    @components.Input(components.InputConfig{
+                        Label: "Urgent",
+                        Value: fmt.Sprintf("%t", consultation.Urgent),
+                        Type: components.TextInput,
+                        ReadOnly: true,
+                    })
+                    @components.Input(components.InputConfig{
+                        Label: "Consultation type",
+                        Value: consultationType(consultation.ConsultationType),
+                        Type: components.TextInput,
+                        ReadOnly: true,
+                    })
+                </div>
+                <div>
+                    @components.Input(components.InputConfig{
+                        Label: "Patient surname",
+                        Value: consultation.PatientSurname,
+                        Type: components.TextInput,
+                        ReadOnly: true,
+                    })
+                    @components.Input(components.InputConfig{
+                        Label: "Patient place of living",
+                        Value: util.Deref(consultation.PatientPlaceOfLiving, "/"),
+                        Type: components.TextInput,
+                        ReadOnly: true,
+                    })
+                    @components.Input(components.InputConfig{
+                        Label: "Translator needed",
+                        Value: fmt.Sprintf("%t", consultation.NeedTranslator),
+                        Type: components.TextInput,
+                        ReadOnly: true,
+                    })
+                    @components.Input(components.InputConfig{
+                        Label: "Consultation status",
+                        Value: consultationStatus(consultation.ConsultationStatus),
+                        Type: components.TextInput,
+                        ReadOnly: true,
+                    })
+                </div>
+            </div>
+        </article>
+            @components.HeadingGroup(components.Config{
+                Description: "Medical information provided by the patient during the consultation request, including symptoms, diagnosis, allergies, and medications.",
+                Breadcrumbs: []components.Breadcrumb{
+                    {Title: "Medical information"},
+                },
+            })
+        <article>
+            @components.TextArea(components.TextAreaConfig{
+                Label: "Medical problem",
+                Value: consultation.MedicalProblem,
+                ReadOnly: true,
+            })
+            @components.TextArea(components.TextAreaConfig{
+                Label: "Patient diagnosis",
+                Value: util.Deref(consultation.PatientDiagnosis, "/"),
+                ReadOnly: true,
+            })
+            @components.TextArea(components.TextAreaConfig{
+                Label: "Patient allergies",
+                Value: util.Deref(consultation.Allergies, "/"),
+                ReadOnly: true,
+            })
+            @components.TextArea(components.TextAreaConfig{
+                Label: "Patient medications",
+                Value: util.Deref(consultation.Medication, "/"),
+                ReadOnly: true,
+            })
+        </article>
+        if len(consultation.Attachments) > 0 {
+            @components.HeadingGroup(components.Config{
+                Description: "Attachments related to the consultation, such as medical reports, images, or documents provided by the patient.",
+                Breadcrumbs: []components.Breadcrumb{
+                    {Title: "Attachments"},
+                },
+            })
+            <article>
+                <ul>
+                    for _, v := range consultation.Attachments {
+                        <li><a href={ templ.URL(v.URL) }>{ v.Filename }</a></li>
+                    }
+                </ul>
+            </article>
+        }
+        @components.HeadingGroup(components.Config{
+            Description: "Metadata about the consultation.",
+            Breadcrumbs: []components.Breadcrumb{
+                {Title: "Metadata"},
+            },
+        })
+        <article>
+            <div class="grid">
+                <div>
+                    @components.Input(components.InputConfig{
+                        Label: "Created at",
+                        Value: consultation.CreatedAt.Format("02-01-2006 15:04"),
+                        Type: components.TextInput,
+                        ReadOnly: true,
+                    })
+                </div>
+                <div>
+                    @components.Input(components.InputConfig{
+                        Label: "Finished at",
+                        Value: func() string {
+                            if consultation.FinishedAt != nil {
+                                return consultation.FinishedAt.Format("02-01-2006 15:04")
+                            }
+                            return "/"
+                        }(),
+                        Type: components.TextInput,
+                        ReadOnly: true,
+                    })
+                </div>
+            </div>
+        </article>
+        if consultation.ConsultationStatus == "finished" && consultation.DoctorAnswer != nil {
+            @components.HeadingGroup(components.Config{
+                Breadcrumbs: []components.Breadcrumb{
+                    {Title: "Doctor's answer"},
+                },
+            })
+            <article>
+                @templ.Raw(*consultation.DoctorAnswer)
+            </article>
+        }
+    }
+}
+
+templ consultationActions(consultation Consultation, role string, canAnswer, canJoinVideoCall bool) {
+    if role == "doctor" && consultation.ConsultationStatus != "finished" {
+        if consultation.ConsultationStatus == "pending" && consultation.ConsultationType == "video" {
+            <ul>
+                <li>
+                    <a href={ templ.SafeURL(fmt.Sprintf("/consultations/%s/schedule", consultation.ID)) } role="button" class="secondary">Schedule</a>
+                </li>
+            </ul>
+        }
+        if canJoinVideoCall {
+            <ul>
+                <li>
+                    <a href={ templ.URL("/consultations/" + consultation.ID + "/video") } role="button">
+                        Join video consultation
+                    </a>
+                </li>
+            </ul>
+        } else if canAnswer {
+            <ul>
+                <li>
+                    <a href={ templ.SafeURL(fmt.Sprintf("/consultations/%s/answer", consultation.ID)) } role="button" class="secondary">Write answer</a>
+                </li>
+            </ul>
+        }
+    }
 }
