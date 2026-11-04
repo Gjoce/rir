@@ -1,0 +1,40 @@
+[settings]
+lockfile = true
+
+[tools]
+go = "1.27.3"
+node = "26.13.0"
+caddy = "2.11.8"
+golangci-lint = "2.15.0"
+hurl = "8.1.0"
+"go:github.com/a-h/templ/cmd/templ" = "0.3.1100"
+"npm:run-pty" = "6.0.2"
+
+[tasks."docker:up"]
+description = "Start PostgreSQL, MinIO and Mailpit"
+run = "docker compose --env-file resources/config/cybermedico/compose.env up --detach --wait"
+
+[tasks."docker:down"]
+description = "Stop PostgreSQL, MinIO and Mailpit"
+run = "docker compose --env-file resources/config/cybermedico/compose.env down"
+
+[tasks."templ:watch"]
+description = "Regenerate Go code when .templ files change"
+run = "templ generate --watch"
+
+[tasks."api:run"]
+description = "Run the API on http://localhost:8080"
+run = "go run ./cmd/cybermedico"
+
+[tasks."caddy:run"]
+description = "Serve the API on https://cybermedico.local"
+run = "caddy run --config resources/config/caddy/Caddyfile"
+
+[tasks.develop]
+description = "Start the containers, then run templ, the API and Caddy side by side"
+depends = ["docker:up"]
+run = "run-pty % mise run templ:watch % mise run api:run % mise run caddy:run"
+
+[tasks.lint]
+description = "Run golangci-lint and apply fixes"
+run = "golangci-lint run ./... --fix"

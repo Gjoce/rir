@@ -44,7 +44,7 @@ mise install
 mise run develop
 ```
 
-- `mise install` namesti točne različice orodij (Go, templ, golangci-lint, Hurl, Caddy), zapisane v `mise.toml`.
+- `mise install` namesti točne različice orodij (Go, Node, run-pty, templ, golangci-lint, Hurl, Caddy), zapisane v `mise.toml`.
 - `mise run develop` z enim ukazom zažene celotno razvojno okolje. Opravilo združuje manjša opravila, ki jih mise izvaja vzporedno:
 
 | Opravilo      | Kaj zažene                                                                                       |
