@@ -15,6 +15,68 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
+// ConsultationsFormParams is parameters of consultations_form operation.
+type ConsultationsFormParams struct {
+	DatastarRequest OptBool `json:",omitempty,omitzero"`
+}
+
+func unpackConsultationsFormParams(packed middleware.Parameters) (params ConsultationsFormParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "Datastar-Request",
+			In:   "header",
+		}
+		if v, ok := packed[key]; ok {
+			params.DatastarRequest = v.(OptBool)
+		}
+	}
+	return params
+}
+
+func decodeConsultationsFormParams(args [0]string, argsEscaped bool, r *http.Request) (params ConsultationsFormParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
+	// Decode header: Datastar-Request.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "Datastar-Request",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				var paramsDotDatastarRequestVal bool
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToBool(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotDatastarRequestVal = c
+					return nil
+				}(); err != nil {
+					return err
+				}
+				params.DatastarRequest.SetTo(paramsDotDatastarRequestVal)
+				return nil
+			}); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "Datastar-Request",
+			In:   "header",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
 // RootParams is parameters of root operation.
 type RootParams struct {
 	DatastarRequest OptBool `json:",omitempty,omitzero"`

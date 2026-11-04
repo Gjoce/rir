@@ -1,0 +1,210 @@
+package html
+
+import (
+    "cybermedico/layouts"
+    "fmt"
+    "cybermedico/components"
+    "encoding/json"
+)
+
+func consultationType(consultation string) string {
+	switch consultation {
+	case "video":
+		return "Video"
+	case "written":
+		return "Written"
+	default:
+		return consultation
+	}
+}
+
+func consultationStatus(consultation string) string {
+	switch consultation {
+	case "pending":
+		return "Pending"
+	case "scheduled":
+		return "Scheduled"
+    case "finished":
+        return "Finished"
+    case "not_attended":
+        return "Not attended"
+	default:
+		return consultation
+	}
+}
+
+templ ConsultationsForm(comp templ.Component, currentType string, canViewNotAttended bool) {
+    @layouts.Dashboard(nil) {
+        @components.HeadingGroup(components.Config{
+            Description: "View and manage your consultations. Click on a consultation to see details and take actions.",
+            Breadcrumbs: []components.Breadcrumb{
+                {Title: "Consultations"},
+            },
+        })
+        <article>
+            <div data-signals:type={ fmt.Sprintf("'%s'", currentType) } data-signals:page=1 style="margin-bottom: 2rem;">
+                <div class="grid" style="text-align: center;">
+                    <div>
+                        <button 
+                            data-on:click="$type = 'pending'; $page = 1; @get('/consultations')" 
+                            data-class:outline="$type !== 'pending'" 
+                            data-class:secondary="$type !== 'pending'" 
+                            class={ templ.KV("outline secondary", currentType != "pending") }>
+                            Active
+                        </button>
+                    </div>
+                    <div>
+                        <button 
+                            data-on:click="$type = 'scheduled'; $page = 1; @get('/consultations')" 
+                            data-class:outline="$type !== 'scheduled'" 
+                            data-class:secondary="$type !== 'scheduled'" 
+                            class={ templ.KV("outline secondary", currentType != "scheduled") }>
+                            Scheduled
+                        </button>
+                    </div>
+                    <div>
+                        <button 
+                            data-on:click="$type = 'finished'; $page = 1; @get('/consultations')" 
+                            data-class:outline="$type !== 'finished'" 
+                            data-class:secondary="$type !== 'finished'" 
+                            class={ templ.KV("outline secondary", currentType != "finished") }>
+                            Finished
+                        </button>
+                    </div>
+                    if canViewNotAttended {
+                        <div>
+                            <button 
+                                data-on:click="$type = 'not_attended'; $page = 1; @get('/consultations')" 
+                                data-class:outline="$type !== 'not_attended'" 
+                                data-class:secondary="$type !== 'not_attended'" 
+                                class={ templ.KV("outline secondary", currentType != "not_attended") }>
+                                    Not Attended
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+            @comp
+            <script>
+                (function() {
+                    function formatTimeLeft(expiresAt) {
+                        if (!expiresAt) {
+                            return "-";
+                        }
+                        const then = new Date(expiresAt);
+                        if (Number.isNaN(then.valueOf())) {
+                            return "-";
+                        }
+                        const now = new Date();
+                        if (then < now) {
+                            return "Expired";
+                        }
+
+                        const durationMs = then - now;
+                        const durationSeconds = Math.floor(durationMs / 1000);
+
+                        const days = Math.floor(durationSeconds / 86400);
+                        const hours = Math.floor(durationSeconds / 3600) % 24;
+                        const minutes = Math.floor(durationSeconds / 60) % 60;
+                        const seconds = durationSeconds % 60;
+
+                        if (days > 0) {
+                            return `${days}d ${hours}h ${minutes}m`;
+                        } else if (hours > 0) {
+                            return `${hours}h ${minutes}m ${seconds}s`;
+                        } else if (minutes > 0) {
+                            return `${minutes}m ${seconds}s`;
+                        } else {
+                            return `${seconds}s`;
+                        }
+                    }
+
+                    function updateCountdowns() {
+                        document.querySelectorAll('.countdown-timer[data-expires-at]').forEach(function(el) {
+                            el.textContent = formatTimeLeft(el.dataset.expiresAt);
+                        });
+                    }
+
+                    updateCountdowns();
+                    setInterval(updateCountdowns, 1000);
+                })();
+            </script>
+        </article>
+    }
+}
+
+templ ConsultationsSSE(consultations []Consultations, filters ConsultationFilters, pageCount int, showTimeLeft bool) {
+    {{ filtersJson, _ := json.Marshal(filters)}}
+    <div id="consultations-table" data-signals__ifmissing={ string(filtersJson) }>
+        if len(consultations) == 0 {
+            @components.MessageCard() {
+                <p>No consultations</p>
+            }
+        } else {
+            <div class="overflow-auto">
+                <table class="striped" style="white-space: nowrap;">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Patient Email</th>
+                            <th>Type</th>
+                            <th>Urgent</th>
+                            <th>Price</th>
+                            <th>Created At</th>
+                            if showTimeLeft {
+                                <th>Time Left</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        for _, consultation := range consultations {
+                            <tr data-on:click={ fmt.Sprintf("window.location='/consultations/%s'", consultation.ID)} style="cursor: pointer;">
+                                <td>{ consultation.PatientName } { consultation.PatientSurname }</td>
+                                <td> { consultation.DoctorDisplayName }</td>
+                                <td>{ consultation.PatientEmail }</td>
+                                <td>{ consultationType(consultation.ConsultationType) }</td>
+                                if consultation.Urgent {
+                                    <td>
+                                        <span class="badge-true">Yes</span>
+                                    </td>
+                                } else {
+                                    <td>
+                                        <span class="badge-false">No</span>
+                                    </td>
+                                }
+                                <td>{ consultation.Price } €</td>
+                                <td> { consultation.CreatedAt.Format("02-01-2006") }</td>
+                                 if showTimeLeft {
+                                    <td>
+                                        @components.CountdownTimer(components.CountdownConfig{
+                                            ExpiresAt:          consultation.ExpiresAt,
+                                            VideoExpiresAt:     consultation.VideoExpiresAt,
+                                            RequiresResponseBySchedule: consultation.VideoRequiresResponseBy,
+                                            ConsultationID:     consultation.ID,
+                                            ConsultationType:   consultation.ConsultationType,
+                                            ConsultationStatus: consultation.ConsultationStatus,
+                                        })
+                                    </td>
+                                 }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem; align-items: center;">
+                if filters.Page > 1 {
+                    <button data-on:click={ fmt.Sprintf("$page = %d; @get('/consultations')", filters.Page-1) } class="outline">
+                        Previous
+                    </button>
+                }
+                <span>Page { filters.Page } of { pageCount }</span>
+                if filters.Page < pageCount {
+                    <button data-on:click={ fmt.Sprintf("$page = %d; @get('/consultations')", filters.Page+1) } class="outline">
+                        Next
+                    </button>
+                }
+            </div>
+            }
+        </div>
+}

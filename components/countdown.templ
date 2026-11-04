@@ -1,0 +1,56 @@
+package components
+
+import (
+    "fmt"
+    "time"
+)
+
+type CountdownConfig struct {
+    ExpiresAt          *time.Time
+    VideoExpiresAt     *time.Time
+    RequiresResponseBySchedule *time.Time
+    ConsultationID     string
+    ConsultationType   string
+    ConsultationStatus string
+}
+
+func formatTimeLeft(t time.Time) string {
+    d := time.Until(t)
+    if d <= 0 {
+        return "Expired"
+    }
+    days := int(d / (24 * time.Hour))
+    hours := int(d/time.Hour) % 24
+    minutes := int(d/time.Minute) % 60
+    seconds := int(d/time.Second) % 60
+    switch {
+    case days > 0:
+        return fmt.Sprintf("%dd %dh %dm", days, hours, minutes)
+    case hours > 0:
+        return fmt.Sprintf("%dh %dm %ds", hours, minutes, seconds)
+    case minutes > 0:
+        return fmt.Sprintf("%dm %ds", minutes, seconds)
+    default:
+        return fmt.Sprintf("%ds", seconds)
+    }
+}
+
+templ CountdownTimer(config CountdownConfig) {
+    if config.ConsultationStatus == "pending" && config.ConsultationType == "written" {
+        if config.ExpiresAt == nil {
+            <span>/</span>
+        } else {
+            <span class="countdown-timer" data-expires-at={ config.ExpiresAt.Format(time.RFC3339) } data-consultation-id={ config.ConsultationID }>{ formatTimeLeft(*config.ExpiresAt) }</span>
+        }
+    } else if config.ConsultationStatus == "scheduled" && config.ConsultationType == "video" {
+        if config.VideoExpiresAt == nil {
+            <span>/</span>
+        } else {
+            <span class="countdown-timer" data-expires-at={ config.VideoExpiresAt.Format(time.RFC3339) } data-consultation-id={ config.ConsultationID }>{ formatTimeLeft(*config.VideoExpiresAt) }</span>
+        }
+    } else if config.ConsultationStatus == "pending" && config.ConsultationType == "video" {
+            <span class="countdown-timer" data-expires-at={ config.RequiresResponseBySchedule.Format(time.RFC3339) } data-consultation-id={ config.ConsultationID }>{ formatTimeLeft(*config.RequiresResponseBySchedule) }</span>
+    } else {
+        <span>/</span>
+    }
+}

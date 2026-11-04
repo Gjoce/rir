@@ -45,6 +45,22 @@ templ head() {
             height: 3px;
         }
 
+        .badge-true {
+          background-color: var(--pico-form-element-valid-border-color);
+          color: white;
+          padding: 4px 8px;
+          text-align: center;
+          border-radius: 5px;
+        }
+
+        .badge-false {
+            background-color: var(--pico-form-element-invalid-border-color);
+            color: white;
+            padding: 2px 6px;
+            text-align: center;
+            border-radius: var(--pico-border-radius);
+        }
+
         nav li :where(.breadcrumb-responsive) {
             display: inline-block;
             margin: calc(var(--pico-nav-link-spacing-vertical) * -1) calc(var(--pico-nav-link-spacing-horizontal) * -1);
