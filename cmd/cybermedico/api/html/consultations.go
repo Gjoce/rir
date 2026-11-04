@@ -5,20 +5,28 @@ import (
 	"context"
 	"cybermedico/authorization"
 	herrors "cybermedico/cmd/cybermedico/api/errors"
+	"cybermedico/cmd/cybermedico/api/log"
 	"cybermedico/cmd/cybermedico/api/util"
 	api "cybermedico/cmd/cybermedico/ogen"
 	"cybermedico/cmd/cybermedico/storage"
 	"errors"
 	"fmt"
+	"html"
 	"net/http"
+	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
-const consultationsPerPage = 10
+const (
+	consultationsPerPage = 10
+	maxAnswerLength      = 50000
+)
 
 type ConsultationsHandler struct {
 	db          *pgxpool.Pool
@@ -426,4 +434,198 @@ func (h ConsultationsHandler) ConsultationForm(ctx context.Context, params api.C
 	var buff bytes.Buffer
 
 	return &api.R200{Data: &buff}, ConsultationFormHtml(consultation, role, canAnswerConsultation, canJoinVideoCall).Render(ctx, &buff)
+}
+
+type answerConsultation struct {
+	ID               string
+	PatientName      string
+	PatientSurname   string
+	PatientAge       int
+	ConsultationType string
+	Urgent           bool
+	Price            float64
+	Answer           string
+	AnswerErr        string
+}
+
+func (a answerConsultation) Valid() bool {
+	return a.AnswerErr == ""
+}
+
+// cleanAnswer keeps only what the editor's toolbar can produce. The answer is shown
+// as HTML on the detail page and in the patient's email, so nothing else can stay in it.
+func cleanAnswer(answer string) string {
+	policy := bluemonday.NewPolicy()
+	policy.AllowElements("p", "br", "strong", "em", "u", "blockquote", "h1", "h2", "ol", "ul", "li")
+
+	return strings.TrimSpace(policy.Sanitize(answer))
+}
+
+// answerHasText reports whether a person would see any words: the editor's empty
+// state is markup such as <p><br></p>.
+func answerHasText(answer string) bool {
+	text := html.UnescapeString(bluemonday.StrictPolicy().Sanitize(answer))
+
+	return strings.TrimSpace(strings.ReplaceAll(text, " ", " ")) != ""
+}
+
+func (h ConsultationsHandler) ConsultationAnswerForm(ctx context.Context, params api.ConsultationAnswerFormParams) (api.ConsultationAnswerFormRes, error) {
+	var doctorID, consultationStatus, consultationType string
+	var scheduledAt *time.Time
+
+	err := h.db.QueryRow(ctx, `
+		SELECT c.doctor_id, c.consultation_status, c.consultation_type, vc.scheduled_at
+		FROM consultations c
+		LEFT JOIN video_consultations vc ON vc.consultation_id = c.id
+		WHERE c.id = @id
+	`, pgx.NamedArgs{"id": params.ID.String()}).Scan(&doctorID, &consultationStatus, &consultationType, &scheduledAt)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, herrors.HtmlError{Code: http.StatusNotFound, Msg: "Consultation not found", ButtonLink: "/consultations"}
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to query consultation owner: %w", err)
+	}
+
+	allowed, err := h.authService.IsAllowed(ctx, "answer_consultation", authorization.Target{
+		UserID:             doctorID,
+		ConsultationStatus: consultationStatus,
+		ConsultationType:   consultationType,
+		ScheduledAtPast:    scheduledAt != nil && scheduledAt.Before(time.Now()),
+	})
+	if err != nil {
+		return nil, err
+	}
+	if !allowed {
+		return nil, herrors.HtmlError{
+			Code:       http.StatusForbidden,
+			Msg:        "You don't have permission to answer this consultation",
+			ButtonLink: "/",
+		}
+	}
+
+	var consultation answerConsultation
+
+	query := `
+	SELECT id, patient_name, patient_surname, patient_age, consultation_type, urgent, price
+	FROM consultations
+	WHERE id = @id
+	`
+
+	err = h.db.QueryRow(ctx, query, pgx.NamedArgs{"id": params.ID.String()}).Scan(&consultation.ID, &consultation.PatientName, &consultation.PatientSurname, &consultation.PatientAge, &consultation.ConsultationType, &consultation.Urgent, &consultation.Price)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query consultation for answer: %w", err)
+	}
+
+	var buff bytes.Buffer
+
+	return &api.R200{
+		Data: &buff,
+	}, ConsultationAnswerForm(consultation).Render(ctx, &buff)
+}
+
+func (h ConsultationsHandler) ConsultationAnswerSubmit(ctx context.Context, request *api.ConsultationAnswerSubmitReq, params api.ConsultationAnswerSubmitParams) (api.ConsultationAnswerSubmitRes, error) {
+	var doctorID, consultationStatus, consultationType string
+	var scheduledAt *time.Time
+
+	err := h.db.QueryRow(ctx, `
+		SELECT c.doctor_id, c.consultation_status, c.consultation_type, vc.scheduled_at
+		FROM consultations c
+		LEFT JOIN video_consultations vc ON vc.consultation_id = c.id
+		WHERE c.id = @id
+	`, pgx.NamedArgs{"id": params.ID.String()}).Scan(&doctorID, &consultationStatus, &consultationType, &scheduledAt)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, herrors.HtmlError{Code: http.StatusNotFound, Msg: "Consultation not found", ButtonLink: "/consultations"}
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to query consultation owner: %w", err)
+	}
+
+	allowed, err := h.authService.IsAllowed(ctx, "answer_consultation", authorization.Target{
+		UserID:             doctorID,
+		ConsultationStatus: consultationStatus,
+		ConsultationType:   consultationType,
+		ScheduledAtPast:    scheduledAt != nil && scheduledAt.Before(time.Now()),
+	})
+	if err != nil {
+		return nil, err
+	}
+	if !allowed {
+		return nil, herrors.HtmlError{
+			Code:       http.StatusForbidden,
+			Msg:        "You don't have permission to answer this consultation",
+			ButtonLink: "/",
+		}
+	}
+
+	answer := cleanAnswer(request.Answer)
+
+	var answerCons answerConsultation
+	switch {
+	case !answerHasText(answer):
+		answerCons.AnswerErr = "Answer cannot be empty"
+	case utf8.RuneCountInString(answer) > maxAnswerLength:
+		answerCons.AnswerErr = fmt.Sprintf("Answer can have at most %d characters", maxAnswerLength)
+	}
+
+	r := util.RequestFromContext(ctx)
+	w := util.ResponseFromContext(ctx)
+
+	if !answerCons.Valid() {
+		sse := datastar.NewSSE(w, r)
+		if err := sse.PatchElementTempl(answerError(answerCons.AnswerErr)); err != nil {
+			return nil, fmt.Errorf("failed to patch answer error: %w", err)
+		}
+
+		return nil, herrors.ErrNoop
+	}
+
+	tx, err := h.db.Begin(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer func() {
+		if err := tx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+			log.Logger.Error("failed to rollback transaction", "error", err)
+		}
+	}()
+
+	// The status condition makes this safe against a double click or a second tab:
+	// only one request can finish the consultation, so a sent answer can't be replaced.
+	tag, err := tx.Exec(ctx, `
+		UPDATE consultations SET consultation_status = 'finished', finished_at = NOW()
+		WHERE id = @id AND consultation_status = @status
+	`, pgx.NamedArgs{"id": params.ID.String(), "status": consultationStatus})
+	if err != nil {
+		return nil, fmt.Errorf("failed to update consultation status: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return nil, herrors.HtmlError{Code: http.StatusConflict, Msg: "This consultation was already answered", ButtonLink: "/consultations"}
+	}
+
+	switch consultationType {
+	case "written":
+		_, err = tx.Exec(ctx, `
+			UPDATE written_consultations SET doctor_answer = @answer WHERE consultation_id = @id
+		`, pgx.NamedArgs{"id": params.ID.String(), "answer": answer})
+	case "video":
+		_, err = tx.Exec(ctx, `
+			UPDATE video_consultations SET doctor_answer_after_video = @answer WHERE consultation_id = @id
+		`, pgx.NamedArgs{"id": params.ID.String(), "answer": answer})
+	default:
+		return nil, fmt.Errorf("unsupported consultation type: %s", consultationType)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to update consultation answer: %w", err)
+	}
+
+	if err = tx.Commit(ctx); err != nil {
+		return nil, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	sse := datastar.NewSSE(w, r)
+	if err := sse.Redirectf("/consultations/%s", params.ID.String()); err != nil {
+		return nil, err
+	}
+
+	return nil, herrors.ErrNoop
 }
