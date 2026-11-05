@@ -1,6 +1,5 @@
 {
-	admin localhost:2600
-	http_port 8081
+	http_port 80
 	https_port 443
 	local_certs
 }

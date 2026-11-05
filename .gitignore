@@ -1,3 +1,4 @@
 /build/
 *.exe
 mise.local.toml
+.DS_Store
