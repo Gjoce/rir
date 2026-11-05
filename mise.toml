@@ -3,7 +3,6 @@ lockfile = true
 
 [tools]
 go = "1.27.3"
-node = "26.13.0"
 caddy = "2.11.8"
 golangci-lint = "2.15.0"
 hurl = "8.1.0"
@@ -14,10 +13,7 @@ opa = "1.22.0"
 
 [tasks."docker:up"]
 description = "Start PostgreSQL, MinIO and Mailpit, and create the storage buckets"
-run = [
-  "docker compose --env-file resources/config/cybermedico/compose.env up --detach --wait",
-  "docker compose --env-file resources/config/cybermedico/compose.env run --rm minio-init",
-]
+run = 'docker compose --env-file resources/config/cybermedico/compose.env up --detach --wait'
 
 [tasks."docker:down"]
 description = "Stop PostgreSQL, MinIO and Mailpit"
