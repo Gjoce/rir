@@ -425,19 +425,53 @@ func (h ConsultationsHandler) ConsultationForm(ctx context.Context, params api.C
 		return nil, err
 	}
 
-	canJoinVideoCall, err := h.authService.IsAllowed(ctx, "join_video_consultation", authorization.Target{
-		UserID:             doctorID,
-		ConsultationStatus: consultation.ConsultationStatus,
-		ConsultationType:   consultation.ConsultationType,
-		WithinJoinWindow:   consultation.ScheduledAt != nil && util.IsWithinJoinWindow(*consultation.ScheduledAt, time.Now()),
-	})
+	videoCall, err := h.videoCallEntry(ctx, doctorID, consultation, time.Now())
 	if err != nil {
 		return nil, err
 	}
 
 	var buff bytes.Buffer
 
-	return &api.R200{Data: &buff}, ConsultationFormHtml(consultation, role, canAnswerConsultation, canJoinVideoCall).Render(ctx, &buff)
+	return &api.R200{Data: &buff}, ConsultationFormHtml(consultation, role, canAnswerConsultation, videoCall).Render(ctx, &buff)
+}
+
+// VideoCallEntry is the join button on a video consultation.
+type VideoCallEntry struct {
+	// Show is true for the assigned doctor until the join window closes.
+	Show bool
+	// Open is true while the call can be entered.
+	Open bool
+	// OpensAt is when the call can first be entered.
+	OpensAt string
+}
+
+func (h ConsultationsHandler) videoCallEntry(ctx context.Context, doctorID string, consultation Consultation, now time.Time) (VideoCallEntry, error) {
+	if consultation.ScheduledAt == nil {
+		return VideoCallEntry{}, nil
+	}
+	scheduledAt := *consultation.ScheduledAt
+
+	target := authorization.Target{
+		UserID:             doctorID,
+		ConsultationStatus: consultation.ConsultationStatus,
+		ConsultationType:   consultation.ConsultationType,
+		WithinJoinWindow:   util.IsWithinJoinWindow(scheduledAt, now),
+	}
+
+	canView, err := h.authService.IsAllowed(ctx, "view_video_call", target)
+	if err != nil {
+		return VideoCallEntry{}, err
+	}
+	canJoin, err := h.authService.IsAllowed(ctx, "join_video_consultation", target)
+	if err != nil {
+		return VideoCallEntry{}, err
+	}
+
+	return VideoCallEntry{
+		Show:    canView && now.Before(scheduledAt.Add(util.JoinWindowAfter)),
+		Open:    canJoin,
+		OpensAt: util.FormatAppointmentTime(util.JoinWindowOpensAt(scheduledAt)),
+	}, nil
 }
 
 type answerConsultation struct {

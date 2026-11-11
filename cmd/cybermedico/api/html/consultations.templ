@@ -170,8 +170,8 @@ templ ConsultationsSSE(consultations []Consultations, filters ConsultationFilter
         </div>
 }
 
-templ ConsultationFormHtml(consultation Consultation, role string, canAnswerConsultation, canJoinVideoCall bool) {
-    @layouts.Dashboard(consultationActions(consultation, role, canAnswerConsultation, canJoinVideoCall)) {
+templ ConsultationFormHtml(consultation Consultation, role string, canAnswerConsultation bool, videoCall VideoCallEntry) {
+    @layouts.Dashboard(consultationActions(consultation, role, canAnswerConsultation, videoCall)) {
         @components.HeadingGroup(components.Config{
             Description: "Detailed information about the consultation, including patient details, medical information, attachments, and timestamps.",
             Breadcrumbs: []components.Breadcrumb{
@@ -344,7 +344,7 @@ templ ConsultationFormHtml(consultation Consultation, role string, canAnswerCons
     }
 }
 
-templ consultationActions(consultation Consultation, role string, canAnswer, canJoinVideoCall bool) {
+templ consultationActions(consultation Consultation, role string, canAnswer bool, videoCall VideoCallEntry) {
     if role == "doctor" && consultation.ConsultationStatus != "finished" {
         if consultation.ConsultationStatus == "pending" && consultation.ConsultationType == "video" {
             <ul>
@@ -353,13 +353,24 @@ templ consultationActions(consultation Consultation, role string, canAnswer, can
                 </li>
             </ul>
         }
-        if canJoinVideoCall {
+        if videoCall.Show {
             <ul>
                 <li>
-                    <a href={ templ.URL("/consultations/" + consultation.ID + "/video") } role="button">
+                    // Before the window it still leads to the call page, which waits
+                    // and opens the call by itself.
+                    <a
+                        href={ templ.URL("/consultations/" + consultation.ID + "/video") }
+                        role="button"
+                        if !videoCall.Open {
+                            class="secondary"
+                        }
+                    >
                         Join video consultation
                     </a>
                 </li>
+                if !videoCall.Open {
+                    <li><small>Opens { videoCall.OpensAt }</small></li>
+                }
             </ul>
         } else if canAnswer {
             <ul>
