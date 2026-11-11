@@ -6,25 +6,374 @@ import (
     "encoding/json"
     "fmt"
     "strings"
+    "time"
 )
 
 templ RootHtml(comp templ.Component, specializations []string, filters PublicDoctorsFilters) {
     @layouts.Public() {
-        {{ filtersJson, _ := json.Marshal(filters) }}
-        <hgroup>
-            <h2>Choose a specialist</h2>
-            <p>Order a written or video consultation from your home.</p>
-        </hgroup>
-        <div data-signals__ifmissing={ string(filtersJson) } data-on:change="@get('/')" style="max-width: 24rem;">
-            @components.Select(components.SelectConfig{
-                Label: "Specialization",
-                Name: "specialization",
-                Valid: true,
-                Options: specializationOptions(specializations),
-            })
-        </div>
-        @comp
+        @landingStyles()
+        <section class="landing-hero" aria-labelledby="landing-title">
+            @heroBackdrop()
+            <div class="grid">
+                <div>
+                    <hgroup>
+                        <p class="landing-eyebrow">Online specialist consultations</p>
+                        <h1 id="landing-title">A specialist's opinion, without the waiting room</h1>
+                        <p>Choose a specialist, describe your problem and attach your results. You get a written opinion by email, or talk to the doctor in a video call in your browser.</p>
+                    </hgroup>
+                    <p class="landing-actions">
+                        <a href="#specialists" role="button">Choose a specialist</a>
+                        <a href="#how-it-works" role="button" class="secondary outline">How it works</a>
+                    </p>
+                    <ul class="landing-facts">
+                        <li>No account needed</li>
+                        <li>Answer within 72 hours</li>
+                        <li>Digitally signed opinion</li>
+                    </ul>
+                </div>
+                <figure class="landing-preview" aria-label="Example of an opinion as the patient receives it">
+                    <article>
+                        <header>
+                            <small>Written opinion</small>
+                            <strong>Cardiology consultation</strong>
+                        </header>
+                        <p>Based on the results you sent, the findings are consistent with well-controlled hypertension. Continue the current therapy and measure your blood pressure twice a day for two weeks.</p>
+                        <footer>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+                                <path d="m9 12 2 2 4-4"/>
+                            </svg>
+                            <small>Digitally signed by the doctor</small>
+                        </footer>
+                    </article>
+                </figure>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="landing-process" aria-labelledby="how-title">
+            <div class="landing-process-intro">
+                <hgroup>
+                    <h2 id="how-title">How it works</h2>
+                    <p>Three steps, all from home.</p>
+                </hgroup>
+                <img src="/static/medical-care.svg" alt="A doctor holding a medical record" width="280" height="195" loading="lazy" />
+            </div>
+            <div class="grid">
+                @landingStep("1", "Choose a specialist", "Compare doctors by specialization, workplace, languages and price.") {
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.3-4.3"/>
+                }
+                @landingStep("2", "Describe your problem", "Fill in a short form and attach up to five reports or images.") {
+                    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
+                    <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+                    <path d="M10 9H8"/>
+                    <path d="M16 13H8"/>
+                    <path d="M16 17H8"/>
+                }
+                @landingStep("3", "Receive the opinion", "The doctor's opinion arrives by email, digitally signed.") {
+                    <rect width="20" height="16" x="2" y="4" rx="2"/>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                }
+            </div>
+        </section>
+
+        <section class="landing-consultations" aria-labelledby="types-title">
+            <hgroup>
+                <h2 id="types-title">Two ways to consult</h2>
+                <p>Pick what suits your question.</p>
+            </hgroup>
+            <div class="grid">
+                <article class="landing-option">
+                    <header><strong>Written consultation</strong></header>
+                    <div class="landing-option-content">
+                        <ul>
+                            <li>Describe your problem and attach your results</li>
+                            <li>Answer within <strong>72 hours</strong></li>
+                            <li>Opinion by email, digitally signed</li>
+                        </ul>
+                        <img src="/static/doctors-orders.svg" alt="A doctor reviewing written medical instructions" width="110" height="175" loading="lazy" />
+                    </div>
+                </article>
+                <article class="landing-option">
+                    <header><strong>Video consultation</strong></header>
+                    <ul>
+                        <li>Choose the part of the day that suits you</li>
+                        <li>Appointment within <strong>12 hours</strong> (urgent: <strong>8 hours</strong>)</li>
+                        <li>Join the call in your browser, nothing to install</li>
+                        <li>Written opinion after the call</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section id="specialists" class="landing-specialists" aria-labelledby="specialists-title">
+            {{ filtersJson, _ := json.Marshal(filters) }}
+            <hgroup>
+                <h2 id="specialists-title">Choose a specialist</h2>
+                <p>Order a written or video consultation from your home.</p>
+            </hgroup>
+            <div class="landing-filter" data-signals__ifmissing={ string(filtersJson) } data-on:change="@get('/')">
+                @components.Select(components.SelectConfig{
+                    Label: "Specialization",
+                    Name: "specialization",
+                    Valid: true,
+                    Options: specializationOptions(specializations),
+                })
+            </div>
+            @comp
+        </section>
+
+        <section class="landing-trust" aria-labelledby="trust-title">
+            <hgroup>
+                <h2 id="trust-title">Your health data is handled with care</h2>
+                <p>Built for medical opinions you can rely on.</p>
+            </hgroup>
+            <div class="grid">
+                <article class="landing-assurance">
+                    <h3>Signed opinions</h3>
+                    <p>Every opinion is signed with the doctor's own key. Any change afterwards shows, so you can present it to another doctor as authentic.</p>
+                </article>
+                <article class="landing-assurance">
+                    <h3>Verified doctors</h3>
+                    <p>Doctors sign in with a password and a code from their phone, and confirm every opinion again before it is sent.</p>
+                </article>
+                <article class="landing-assurance">
+                    <h3>Private video calls</h3>
+                    <p>Your call link is personal and only works for your appointment. The video is encrypted between your browser and the doctor's.</p>
+                </article>
+            </div>
+        </section>
+
+        <footer class="landing-footer">
+            <small>© { fmt.Sprint(time.Now().Year()) } CyberMedico</small>
+            <small><a href="/auth/login" class="secondary">Log in for doctors</a></small>
+        </footer>
     }
+}
+
+// heroBackdrop draws the hero's background: a soft tint in the brand colour, a
+// faint dot grid and a heartbeat line, in the theme's colours.
+templ heroBackdrop() {
+    <div class="landing-backdrop" aria-hidden="true">
+        <svg class="landing-pulse" viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 120 H380 l20 -10 l15 10 H470 l14 -78 l22 150 l18 -112 l12 40 H640 l18 -14 l16 14 H1200" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+        </svg>
+    </div>
+}
+
+templ landingStep(number, title, text string) {
+    <article class="landing-step">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            { children... }
+        </svg>
+        <p class="landing-step-number"><small>Step { number }</small></p>
+        <h3>{ title }</h3>
+        <p>{ text }</p>
+    </article>
+}
+
+templ landingStyles() {
+    <style>
+        /* The hero band reaches the window edges while the content stays in the container. */
+        body { overflow-x: clip; }
+
+        .landing-hero {
+            position: relative;
+            isolation: isolate;
+            /* The bottom padding leaves room for the heartbeat line under the content. */
+            padding: calc(var(--pico-spacing) * 4) 0 8.5rem;
+            margin-bottom: calc(var(--pico-spacing) * 3);
+        }
+        .landing-hero .grid { align-items: center; gap: calc(var(--pico-spacing) * 3); }
+        .landing-hero h1 { font-size: clamp(2rem, 4.5vw, 3rem); line-height: 1.15; margin-bottom: var(--pico-spacing); }
+        .landing-hero hgroup > p:last-child { font-size: 1.1rem; max-width: 36rem; }
+        .landing-eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--pico-primary) !important;
+        }
+        .landing-actions { display: flex; flex-wrap: wrap; gap: var(--pico-spacing); }
+        .landing-facts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.5rem;
+            padding: 0;
+            margin: 0;
+            color: var(--pico-muted-color);
+            font-size: 0.9rem;
+        }
+        .landing-facts li { list-style: none; margin: 0; }
+        .landing-facts li::before { content: "✓"; color: var(--pico-primary); margin-right: 0.4rem; font-weight: 700; }
+
+        .landing-backdrop {
+            position: absolute;
+            inset: 0;
+            left: 50%;
+            width: 100vw;
+            transform: translateX(-50%);
+            z-index: -1;
+            color: var(--pico-primary);
+            background:
+                radial-gradient(ellipse 60% 70% at 85% 10%, color-mix(in srgb, var(--pico-primary) 16%, transparent), transparent 70%),
+                radial-gradient(ellipse 50% 60% at 0% 100%, color-mix(in srgb, var(--pico-primary) 8%, transparent), transparent 70%);
+            border-bottom: 1px solid var(--pico-muted-border-color);
+        }
+        .landing-backdrop::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(color-mix(in srgb, var(--pico-primary) 28%, transparent) 1px, transparent 1.5px);
+            background-size: 24px 24px;
+            mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 80%);
+        }
+        .landing-pulse {
+            position: absolute;
+            left: 0;
+            bottom: 0.75rem;
+            width: 100%;
+            height: 7rem;
+            opacity: 0.55;
+        }
+        @media (prefers-reduced-motion: no-preference) {
+            .landing-pulse path {
+                stroke-dasharray: 2600;
+                stroke-dashoffset: 2600;
+                animation: landing-pulse 3.5s ease-out 0.3s forwards;
+            }
+            @keyframes landing-pulse { to { stroke-dashoffset: 0; } }
+        }
+
+        .landing-preview { margin: 0; }
+        .landing-preview article {
+            margin: 0;
+            box-shadow: 0 1.5rem 3rem -1.5rem color-mix(in srgb, var(--pico-primary) 45%, transparent);
+        }
+        .landing-preview header { display: flex; flex-direction: column; }
+        .landing-preview header small { color: var(--pico-muted-color); }
+        .landing-preview footer { display: flex; align-items: center; gap: 0.5rem; color: var(--pico-ins-color); }
+
+        main > section { margin-bottom: calc(var(--pico-spacing) * 4); }
+        main > section:not(.landing-hero) { position: relative; }
+        main > section > hgroup { margin-bottom: calc(var(--pico-spacing) * 2); }
+        main > section > hgroup h2 { letter-spacing: -0.025em; }
+        main > section > hgroup p { max-width: 42rem; }
+        .landing-process {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            padding: calc(var(--pico-spacing) * 2.5);
+            border: 1px solid var(--pico-muted-border-color);
+            border-radius: calc(var(--pico-border-radius) * 1.5);
+            background: linear-gradient(135deg,
+                color-mix(in srgb, var(--pico-primary) 5%, var(--pico-card-background-color)),
+                var(--pico-card-background-color) 65%);
+        }
+        .landing-process::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image:
+                linear-gradient(color-mix(in srgb, var(--pico-primary) 6%, transparent) 1px, transparent 1px),
+                linear-gradient(90deg, color-mix(in srgb, var(--pico-primary) 6%, transparent) 1px, transparent 1px);
+            background-size: 34px 34px;
+            mask-image: radial-gradient(ellipse at 85% 18%, #000 0%, transparent 72%);
+        }
+        .landing-process .grid { gap: calc(var(--pico-spacing) * 1.5); }
+        .landing-process-intro {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(10rem, 17rem);
+            align-items: center;
+            gap: calc(var(--pico-spacing) * 2);
+            margin-bottom: calc(var(--pico-spacing) * 2);
+        }
+        .landing-process-intro hgroup { margin-bottom: 0; }
+        .landing-process-intro img { display: block; width: 100%; height: auto; }
+        .landing-step {
+            height: 100%;
+            padding: calc(var(--pico-spacing) * 1.5);
+            border: 1px solid var(--pico-muted-border-color);
+            border-radius: var(--pico-border-radius);
+            background: var(--pico-card-background-color);
+            box-shadow: 0 0.75rem 2rem -1.75rem var(--pico-primary);
+        }
+        .landing-step svg { color: var(--pico-primary); margin-bottom: var(--pico-spacing); }
+        .landing-step-number { color: var(--pico-muted-color); margin-bottom: 0.25rem; }
+        .landing-step h3 { font-size: 1.15rem; margin: 0 0 0.5rem; }
+        main > section[id] { scroll-margin-top: var(--pico-spacing); }
+        .landing-step > p:last-child { margin-bottom: 0; }
+
+        .landing-consultations .grid { align-items: stretch; gap: calc(var(--pico-spacing) * 1.5); }
+        .landing-option {
+            margin: 0;
+            height: 100%;
+            border: 1px solid var(--pico-muted-border-color);
+            box-shadow: 0 1rem 2.5rem -2.1rem var(--pico-primary);
+        }
+        .landing-option header { color: var(--pico-primary); }
+        .landing-option-content {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 5.5rem;
+            align-items: center;
+            gap: var(--pico-spacing);
+        }
+        .landing-option-content ul { margin-bottom: 0; }
+        .landing-option-content img { display: block; width: 100%; height: auto; }
+
+        .landing-specialists {
+            padding: calc(var(--pico-spacing) * 3) 0;
+            border-top: 1px solid var(--pico-muted-border-color);
+            border-bottom: 1px solid var(--pico-muted-border-color);
+            background: linear-gradient(180deg,
+                color-mix(in srgb, var(--pico-primary) 3%, transparent), transparent 48%);
+        }
+        .landing-filter { max-width: 24rem; margin-bottom: calc(var(--pico-spacing) * 1.5); }
+        .landing-doctor-grid { gap: calc(var(--pico-spacing) * 1.25) !important; }
+        .landing-doctor-card {
+            height: 100%;
+            overflow: hidden;
+            border: 1px solid var(--pico-muted-border-color);
+            box-shadow: 0 1rem 2.5rem -2.25rem var(--pico-primary);
+        }
+        .landing-doctor-card > img {
+            background: color-mix(in srgb, var(--pico-primary) 5%, var(--pico-card-background-color));
+        }
+        .landing-doctor-card hgroup { min-height: 3.4rem; }
+        .landing-doctor-card hgroup h4 { margin-bottom: 0.25rem; }
+        .landing-doctor-card footer { border-top: 1px solid var(--pico-muted-border-color); }
+
+        .landing-trust {
+            padding: calc(var(--pico-spacing) * 3);
+            border: 1px solid var(--pico-muted-border-color);
+            border-radius: calc(var(--pico-border-radius) * 1.5);
+            background: radial-gradient(ellipse at 100% 0%,
+                color-mix(in srgb, var(--pico-primary) 7%, transparent), transparent 55%);
+        }
+        .landing-trust h3 { font-size: 1.1rem; }
+        .landing-trust .grid { gap: calc(var(--pico-spacing) * 1.5); }
+        .landing-assurance { margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
+        .landing-assurance h3 { margin-bottom: 0.5rem; }
+        .landing-assurance p { margin-bottom: 0; color: var(--pico-muted-color); }
+
+        .landing-footer {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: var(--pico-spacing);
+            padding: calc(var(--pico-spacing) * 2) 0;
+            border-top: 1px solid var(--pico-muted-border-color);
+            color: var(--pico-muted-color);
+        }
+        @media (max-width: 576px) {
+            .landing-process, .landing-trust { padding: calc(var(--pico-spacing) * 1.5); }
+            .landing-step { padding: var(--pico-spacing); }
+            .landing-process-intro { grid-template-columns: minmax(0, 1fr) 7rem; gap: var(--pico-spacing); }
+            .landing-option-content { grid-template-columns: minmax(0, 1fr) 4rem; }
+        }
+    </style>
 }
 
 templ PublicDoctorsSSE(doctors []PublicDoctor, filters PublicDoctorsFilters) {
@@ -35,13 +384,13 @@ templ PublicDoctorsSSE(doctors []PublicDoctor, filters PublicDoctorsFilters) {
                 <a href="/">Show all doctors</a>
             }
         } else {
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: var(--pico-spacing);">
+            <div class="landing-doctor-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));">
                 for _, doctor := range doctors {
-                    <article style="margin: 0;">
+                    <article class="landing-doctor-card" style="margin: 0;">
                         <img
                             src={ doctor.PhotoUrl }
                             alt={ doctor.DisplayName }
-                            style="width: 100%; height: 14rem; object-fit: contain; border-radius: var(--pico-border-radius); display: block; margin-bottom: var(--pico-spacing);"
+                            style="width: 100%; height: 14rem; object-fit: cover; display: block; margin-bottom: var(--pico-spacing);"
                         />
                         <hgroup>
                             <h4><a href={ templ.SafeURL(fmt.Sprintf("/specialists/%s", doctor.ID)) }>{ doctor.DisplayName }</a></h4>
