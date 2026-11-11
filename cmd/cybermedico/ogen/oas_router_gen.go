@@ -35,7 +35,7 @@ var (
 	rn20AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
-	rn24AllowedHeaders = map[string]string{
+	rn28AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
 )
@@ -103,9 +103,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			switch elem[0] {
-			case 'a': // Prefix: "auth/"
+			case 'a': // Prefix: "a"
 
-				if l := len("auth/"); len(elem) >= l && elem[0:l] == "auth/" {
+				if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
 					elem = elem[l:]
 				} else {
 					break
@@ -115,35 +115,30 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					break
 				}
 				switch elem[0] {
-				case '2': // Prefix: "2fa"
+				case 'p': // Prefix: "pi/video/"
 
-					if l := len("2fa"); len(elem) >= l && elem[0:l] == "2fa" {
+					if l := len("pi/video/"); len(elem) >= l && elem[0:l] == "pi/video/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
-					if len(elem) == 0 {
-						switch r.Method {
-						case "GET":
-							s.handleTwoFactorFormRequest([0]string{}, elemIsEscaped, w, r)
-						case "POST":
-							s.handleTwoFactorSubmitRequest([0]string{}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, notAllowedParams{
-								allowedMethods: "GET,POST",
-								allowedHeaders: rn18AllowedHeaders,
-								acceptPost:     "application/x-www-form-urlencoded",
-								acceptPatch:    "",
-							})
-						}
+					// Param: "id"
+					// Match until "/"
+					idx := strings.IndexByte(elem, '/')
+					if idx < 0 {
+						idx = len(elem)
+					}
+					args[0] = elem[:idx]
+					elem = elem[idx:]
 
-						return
+					if len(elem) == 0 {
+						break
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/setup"
+					case '/': // Prefix: "/ice"
 
-						if l := len("/setup"); len(elem) >= l && elem[0:l] == "/setup" {
+						if l := len("/ice"); len(elem) >= l && elem[0:l] == "/ice" {
 							elem = elem[l:]
 						} else {
 							break
@@ -153,14 +148,14 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							// Leaf node.
 							switch r.Method {
 							case "GET":
-								s.handleTwoFactorSetupFormRequest([0]string{}, elemIsEscaped, w, r)
-							case "POST":
-								s.handleTwoFactorSetupSubmitRequest([0]string{}, elemIsEscaped, w, r)
+								s.handleVideoPageIceRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
 							default:
 								s.notAllowed(w, r, notAllowedParams{
-									allowedMethods: "GET,POST",
-									allowedHeaders: rn19AllowedHeaders,
-									acceptPost:     "application/x-www-form-urlencoded",
+									allowedMethods: "GET",
+									allowedHeaders: nil,
+									acceptPost:     "",
 									acceptPatch:    "",
 								})
 							}
@@ -170,31 +165,100 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 					}
 
-				case 'l': // Prefix: "login"
+				case 'u': // Prefix: "uth/"
 
-					if l := len("login"); len(elem) >= l && elem[0:l] == "login" {
+					if l := len("uth/"); len(elem) >= l && elem[0:l] == "uth/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "GET":
-							s.handleLoginRequest([0]string{}, elemIsEscaped, w, r)
-						case "POST":
-							s.handleLoginSubmitRequest([0]string{}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, notAllowedParams{
-								allowedMethods: "GET,POST",
-								allowedHeaders: rn10AllowedHeaders,
-								acceptPost:     "application/x-www-form-urlencoded",
-								acceptPatch:    "",
-							})
+						break
+					}
+					switch elem[0] {
+					case '2': // Prefix: "2fa"
+
+						if l := len("2fa"); len(elem) >= l && elem[0:l] == "2fa" {
+							elem = elem[l:]
+						} else {
+							break
 						}
 
-						return
+						if len(elem) == 0 {
+							switch r.Method {
+							case "GET":
+								s.handleTwoFactorFormRequest([0]string{}, elemIsEscaped, w, r)
+							case "POST":
+								s.handleTwoFactorSubmitRequest([0]string{}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, notAllowedParams{
+									allowedMethods: "GET,POST",
+									allowedHeaders: rn18AllowedHeaders,
+									acceptPost:     "application/x-www-form-urlencoded",
+									acceptPatch:    "",
+								})
+							}
+
+							return
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/setup"
+
+							if l := len("/setup"); len(elem) >= l && elem[0:l] == "/setup" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleTwoFactorSetupFormRequest([0]string{}, elemIsEscaped, w, r)
+								case "POST":
+									s.handleTwoFactorSetupSubmitRequest([0]string{}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, notAllowedParams{
+										allowedMethods: "GET,POST",
+										allowedHeaders: rn19AllowedHeaders,
+										acceptPost:     "application/x-www-form-urlencoded",
+										acceptPatch:    "",
+									})
+								}
+
+								return
+							}
+
+						}
+
+					case 'l': // Prefix: "login"
+
+						if l := len("login"); len(elem) >= l && elem[0:l] == "login" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "GET":
+								s.handleLoginRequest([0]string{}, elemIsEscaped, w, r)
+							case "POST":
+								s.handleLoginSubmitRequest([0]string{}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, notAllowedParams{
+									allowedMethods: "GET,POST",
+									allowedHeaders: rn10AllowedHeaders,
+									acceptPost:     "application/x-www-form-urlencoded",
+									acceptPatch:    "",
+								})
+							}
+
+							return
+						}
+
 					}
 
 				}
@@ -540,7 +604,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							default:
 								s.notAllowed(w, r, notAllowedParams{
 									allowedMethods: "GET,POST",
-									allowedHeaders: rn24AllowedHeaders,
+									allowedHeaders: rn28AllowedHeaders,
 									acceptPost:     "multipart/form-data",
 									acceptPatch:    "",
 								})
@@ -737,9 +801,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 			}
 			switch elem[0] {
-			case 'a': // Prefix: "auth/"
+			case 'a': // Prefix: "a"
 
-				if l := len("auth/"); len(elem) >= l && elem[0:l] == "auth/" {
+				if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
 					elem = elem[l:]
 				} else {
 					break
@@ -749,42 +813,30 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					break
 				}
 				switch elem[0] {
-				case '2': // Prefix: "2fa"
+				case 'p': // Prefix: "pi/video/"
 
-					if l := len("2fa"); len(elem) >= l && elem[0:l] == "2fa" {
+					if l := len("pi/video/"); len(elem) >= l && elem[0:l] == "pi/video/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
+					// Param: "id"
+					// Match until "/"
+					idx := strings.IndexByte(elem, '/')
+					if idx < 0 {
+						idx = len(elem)
+					}
+					args[0] = elem[:idx]
+					elem = elem[idx:]
+
 					if len(elem) == 0 {
-						switch method {
-						case "GET":
-							r.name = TwoFactorFormOperation
-							r.summary = ""
-							r.operationID = "twoFactorForm"
-							r.operationGroup = ""
-							r.pathPattern = "/auth/2fa"
-							r.args = args
-							r.count = 0
-							return r, true
-						case "POST":
-							r.name = TwoFactorSubmitOperation
-							r.summary = ""
-							r.operationID = "twoFactorSubmit"
-							r.operationGroup = ""
-							r.pathPattern = "/auth/2fa"
-							r.args = args
-							r.count = 0
-							return r, true
-						default:
-							return
-						}
+						break
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/setup"
+					case '/': // Prefix: "/ice"
 
-						if l := len("/setup"); len(elem) >= l && elem[0:l] == "/setup" {
+						if l := len("/ice"); len(elem) >= l && elem[0:l] == "/ice" {
 							elem = elem[l:]
 						} else {
 							break
@@ -794,22 +846,13 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							// Leaf node.
 							switch method {
 							case "GET":
-								r.name = TwoFactorSetupFormOperation
+								r.name = VideoPageIceOperation
 								r.summary = ""
-								r.operationID = "twoFactorSetupForm"
+								r.operationID = "video_page_ice"
 								r.operationGroup = ""
-								r.pathPattern = "/auth/2fa/setup"
+								r.pathPattern = "/api/video/{id}/ice"
 								r.args = args
-								r.count = 0
-								return r, true
-							case "POST":
-								r.name = TwoFactorSetupSubmitOperation
-								r.summary = ""
-								r.operationID = "twoFactorSetupSubmit"
-								r.operationGroup = ""
-								r.pathPattern = "/auth/2fa/setup"
-								r.args = args
-								r.count = 0
+								r.count = 1
 								return r, true
 							default:
 								return
@@ -818,38 +861,121 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 
 					}
 
-				case 'l': // Prefix: "login"
+				case 'u': // Prefix: "uth/"
 
-					if l := len("login"); len(elem) >= l && elem[0:l] == "login" {
+					if l := len("uth/"); len(elem) >= l && elem[0:l] == "uth/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "GET":
-							r.name = LoginOperation
-							r.summary = ""
-							r.operationID = "login"
-							r.operationGroup = ""
-							r.pathPattern = "/auth/login"
-							r.args = args
-							r.count = 0
-							return r, true
-						case "POST":
-							r.name = LoginSubmitOperation
-							r.summary = ""
-							r.operationID = "loginSubmit"
-							r.operationGroup = ""
-							r.pathPattern = "/auth/login"
-							r.args = args
-							r.count = 0
-							return r, true
-						default:
-							return
+						break
+					}
+					switch elem[0] {
+					case '2': // Prefix: "2fa"
+
+						if l := len("2fa"); len(elem) >= l && elem[0:l] == "2fa" {
+							elem = elem[l:]
+						} else {
+							break
 						}
+
+						if len(elem) == 0 {
+							switch method {
+							case "GET":
+								r.name = TwoFactorFormOperation
+								r.summary = ""
+								r.operationID = "twoFactorForm"
+								r.operationGroup = ""
+								r.pathPattern = "/auth/2fa"
+								r.args = args
+								r.count = 0
+								return r, true
+							case "POST":
+								r.name = TwoFactorSubmitOperation
+								r.summary = ""
+								r.operationID = "twoFactorSubmit"
+								r.operationGroup = ""
+								r.pathPattern = "/auth/2fa"
+								r.args = args
+								r.count = 0
+								return r, true
+							default:
+								return
+							}
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/setup"
+
+							if l := len("/setup"); len(elem) >= l && elem[0:l] == "/setup" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch method {
+								case "GET":
+									r.name = TwoFactorSetupFormOperation
+									r.summary = ""
+									r.operationID = "twoFactorSetupForm"
+									r.operationGroup = ""
+									r.pathPattern = "/auth/2fa/setup"
+									r.args = args
+									r.count = 0
+									return r, true
+								case "POST":
+									r.name = TwoFactorSetupSubmitOperation
+									r.summary = ""
+									r.operationID = "twoFactorSetupSubmit"
+									r.operationGroup = ""
+									r.pathPattern = "/auth/2fa/setup"
+									r.args = args
+									r.count = 0
+									return r, true
+								default:
+									return
+								}
+							}
+
+						}
+
+					case 'l': // Prefix: "login"
+
+						if l := len("login"); len(elem) >= l && elem[0:l] == "login" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "GET":
+								r.name = LoginOperation
+								r.summary = ""
+								r.operationID = "login"
+								r.operationGroup = ""
+								r.pathPattern = "/auth/login"
+								r.args = args
+								r.count = 0
+								return r, true
+							case "POST":
+								r.name = LoginSubmitOperation
+								r.summary = ""
+								r.operationID = "loginSubmit"
+								r.operationGroup = ""
+								r.pathPattern = "/auth/login"
+								r.args = args
+								r.count = 0
+								return r, true
+							default:
+								return
+							}
+						}
+
 					}
 
 				}

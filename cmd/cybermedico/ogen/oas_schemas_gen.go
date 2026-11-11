@@ -268,9 +268,79 @@ func (*DefaultStatusCode) twoFactorSetupSubmitRes()       {}
 func (*DefaultStatusCode) twoFactorSubmitRes()            {}
 func (*DefaultStatusCode) videoOrderFormRes()             {}
 func (*DefaultStatusCode) videoOrderSubmitRes()           {}
+func (*DefaultStatusCode) videoPageIceRes()               {}
 func (*DefaultStatusCode) videoPagePatientRes()           {}
 func (*DefaultStatusCode) writtenOrderFormRes()           {}
 func (*DefaultStatusCode) writtenOrderSubmitRes()         {}
+
+// Ref: #/components/schemas/ErrorResponse
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+// GetError returns the value of Error.
+func (s *ErrorResponse) GetError() string {
+	return s.Error
+}
+
+// SetError sets the value of Error.
+func (s *ErrorResponse) SetError(val string) {
+	s.Error = val
+}
+
+// Ref: #/components/schemas/ICEConfig
+type ICEConfig struct {
+	IceServers []ICEServer `json:"iceServers"`
+}
+
+// GetIceServers returns the value of IceServers.
+func (s *ICEConfig) GetIceServers() []ICEServer {
+	return s.IceServers
+}
+
+// SetIceServers sets the value of IceServers.
+func (s *ICEConfig) SetIceServers(val []ICEServer) {
+	s.IceServers = val
+}
+
+func (*ICEConfig) videoPageIceRes() {}
+
+// Ref: #/components/schemas/ICEServer
+type ICEServer struct {
+	Urls       []string  `json:"urls"`
+	Username   OptString `json:"username"`
+	Credential OptString `json:"credential"`
+}
+
+// GetUrls returns the value of Urls.
+func (s *ICEServer) GetUrls() []string {
+	return s.Urls
+}
+
+// GetUsername returns the value of Username.
+func (s *ICEServer) GetUsername() OptString {
+	return s.Username
+}
+
+// GetCredential returns the value of Credential.
+func (s *ICEServer) GetCredential() OptString {
+	return s.Credential
+}
+
+// SetUrls sets the value of Urls.
+func (s *ICEServer) SetUrls(val []string) {
+	s.Urls = val
+}
+
+// SetUsername sets the value of Username.
+func (s *ICEServer) SetUsername(val OptString) {
+	s.Username = val
+}
+
+// SetCredential sets the value of Credential.
+func (s *ICEServer) SetCredential(val OptString) {
+	s.Credential = val
+}
 
 type LoginSubmitReq struct {
 	Email    string `json:"email"`
@@ -515,3 +585,15 @@ func (s *TwoFactorSubmitReq) GetTotpCode() string {
 func (s *TwoFactorSubmitReq) SetTotpCode(val string) {
 	s.TotpCode = val
 }
+
+type VideoPageIceForbidden ErrorResponse
+
+func (*VideoPageIceForbidden) videoPageIceRes() {}
+
+type VideoPageIceInternalServerError ErrorResponse
+
+func (*VideoPageIceInternalServerError) videoPageIceRes() {}
+
+type VideoPageIceUnauthorized ErrorResponse
+
+func (*VideoPageIceUnauthorized) videoPageIceRes() {}

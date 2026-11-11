@@ -12,11 +12,11 @@ opa = "1.22.0"
 "npm:run-pty" = "6.0.2"
 
 [tasks."docker:up"]
-description = "Start PostgreSQL, MinIO and Mailpit, and create the storage buckets"
+description = "Start PostgreSQL, MinIO, Mailpit and coturn, and create the storage buckets"
 run = 'docker compose --env-file resources/config/cybermedico/compose.env up --detach --wait'
 
 [tasks."docker:down"]
-description = "Stop PostgreSQL, MinIO and Mailpit"
+description = "Stop PostgreSQL, MinIO, Mailpit and coturn"
 run = "docker compose --env-file resources/config/cybermedico/compose.env down"
 
 [tasks.generate]

@@ -333,6 +333,44 @@ paths:
           $ref: "#/components/responses/200"
         "default":
           $ref: "#/components/responses/default"
+  /api/video/{id}/ice:
+    get:
+      operationId: video_page_ice
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+        - name: t
+          in: query
+          required: false
+          description: The patient's join token. The doctor is identified by the session.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ICE server configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ICEConfig"
+        "401":
+          description: Neither a logged-in doctor nor a join token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Not allowed to join this call now
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "default":
+          $ref: "#/components/responses/default"
   /dashboard:
     get:
       security:
@@ -383,6 +421,32 @@ components:
           items:
             type: string
             format: binary
+    ICEConfig:
+      type: object
+      required: [iceServers]
+      properties:
+        iceServers:
+          type: array
+          items:
+            $ref: "#/components/schemas/ICEServer"
+    ICEServer:
+      type: object
+      required: [urls]
+      properties:
+        urls:
+          type: array
+          items:
+            type: string
+        username:
+          type: string
+        credential:
+          type: string
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
   securitySchemes:
     sessionCookie:
       type: apiKey

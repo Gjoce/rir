@@ -70,9 +70,10 @@ func main() {
 
 	authService, _ := initializeAuth(ctx, dbPool)
 
-	signalHandler := initializeVideo(ctx, dbPool, authService, videoURLBuilder)
+	videoAuthorize := html.NewVideoJoinAuthorizer(dbPool, authService, videoURLBuilder.JoinSecret)
+	signalHandler := initializeVideo(ctx, dbPool, videoAuthorize)
 
-	htmlServer := initializeHTMLServer(dbPool, authService, storageService, riverClient, videoURLBuilder)
+	htmlServer := initializeHTMLServer(dbPool, authService, storageService, riverClient, videoURLBuilder, videoAuthorize)
 	httpServer := initializeHTTPServer(htmlServer, authService, signalHandler)
 	startHTTPServer(httpServer)
 
@@ -391,7 +392,7 @@ func initializeAuth(ctx context.Context, db *pgxpool.Pool) (*html.AuthService, a
 	return authService, authorizer
 }
 
-func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, storageService *storage.Service, riverClient *river.Client[pgx.Tx], videoURLBuilder *video.URLBuilder) *ogen.Server {
+func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, storageService *storage.Service, riverClient *river.Client[pgx.Tx], videoURLBuilder *video.URLBuilder, videoAuthorize video.AuthorizeFunc) *ogen.Server {
 	authHandler := html.NewAuthHandler(dbPool, authService)
 
 	htmlServer, err := ogen.NewServer(struct {
@@ -403,6 +404,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 		html.DashboardHandler
 		html.ConsultationsHandler
 		html.VideoPageHandler
+		html.ICEHandler
 	}{
 		html.NewRootHandler(dbPool),
 		html.NewSpecialistsHandler(dbPool),
@@ -412,6 +414,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 		html.NewDashboardHandler(authService),
 		html.NewConsultationsHandler(dbPool, authService, storageService, riverClient),
 		html.NewVideoPageHandler(dbPool, authService, videoURLBuilder.JoinSecret),
+		html.NewICEHandler(initializeTURNConfig(), videoAuthorize),
 	},
 		authHandler,
 		ogen.WithErrorHandler(errors.ErrorHandler),
@@ -426,13 +429,57 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 }
 
 // initializeVideo wires up the broker and the signaling handler for video calls.
-func initializeVideo(ctx context.Context, dbPool *pgxpool.Pool, authService *html.AuthService, urlBuilder *video.URLBuilder) http.Handler {
+func initializeVideo(ctx context.Context, dbPool *pgxpool.Pool, authorize video.AuthorizeFunc) http.Handler {
 	broker := video.NewBroker()
 	go runBrokerEvictor(ctx, broker)
 
-	authorize := html.NewVideoJoinAuthorizer(dbPool, authService, urlBuilder.JoinSecret)
-
 	return video.NewSignalingHandler(broker, authorize, video.NewPGEventRecorder(dbPool))
+}
+
+// initializeTURNConfig reads the TURN settings, or returns nil when they are not
+// set. Calls then only connect directly, which works when both sides share a
+// network but not across most home and office routers.
+//
+// Required env vars:
+//   - TURN_HOSTNAME       — public hostname of coturn
+//   - TURN_SHARED_SECRET  — coturn's static-auth-secret
+//
+// Optional:
+//   - TURN_CREDENTIAL_TTL — Go duration, defaults to 2h
+func initializeTURNConfig() *html.TURNConfig {
+	turnHost := os.Getenv("TURN_HOSTNAME")
+	turnSecret := os.Getenv("TURN_SHARED_SECRET")
+
+	missing := []string{}
+	if turnHost == "" {
+		missing = append(missing, "TURN_HOSTNAME")
+	}
+	if turnSecret == "" {
+		missing = append(missing, "TURN_SHARED_SECRET")
+	}
+	if len(missing) > 0 {
+		log.Logger.Warn("TURN config incomplete, video calls will only connect directly",
+			"missing", strings.Join(missing, ","),
+		)
+
+		return nil
+	}
+
+	credTTL := 2 * time.Hour
+	if v := os.Getenv("TURN_CREDENTIAL_TTL"); v != "" {
+		parsed, err := time.ParseDuration(v)
+		if err != nil || parsed <= 0 {
+			log.Logger.Warn("invalid TURN_CREDENTIAL_TTL, using default", "value", v, "default", credTTL)
+		} else {
+			credTTL = parsed
+		}
+	}
+
+	return &html.TURNConfig{
+		Hostname:      turnHost,
+		SharedSecret:  []byte(turnSecret),
+		CredentialTTL: credTTL,
+	}
 }
 
 // runBrokerEvictor calls EvictIdle on a fixed schedule until ctx is done.

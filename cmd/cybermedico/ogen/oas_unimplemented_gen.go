@@ -160,6 +160,13 @@ func (UnimplementedHandler) VideoOrderSubmit(ctx context.Context, req *Consultat
 	return r, ht.ErrNotImplemented
 }
 
+// VideoPageIce implements video_page_ice operation.
+//
+// GET /api/video/{id}/ice
+func (UnimplementedHandler) VideoPageIce(ctx context.Context, params VideoPageIceParams) (r VideoPageIceRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // VideoPagePatient implements video_page_patient operation.
 //
 // GET /video/{id}
