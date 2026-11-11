@@ -43,6 +43,7 @@ var operationRolesSessionCookie = map[string][]string{
 	ConsultationsVideoFormOperation:     []string{},
 	DashboardOperation:                  []string{},
 	LogoutOperation:                     []string{},
+	WidgetOperation:                     []string{},
 }
 
 // GetRolesForSessionCookie returns the required roles for the given operation.

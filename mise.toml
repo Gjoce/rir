@@ -37,6 +37,7 @@ run = "caddy run --config resources/config/caddy/Caddyfile"
 
 [tasks.develop]
 description = "Start the containers, then run templ, the API and Caddy side by side"
+depends = ["docker:up"]
 run = "run-pty % mise run templ:watch % mise run api:run % mise run caddy:run"
 
 [tasks.lint]

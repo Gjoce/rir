@@ -174,6 +174,13 @@ func (UnimplementedHandler) VideoPagePatient(ctx context.Context, params VideoPa
 	return r, ht.ErrNotImplemented
 }
 
+// Widget implements widget operation.
+//
+// GET /widgets/{id}
+func (UnimplementedHandler) Widget(ctx context.Context, params WidgetParams) (r WidgetRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // WrittenOrderForm implements written_order_form operation.
 //
 // GET /specialists/{id}/written

@@ -1,12 +1,167 @@
 package html
 
-import "cybermedico/layouts"
+import (
+    "cybermedico/layouts"
+    "cybermedico/widgets"
+	"cybermedico/components"
+    "fmt"
 
-templ DashboardHtml() {
+    "github.com/starfederation/datastar-go/datastar"
+)
+
+templ widgetHtml(widget WidgetMain, data widgets.Data) {
+    <div style="height: 100%; width: 100%" id={ widget.ID }>
+        if renderer, ok := widgets.Map[widget.Type]; ok {
+            @renderer.Render(ctx, widget.Config, data)
+        } else {
+            <p>Unknown widget type: { widget.Type }</p>
+        }
+    </div>
+}
+
+templ widgetContainerHtml(widget WidgetMain) {
+    <div style="height: 100%; width: 100%"
+        data-init={ datastar.GetSSE("/widgets/%s", widget.ID) }
+    >
+        @widgetHtml(widget, widgets.Data{ID: widget.ID, Title: widget.Title})
+    </div>
+}
+
+templ Dashboard(d DashboardData, upcomingConsultations []UpcomingConsultations) {
     @layouts.Dashboard(nil) {
-        <hgroup>
-            <h2>Dashboard</h2>
-            <p>This is the main dashboard view of the platform</p>
-        </hgroup>
+        @components.HeadingGroup(components.Config{
+            Title: "Welcome back!",
+            Breadcrumbs: []components.Breadcrumb{
+                {Title: "Dashboard"},
+            },
+            Description: "This is the main dashboard view of the platform",
+        })
+        <div class="grid-stack dashboard">
+            // User-configured widgets (data fetched lazily via Datastar)
+            for _, widget := range d.Widgets {
+                <div class="grid-stack-item"
+                    gs-x={ fmt.Sprintf("%g", widget.GridLayout.X) }
+                    gs-y={ fmt.Sprintf("%g", widget.GridLayout.Y) }
+                    gs-w={ fmt.Sprintf("%g", widget.GridLayout.W) }
+                    gs-h={ fmt.Sprintf("%g", widget.GridLayout.H) }
+                >
+                    <div class="grid-stack-item-content" style="display:flex;flex-direction:column;overflow:hidden;">
+                        <div style="flex:1;min-height:0;">
+                            @widgetContainerHtml(widget)
+                        </div>
+                    </div>
+                </div>
+            }
+            // Row 2 — upcoming appointments + summary
+            <div class="grid-stack-item" gs-x="0" gs-y="1" gs-w="3" gs-h="1.5">
+                <div class="grid-stack-item-content" style="display:flex;flex-direction:column;overflow:hidden;">
+                    <div style="flex:1;min-height:0;">
+                        <article style="height:100%;margin:0;padding:1rem;">
+                            <header><kbd>Upcoming Appointments</kbd></header>
+                            if len(upcomingConsultations) == 0 {
+                                @components.MessageCard() {
+                                    <p>No upcoming consultations</p>
+                                }
+                            } else {
+                                <div class="overflow-auto">
+                                    <table style="white-space: nowrap;">
+                                        <thead>
+                                            <tr>
+                                                <th>Patient</th>
+                                                <th>Doctor</th>
+                                                <th>Urgent</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            for _, consultation := range upcomingConsultations {
+                                                <tr data-on:click={ fmt.Sprintf("window.location='/consultations/%s'", consultation.ID)} style="cursor: pointer;">
+                                                    <td>{ consultation.PatientName } { consultation.PatientSurname }</td>
+                                                    <td> { consultation.DoctorDisplayName }</td>
+                                                    if consultation.Urgent {
+                                                        <td>
+                                                            <span class="badge-true">Yes</span>
+                                                        </td>
+                                                    } else {
+                                                        <td>
+                                                            <span class="badge-false">No</span>
+                                                        </td>
+                                                    }
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                        </article>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-stack-item" gs-x="3" gs-y="1" gs-w="1" gs-h="1">
+                <div class="grid-stack-item-content" style="display:flex;flex-direction:column;overflow:hidden;">
+                    <div style="flex:1;min-height:0;">
+                        <article style="height:100%;margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+                            if d.MonthlyRevenueError != "" {
+                                <small style="color: var(--pico-del-color);">Unable to load revenue</small>
+                            } else {
+                                <div>
+                                    <h2 style="margin-bottom:0.1rem">{ d.MonthlyRevenue.Amount }</h2>
+                                    <small>This month's revenue</small>
+                                    if d.MonthlyRevenue.Direction != "" {
+                                        {{ tick := "▲" }}
+                                        {{ tickColor := "var(--pico-form-element-valid-border-color)" }}
+                                        if d.MonthlyRevenue.Direction == "down" {
+                                            {{ tick = "▼" }}
+                                            {{ tickColor = "var(--pico-form-element-invalid-border-color)" }}
+                                        }
+                                        <div style="margin-top:0.4rem;display:flex;align-items:center;justify-content:center;gap:0.25rem;font-size:0.8rem">
+                                            <span style={ "font-weight:600;color:" + tickColor }>{ tick } { d.MonthlyRevenue.Delta }</span>
+                                            <small style="color:var(--pico-muted-color)">vs last month</small>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </article>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-stack-item" gs-x="3" gs-y="2" gs-w="1" gs-h="1">
+                <div class="grid-stack-item-content" style="display:flex;flex-direction:column;overflow:hidden;">
+                    <div style="flex:1;min-height:0;">
+                        <article style="height:100%;margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+                            if d.SecondaryStatError != "" {
+                                <small style="color: var(--pico-del-color);">Unable to load summary</small>
+                            } else {
+                                <div style="text-align: center;">
+                                    <h2>{ d.SecondaryStatValue }</h2>
+                                    <small>{ d.SecondaryStatLabel }</small>
+                                </div>
+                            }
+                        </article>
+                    </div>
+                </div>
+            </div>
+            // Row 3 — the bottom-row bar chart (Consultations per Doctor for admins,
+            // My Consultations by Status for doctors) is a role-scoped dashboard
+            // widget seeded in compose.sql; it renders via the widget loop above.
+        </div>
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const grid = GridStack.init({
+                column: 4,
+                staticGrid: true,
+                // float:true disables upward gravity so each item stays at its
+                // declared gs-y. Without it, items are compacted up to fill gaps
+                // and the bar widget (emitted before the static panels) floats
+                // above Upcoming despite its higher y.
+                float: true,
+                margin: '1rem',
+                cellHeight: '15rem',
+                columnOpts: {
+                    columnMax: 4,
+                    breakpoints: [{ w: 768, c: 1 }]
+                }
+            });
+        })
+        </script>
     }
 }

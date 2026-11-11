@@ -8,7 +8,44 @@ templ head() {
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yohns/picocss@2.2.10/css/pico.azure.min.css">
         <title>CyberMedico</title>
         <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.2/bundles/datastar.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/gridstack@12.6.0/dist/gridstack-all.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@12.6.0/dist/gridstack.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.0.0/echarts.min.js" integrity="sha512-4/g9GAdOdTpUP2mKClpKsEzaK7FQNgMjq+No0rX8XZlfrCGtbi4r+T/p5fnacsEC3zIAmHKLJUL7sh3/yVA4OQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script>
+            if (typeof echarts !== 'undefined') {
+                const originalEchartsInit = echarts.init;
+                echarts.init = function(dom, theme, opts) {
+                    if (!document.documentElement.hasAttribute('data-theme') && theme == 'white') {
+                        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        theme = isDark ? 'dark' : 'white';
+                    }
+
+                    const chart = originalEchartsInit.call(this, dom, theme, opts);
+
+                    const originalSetOption = chart.setOption;
+                    chart.setOption = function(option, ...args) {
+                        if (option && typeof option === 'object') {
+                            // Shallow copy so we can force a transparent background
+                            // without mutating the caller's option. Do NOT deep-clone
+                            // via JSON here: JSON.stringify drops function values such
+                            // as tooltip.formatter, breaking custom tooltips.
+                            const transparentOption = Object.assign({}, option);
+                            transparentOption.backgroundColor = 'transparent';
+                            return originalSetOption.call(this, transparentOption, ...args);
+                        }
+                        return originalSetOption.call(this, option, ...args);
+                    };
+
+                    return chart;
+                };
+            }
+        </script>
         <style>
+        .dashboard {
+            background-color: var(--pico-dropdown-hover-background-color);
+            border-radius: var(--pico-border-radius)
+        }
+
         aside nav li {
             width: 100%;
         }

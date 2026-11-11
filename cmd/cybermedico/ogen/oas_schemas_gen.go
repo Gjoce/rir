@@ -270,6 +270,7 @@ func (*DefaultStatusCode) videoOrderFormRes()             {}
 func (*DefaultStatusCode) videoOrderSubmitRes()           {}
 func (*DefaultStatusCode) videoPageIceRes()               {}
 func (*DefaultStatusCode) videoPagePatientRes()           {}
+func (*DefaultStatusCode) widgetRes()                     {}
 func (*DefaultStatusCode) writtenOrderFormRes()           {}
 func (*DefaultStatusCode) writtenOrderSubmitRes()         {}
 
@@ -493,6 +494,7 @@ func (*R200) twoFactorSubmitRes()            {}
 func (*R200) videoOrderFormRes()             {}
 func (*R200) videoOrderSubmitRes()           {}
 func (*R200) videoPagePatientRes()           {}
+func (*R200) widgetRes()                     {}
 func (*R200) writtenOrderFormRes()           {}
 func (*R200) writtenOrderSubmitRes()         {}
 

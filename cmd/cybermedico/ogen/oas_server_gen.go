@@ -100,6 +100,10 @@ type Handler interface {
 	//
 	// GET /video/{id}
 	VideoPagePatient(ctx context.Context, params VideoPagePatientParams) (VideoPagePatientRes, error)
+	// Widget implements widget operation.
+	//
+	// GET /widgets/{id}
+	Widget(ctx context.Context, params WidgetParams) (WidgetRes, error)
 	// WrittenOrderForm implements written_order_form operation.
 	//
 	// GET /specialists/{id}/written
