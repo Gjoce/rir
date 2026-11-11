@@ -17,6 +17,7 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 
 	"github.com/google/uuid"
@@ -442,19 +443,29 @@ func (h OrdersHandler) saveOrder(ctx context.Context, doctor orderDoctor, order 
 
 	// These run after the consultation is inserted: the trigger on video_consultations
 	// reads its urgent flag to set the deadline for scheduling.
+	// The triggers also set the doctor's deadline, which the reminder is scheduled from.
+	deadline := workers.DeadlineWrittenAnswer
+	var deadlineAt time.Time
 	if order.ConsultationType == consultationTypeVideo {
-		_, err = tx.Exec(ctx,
-			`INSERT INTO video_consultations (consultation_id, preferred_time) VALUES (@consultation_id, @preferred_time)`,
+		deadline = workers.DeadlineVideoScheduling
+		err = tx.QueryRow(ctx,
+			`INSERT INTO video_consultations (consultation_id, preferred_time) VALUES (@consultation_id, @preferred_time)
+			RETURNING requires_response_by_schedule`,
 			pgx.NamedArgs{"consultation_id": consultationID, "preferred_time": order.PreferredTime},
-		)
+		).Scan(&deadlineAt)
 	} else {
-		_, err = tx.Exec(ctx,
-			`INSERT INTO written_consultations (consultation_id) VALUES (@consultation_id)`,
+		err = tx.QueryRow(ctx,
+			`INSERT INTO written_consultations (consultation_id) VALUES (@consultation_id) RETURNING expires_at`,
 			pgx.NamedArgs{"consultation_id": consultationID},
-		)
+		).Scan(&deadlineAt)
 	}
 	if err != nil {
 		return fmt.Errorf("failed to insert consultation details: %w", err)
+	}
+
+	reminder, reminderOpts := workers.DoctorDeadlineReminderJob(consultationID, deadline, deadlineAt)
+	if _, err = h.riverClient.InsertTx(ctx, tx, reminder, reminderOpts); err != nil {
+		return fmt.Errorf("failed to enqueue doctor reminder: %w", err)
 	}
 
 	for _, a := range attachments {
