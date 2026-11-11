@@ -240,3 +240,63 @@ func TestSignalingClosesReplacedConnection(t *testing.T) {
 		t.Fatalf("close status = %d, want %d (err %v)", got, video.StatusReplaced, err)
 	}
 }
+
+func waitForKinds(t *testing.T, rec *fakeRecorder, want ...string) {
+	t.Helper()
+	deadline := time.Now().Add(3 * time.Second)
+	for {
+		kinds := strings.Join(rec.Kinds(), ",")
+		missing := ""
+		for _, k := range want {
+			if !strings.Contains(kinds, k) {
+				missing = k
+			}
+		}
+		if missing == "" {
+			return
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("recorded kinds = %v, missing %q", rec.Kinds(), missing)
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
+}
+
+func TestSignalingRecordsReportsAndHangup(t *testing.T) {
+	rig := newSignalingRig(t)
+	doctor := join(t, rig, "doctor")
+	patient := join(t, rig, "patient")
+	_ = readMessage(t, doctor)  // PeerJoined
+	_ = readMessage(t, patient) // PeerPresent
+
+	writeMessage(t, doctor, video.Message{Type: video.MsgReport, Data: json.RawMessage(`{"kind":"ice_connected"}`)})
+	writeMessage(t, patient, video.Message{Type: video.MsgReport, Data: json.RawMessage(`{"kind":"ice_relay_used"}`)})
+	// Only browser-side events can be reported; the rest come from the server.
+	writeMessage(t, patient, video.Message{Type: video.MsgReport, Data: json.RawMessage(`{"kind":"doctor_joined"}`)})
+	writeMessage(t, patient, video.Message{Type: video.MsgReport, Data: json.RawMessage(`"ice_connected"`)})
+	writeMessage(t, doctor, video.Message{Type: video.MsgBye})
+
+	// Reports are not relayed: the next thing the patient sees is the bye.
+	if got := readMessage(t, patient); got.Type != video.MsgBye {
+		t.Fatalf("patient: expected Bye, got %+v", got)
+	}
+
+	waitForKinds(t, rig.recorder, "ice_connected", "ice_relay_used", "call_ended")
+	if n := strings.Count(strings.Join(rig.recorder.Kinds(), ","), "doctor_joined"); n != 1 {
+		t.Fatalf("doctor_joined recorded %d times, want 1 (a forged report got through)", n)
+	}
+}
+
+func TestSignalingCapsReports(t *testing.T) {
+	rig := newSignalingRig(t)
+	doctor := join(t, rig, "doctor")
+	for range 100 {
+		writeMessage(t, doctor, video.Message{Type: video.MsgReport, Data: json.RawMessage(`{"kind":"ice_failed"}`)})
+	}
+	waitForKinds(t, rig.recorder, "ice_failed")
+	time.Sleep(200 * time.Millisecond)
+
+	if n := strings.Count(strings.Join(rig.recorder.Kinds(), ","), "ice_failed"); n > 30 {
+		t.Fatalf("recorded %d reports from one connection, want at most 30", n)
+	}
+}

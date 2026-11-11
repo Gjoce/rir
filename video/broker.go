@@ -29,6 +29,9 @@ const (
 	MsgAnswer       MessageType = "answer"
 	MsgICECandidate MessageType = "ice-candidate"
 	MsgBye          MessageType = "bye"
+	// MsgReport tells the server how the connection went (see reportableKinds).
+	// It is recorded and never relayed.
+	MsgReport MessageType = "report"
 
 	MsgPeerJoined   MessageType = "peer-joined"
 	MsgPeerLeft     MessageType = "peer-left"

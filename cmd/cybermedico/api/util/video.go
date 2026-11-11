@@ -26,12 +26,17 @@ const AppointmentTimeFormat = "02.01.2006 15:04"
 // FormatAppointmentTime formats t in Europe/Skopje, the clinic's time zone,
 // wherever the app runs.
 func FormatAppointmentTime(t time.Time) string {
+	return FormatInSkopje(t, AppointmentTimeFormat)
+}
+
+// FormatInSkopje formats t with layout in Europe/Skopje.
+func FormatInSkopje(t time.Time, layout string) string {
 	location, err := time.LoadLocation("Europe/Skopje")
 	if err != nil {
-		return t.UTC().Format(AppointmentTimeFormat) + " UTC"
+		return t.UTC().Format(layout) + " UTC"
 	}
 
-	return t.In(location).Format(AppointmentTimeFormat)
+	return t.In(location).Format(layout)
 }
 
 // JoinWindowOpensAt returns when patients and doctors may first join.
