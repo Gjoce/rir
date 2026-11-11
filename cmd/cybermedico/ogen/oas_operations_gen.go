@@ -29,6 +29,7 @@ const (
 	VideoOrderSubmitOperation           OperationName = "VideoOrderSubmit"
 	VideoPageIceOperation               OperationName = "VideoPageIce"
 	VideoPagePatientOperation           OperationName = "VideoPagePatient"
+	WidgetOperation                     OperationName = "Widget"
 	WrittenOrderFormOperation           OperationName = "WrittenOrderForm"
 	WrittenOrderSubmitOperation         OperationName = "WrittenOrderSubmit"
 )

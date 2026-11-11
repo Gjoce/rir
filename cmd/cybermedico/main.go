@@ -464,6 +464,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 		html.ThemeHandler
 		html.AuthHandler
 		html.DashboardHandler
+		html.WidgetsHandler
 		html.ConsultationsHandler
 		html.VideoPageHandler
 		html.ICEHandler
@@ -473,7 +474,8 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 		html.NewOrdersHandler(dbPool, storageService, riverClient),
 		html.ThemeHandler{},
 		authHandler,
-		html.NewDashboardHandler(authService),
+		html.NewDashboardHandler(authService, dbPool),
+		html.NewWidgetsHandler(dbPool, authService),
 		html.NewConsultationsHandler(dbPool, authService, storageService, riverClient),
 		html.NewVideoPageHandler(dbPool, authService, videoURLBuilder.JoinSecret),
 		html.NewICEHandler(initializeTURNConfig(), videoAuthorize),

@@ -1440,6 +1440,52 @@ func encodeVideoPagePatientResponse(response VideoPagePatientRes, w http.Respons
 	}
 }
 
+func encodeWidgetResponse(response WidgetRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *R200:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(200)
+
+		writer := w
+		if closer, ok := response.Data.(io.Closer); ok {
+			defer closer.Close()
+		}
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	case *DefaultStatusCode:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		code := response.StatusCode
+		if code == 0 {
+			// Set default status code.
+			code = http.StatusOK
+		}
+		w.WriteHeader(code)
+		if code >= http.StatusInternalServerError {
+			span.SetStatus(codes.Error, http.StatusText(code))
+		}
+
+		writer := w
+		if closer, ok := response.Response.Data.(io.Closer); ok {
+			defer closer.Close()
+		}
+		if _, err := io.Copy(writer, response.Response); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		if code >= http.StatusInternalServerError {
+			return errors.Wrapf(ht.ErrInternalServerErrorResponse, "code: %d, message: %s", code, http.StatusText(code))
+		}
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
+}
+
 func encodeWrittenOrderFormResponse(response WrittenOrderFormRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *R200:

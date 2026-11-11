@@ -203,6 +203,16 @@ github.com/fatih/color
 # github.com/ghodss/yaml v1.0.0
 ## explicit
 github.com/ghodss/yaml
+# github.com/go-echarts/go-echarts/v2 v2.7.2
+## explicit; go 1.18
+github.com/go-echarts/go-echarts/v2/charts
+github.com/go-echarts/go-echarts/v2/datasets
+github.com/go-echarts/go-echarts/v2/event
+github.com/go-echarts/go-echarts/v2/opts
+github.com/go-echarts/go-echarts/v2/render
+github.com/go-echarts/go-echarts/v2/templates
+github.com/go-echarts/go-echarts/v2/types
+github.com/go-echarts/go-echarts/v2/util
 # github.com/go-faster/errors v0.8.0
 ## explicit; go 1.20
 github.com/go-faster/errors

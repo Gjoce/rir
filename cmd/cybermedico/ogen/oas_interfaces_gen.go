@@ -93,6 +93,10 @@ type VideoPagePatientRes interface {
 	videoPagePatientRes()
 }
 
+type WidgetRes interface {
+	widgetRes()
+}
+
 type WrittenOrderFormRes interface {
 	writtenOrderFormRes()
 }

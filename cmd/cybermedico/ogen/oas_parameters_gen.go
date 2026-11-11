@@ -1017,6 +1017,121 @@ func decodeVideoPagePatientParams(args [1]string, argsEscaped bool, r *http.Requ
 	return params, nil
 }
 
+// WidgetParams is parameters of widget operation.
+type WidgetParams struct {
+	ID              uuid.UUID
+	DatastarRequest OptBool `json:",omitempty,omitzero"`
+}
+
+func unpackWidgetParams(packed middleware.Parameters) (params WidgetParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "id",
+			In:   "path",
+		}
+		params.ID = packed[key].(uuid.UUID)
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "Datastar-Request",
+			In:   "header",
+		}
+		if v, ok := packed[key]; ok {
+			params.DatastarRequest = v.(OptBool)
+		}
+	}
+	return params
+}
+
+func decodeWidgetParams(args [1]string, argsEscaped bool, r *http.Request) (params WidgetParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
+	// Decode path: id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToUUID(val)
+				if err != nil {
+					return err
+				}
+
+				params.ID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "id",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	// Decode header: Datastar-Request.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "Datastar-Request",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				var paramsDotDatastarRequestVal bool
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToBool(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotDatastarRequestVal = c
+					return nil
+				}(); err != nil {
+					return err
+				}
+				params.DatastarRequest.SetTo(paramsDotDatastarRequestVal)
+				return nil
+			}); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "Datastar-Request",
+			In:   "header",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
 // WrittenOrderFormParams is parameters of written_order_form operation.
 type WrittenOrderFormParams struct {
 	ID uuid.UUID

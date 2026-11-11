@@ -1,0 +1,25 @@
+package widgets
+
+templ renderWidgetErrorTempl(message string) {
+    <article style="height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+        <div>
+            <h2 style="margin-bottom: .25rem;">Query error</h2>
+            <p style="white-space: pre-wrap;">{ message }</p>
+        </div>
+    </article>
+}
+
+templ renderSpinner() {
+    <article 
+        aria-busy="true"
+        style="height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; text-align: center;"
+    ></article>
+}
+
+templ renderNoData() {
+    <article 
+        style="height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; text-align: center;"
+    >
+        <p>No data was returned</p>
+    </article>
+}
