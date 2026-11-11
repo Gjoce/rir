@@ -177,9 +177,17 @@ func (h VideoPageHandler) ConsultationsVideoForm(ctx context.Context, params api
 
 // VideoPagePatient renders /video/{id} for a patient arriving from the email link.
 // The ?t= token is the patient's only credential; no session is required.
+// Outside the join window the patient gets a page with the appointment time
+// instead of the call.
 func (h VideoPageHandler) VideoPagePatient(ctx context.Context, params api.VideoPagePatientParams) (api.VideoPagePatientRes, error) {
-	// Checked first, so a caller without a valid link learns nothing about the consultation.
-	if _, err := video.VerifyPatientJoinToken(h.joinSecret, params.T, params.ID.String(), time.Now()); err != nil {
+	now := time.Now()
+
+	// Checked first, so a caller without a valid link learns nothing about the
+	// consultation. An expired link is still ours: it gets the "time has passed"
+	// page below.
+	_, err := video.VerifyPatientJoinToken(h.joinSecret, params.T, params.ID.String(), now)
+	linkExpired := errors.Is(err, video.ErrTokenExpired)
+	if err != nil && !linkExpired {
 		log.Logger.Warn("video page: patient token rejected",
 			"consultation_id", params.ID.String(),
 			"error", err,
@@ -187,7 +195,7 @@ func (h VideoPageHandler) VideoPagePatient(ctx context.Context, params api.Video
 
 		return nil, herrors.HtmlError{
 			Code:       http.StatusForbidden,
-			Msg:        "This link is invalid or has expired",
+			Msg:        "This link is invalid. Use the link from your latest email.",
 			ButtonLink: "/",
 		}
 	}
@@ -202,6 +210,14 @@ func (h VideoPageHandler) VideoPagePatient(ctx context.Context, params api.Video
 	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to query consultation: %w", err)
+	}
+
+	if notice, ok := patientJoinNotice(consultation, linkExpired, now); ok {
+		var buff bytes.Buffer
+
+		return &api.R200{
+			Data: &buff,
+		}, PatientJoinNoticePage(notice).Render(ctx, &buff)
 	}
 
 	allowed, err := h.authService.IsAllowed(ctx, "join_video_consultation_patient", consultation.target())
@@ -228,4 +244,62 @@ func (h VideoPageHandler) VideoPagePatient(ctx context.Context, params api.Video
 	return &api.R200{
 		Data: &buff,
 	}, PatientVideoPage(data).Render(ctx, &buff)
+}
+
+// JoinNotice is shown to a patient whose link can't open the call right now.
+type JoinNotice struct {
+	Title string
+	Text  string
+	// AppointmentTime is the formatted start of the call, or empty if there is none.
+	AppointmentTime string
+	// ReloadIn is set while the call hasn't opened yet: the page reloads itself
+	// when it does.
+	ReloadIn time.Duration
+}
+
+// maxNoticeReload is the longest wait the notice page reloads after. Browsers
+// fire longer timers early, and nobody keeps a tab open that long anyway.
+const maxNoticeReload = 24 * time.Hour
+
+// patientJoinNotice decides whether the patient sees a notice instead of the
+// call, and which one. ok is false when the call may be entered now.
+func patientJoinNotice(c videoConsultation, linkExpired bool, now time.Time) (JoinNotice, bool) {
+	if c.ConsultationStatus == "finished" {
+		return JoinNotice{
+			Title: "This consultation has finished",
+			Text:  "The doctor's written opinion is sent to you by email.",
+		}, true
+	}
+	if c.ConsultationStatus != "scheduled" || c.ConsultationType != "video" || c.ScheduledAt == nil {
+		return JoinNotice{
+			Title: "This video consultation can't be joined",
+			Text:  "It isn't scheduled. The link works once the doctor sets the time of the call.",
+		}, true
+	}
+
+	appointment := util.FormatAppointmentTime(*c.ScheduledAt)
+	opensAt := util.JoinWindowOpensAt(*c.ScheduledAt)
+
+	switch {
+	case now.Before(opensAt):
+		reloadIn := opensAt.Sub(now)
+		if reloadIn > maxNoticeReload {
+			reloadIn = 0
+		}
+
+		return JoinNotice{
+			Title:           "Your video consultation hasn't started yet",
+			Text:            fmt.Sprintf("You can join from %s, %d minutes before the start. Keep this page open and the call opens by itself.", util.FormatAppointmentTime(opensAt), int(util.JoinWindowBefore.Minutes())),
+			AppointmentTime: appointment,
+			ReloadIn:        reloadIn,
+		}, true
+	case linkExpired || !util.IsWithinJoinWindow(*c.ScheduledAt, now):
+		return JoinNotice{
+			Title:           "The time to join has passed",
+			Text:            fmt.Sprintf("The call could be joined until %d minutes after the start.", int(util.JoinWindowAfter.Minutes())),
+			AppointmentTime: appointment,
+		}, true
+	}
+
+	return JoinNotice{}, false
 }

@@ -18,3 +18,23 @@ func IsWithinJoinWindow(scheduledAt, now time.Time) bool {
 
 	return !now.Before(open) && now.Before(close)
 }
+
+// AppointmentTimeFormat is how appointment times are shown to patients, the same
+// as in the emails.
+const AppointmentTimeFormat = "02.01.2006 15:04"
+
+// FormatAppointmentTime formats t in Europe/Skopje, the clinic's time zone,
+// wherever the app runs.
+func FormatAppointmentTime(t time.Time) string {
+	location, err := time.LoadLocation("Europe/Skopje")
+	if err != nil {
+		return t.UTC().Format(AppointmentTimeFormat) + " UTC"
+	}
+
+	return t.In(location).Format(AppointmentTimeFormat)
+}
+
+// JoinWindowOpensAt returns when patients and doctors may first join.
+func JoinWindowOpensAt(scheduledAt time.Time) time.Time {
+	return scheduledAt.Add(-JoinWindowBefore)
+}
