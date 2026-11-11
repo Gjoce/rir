@@ -113,13 +113,14 @@ func TestPatientJoinTokenRejectsTamperedPayload(t *testing.T) {
 		t.Fatalf("issue: %v", err)
 	}
 
-	// Flip a character inside the payload segment (before the dot).
+	// Flip the first character of the payload segment. Not the last one: like the
+	// signature's, it carries unused bits, so changing it can decode to the same bytes.
 	dot := strings.IndexByte(tok, '.')
 	if dot <= 0 {
 		t.Fatalf("token has no '.': %q", tok)
 	}
 
-	flipIdx := dot - 1
+	flipIdx := 0
 	orig := tok[flipIdx]
 	swap := byte('A')
 	if orig == 'A' {

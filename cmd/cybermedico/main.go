@@ -70,8 +70,10 @@ func main() {
 
 	authService, _ := initializeAuth(ctx, dbPool)
 
+	signalHandler := initializeVideo(ctx, dbPool, authService, videoURLBuilder)
+
 	htmlServer := initializeHTMLServer(dbPool, authService, storageService, riverClient)
-	httpServer := initializeHTTPServer(htmlServer, authService)
+	httpServer := initializeHTTPServer(htmlServer, authService, signalHandler)
 	startHTTPServer(httpServer)
 
 	waitForShutdown()
@@ -421,9 +423,38 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 	return htmlServer
 }
 
-func initializeHTTPServer(htmlServer *ogen.Server, authService *html.AuthService) *http.Server {
+// initializeVideo wires up the broker and the signaling handler for video calls.
+func initializeVideo(ctx context.Context, dbPool *pgxpool.Pool, authService *html.AuthService, urlBuilder *video.URLBuilder) http.Handler {
+	broker := video.NewBroker()
+	go runBrokerEvictor(ctx, broker)
+
+	authorize := html.NewVideoJoinAuthorizer(dbPool, authService, urlBuilder.JoinSecret)
+
+	return video.NewSignalingHandler(broker, authorize, video.NewPGEventRecorder(dbPool))
+}
+
+// runBrokerEvictor calls EvictIdle on a fixed schedule until ctx is done.
+func runBrokerEvictor(ctx context.Context, broker *video.Broker) {
+	t := time.NewTicker(5 * time.Minute)
+	defer t.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-t.C:
+			if n := broker.EvictIdle(); n > 0 {
+				log.Logger.Debug("WebRTC broker: evicted idle rooms", "count", n)
+			}
+		}
+	}
+}
+
+func initializeHTTPServer(htmlServer *ogen.Server, authService *html.AuthService, signalHandler http.Handler) *http.Server {
 	mux := http.NewServeMux()
 	mux.Handle("/", authService.SessionMiddleware(util.InjectRequestToContext(htmlServer)))
+	// The session tells the authorizer whether a doctor is calling. Patients have no
+	// session; their link token is checked instead.
+	mux.Handle("GET /ws/video/{id}/signal", authService.SessionMiddleware(signalHandler))
 	mux.Handle("/static/", http.FileServer(http.FS(staticFiles)))
 
 	port := os.Getenv("PORT")
