@@ -468,6 +468,15 @@ func (h OrdersHandler) saveOrder(ctx context.Context, doctor orderDoctor, order 
 		return fmt.Errorf("failed to enqueue doctor reminder: %w", err)
 	}
 
+	// Marks the consultation not attended if the doctor misses the deadline.
+	var notAttended river.JobArgs = workers.WrittenNotAttendedArgs{ConsultationID: consultationID}
+	if order.ConsultationType == consultationTypeVideo {
+		notAttended = workers.VideoUnscheduledNotAttendedArgs{ConsultationID: consultationID}
+	}
+	if _, err = h.riverClient.InsertTx(ctx, tx, notAttended, workers.NotAttendedJobOpts(deadlineAt)); err != nil {
+		return fmt.Errorf("failed to enqueue not attended marker: %w", err)
+	}
+
 	for _, a := range attachments {
 		if _, err = tx.Exec(ctx, `
 			INSERT INTO consultation_attachments (consultation_id, s3_key, original_filename, content_type, size_bytes)

@@ -221,6 +221,10 @@ INSERT INTO written_consultations (consultation_id) VALUES
     ('55555555-5555-5555-5555-55555555555b'),
     ('55555555-5555-5555-5555-55555555555c');
 
+-- Not attended: its 72 hours ran out (the trigger sets expires_at from created_at)
+INSERT INTO written_consultations (consultation_id, created_at) VALUES
+    ('55555555-5555-5555-5555-55555555555d', NOW() - INTERVAL '4 days');
+
 INSERT INTO doctor_contacts (doctor_id, phone_number, meeting_link) VALUES
 ('22222222-2222-2222-2222-222222222221', '049 834 233', 'https://meet.cybermedico.net/dr-carter'),
 ('22222222-2222-2222-2222-222222222222', '948 394 123','https://meet.cybermedico.net/dr-wilson'),
