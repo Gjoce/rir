@@ -366,6 +366,9 @@ templ ConsultationFormHtml(consultation Consultation, role string, canAnswerCons
             })
             <article>
                 @templ.Raw(*consultation.DoctorAnswer)
+                <footer id="signature-status">
+                    @signatureStatus(consultation.Signature)
+                </footer>
             </article>
         }
     }
@@ -376,6 +379,19 @@ templ ConsultationFormHtml(consultation Consultation, role string, canAnswerCons
 func opinionDeadlinePassed(c Consultation) bool {
     return c.ConsultationType == "video" && c.ConsultationStatus == "scheduled" &&
         c.VideoExpiresAt != nil && !time.Now().Before(*c.VideoExpiresAt)
+}
+
+templ signatureStatus(s SignatureStatus) {
+    switch s.State {
+        case "valid":
+            <small>✔ Digitally signed by { s.Doctor } on { s.SignedAt }. The signature is valid.</small>
+        case "pending":
+            <small>The opinion is being signed.</small>
+        case "invalid":
+            <small><strong>✖ The signature is not valid:</strong> the opinion or the consultation data changed after signing.</small>
+        default:
+            <small>The signature can't be checked right now.</small>
+    }
 }
 
 templ consultationActions(consultation Consultation, role string, canAnswer bool, videoCall VideoCallEntry) {

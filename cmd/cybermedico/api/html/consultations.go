@@ -11,6 +11,7 @@ import (
 	"cybermedico/cmd/cybermedico/signing"
 	"cybermedico/cmd/cybermedico/storage"
 	"cybermedico/workers"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"html"
@@ -276,6 +277,7 @@ type Consultation struct {
 	Medication              *string // nullable
 	Attachments             []ConsultationAttachment
 	CallEvents              []CallEvent
+	Signature               SignatureStatus
 	CreatedAt               time.Time
 	FinishedAt              *time.Time // nullable
 	DoctorAnswer            *string    // nullable
@@ -416,6 +418,10 @@ func (h ConsultationsHandler) ConsultationForm(ctx context.Context, params api.C
 		return nil, fmt.Errorf("failed to iterate attachments: %w", err)
 	}
 
+	if consultation.ConsultationStatus == "finished" {
+		consultation.Signature = h.signatureStatus(ctx, consultation.ID)
+	}
+
 	if consultation.ConsultationType == "video" {
 		consultation.CallEvents, err = h.loadCallEvents(ctx, consultation.ID)
 		if err != nil {
@@ -463,6 +469,65 @@ func answerRefusal(consultationID string, target authorization.Target) error {
 		Msg:        msg,
 		ButtonLink: "/consultations/" + consultationID,
 	}
+}
+
+// SignatureStatus is the result of checking a finished consultation's signature.
+type SignatureStatus struct {
+	// State is "pending", "valid", "invalid" or "unavailable".
+	State    string
+	SignedAt string
+	Doctor   string
+}
+
+// signatureStatus checks the stored signature against the consultation as it is
+// now in the database, so a change to the opinion or the patient's data after
+// signing shows up as an invalid signature.
+func (h ConsultationsHandler) signatureStatus(ctx context.Context, consultationID string) SignatureStatus {
+	var signatureKey *string
+	err := h.db.QueryRow(ctx, `SELECT signature_doctor_url FROM consultations WHERE id = @id`,
+		pgx.NamedArgs{"id": consultationID}).Scan(&signatureKey)
+	if err != nil {
+		log.Logger.Error("failed to query signature", "error", err, "consultation_id", consultationID)
+
+		return SignatureStatus{State: "unavailable"}
+	}
+	if signatureKey == nil {
+		return SignatureStatus{State: "pending"}
+	}
+
+	recordJSON, err := h.storage.GetSignature(ctx, consultationID)
+	if errors.Is(err, storage.ErrSignatureNotFound) {
+		// The database says it was signed, but the record is gone.
+		log.Logger.Error("signature record missing", "consultation_id", consultationID)
+
+		return SignatureStatus{State: "invalid"}
+	}
+	if err != nil {
+		log.Logger.Error("failed to read signature", "error", err, "consultation_id", consultationID)
+
+		return SignatureStatus{State: "unavailable"}
+	}
+
+	current, err := signing.LoadPayload(ctx, h.db, consultationID)
+	if err != nil {
+		log.Logger.Error("failed to load signed data", "error", err, "consultation_id", consultationID)
+
+		return SignatureStatus{State: "unavailable"}
+	}
+
+	var record signing.SignatureRecord
+	if err := json.Unmarshal(recordJSON, &record); err != nil || !signing.VerifyAgainst(record, current) {
+		log.Logger.Warn("signature does not verify", "consultation_id", consultationID)
+
+		return SignatureStatus{State: "invalid"}
+	}
+
+	status := SignatureStatus{State: "valid", Doctor: record.SignedPayload.DoctorName}
+	if signedAt, err := time.Parse(time.RFC3339, record.SignedPayload.SignedAt); err == nil {
+		status.SignedAt = util.FormatInSkopje(signedAt, "02.01.2006 15:04")
+	}
+
+	return status
 }
 
 // CallEvent is one line of a video consultation's call log.
@@ -660,14 +725,16 @@ func (h ConsultationsHandler) ConsultationAnswerSubmit(ctx context.Context, requ
 	var doctorID, consultationStatus, consultationType string
 	var scheduledAt, opinionDeadline *time.Time
 	var totpSecret *string
+	var hasSigningKey bool
 
 	err := h.db.QueryRow(ctx, `
-		SELECT c.doctor_id, c.consultation_status, c.consultation_type, vc.scheduled_at, vc.expires_at_after_video, u.totp_secret
+		SELECT c.doctor_id, c.consultation_status, c.consultation_type, vc.scheduled_at, vc.expires_at_after_video, u.totp_secret,
+			u.public_key IS NOT NULL AND u.encrypted_private_key IS NOT NULL AND u.key_revoked_at IS NULL
 		FROM consultations c
 		LEFT JOIN video_consultations vc ON vc.consultation_id = c.id
 		JOIN users u ON u.id = c.doctor_id
 		WHERE c.id = @id
-	`, pgx.NamedArgs{"id": params.ID.String()}).Scan(&doctorID, &consultationStatus, &consultationType, &scheduledAt, &opinionDeadline, &totpSecret)
+	`, pgx.NamedArgs{"id": params.ID.String()}).Scan(&doctorID, &consultationStatus, &consultationType, &scheduledAt, &opinionDeadline, &totpSecret, &hasSigningKey)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, herrors.HtmlError{Code: http.StatusNotFound, Msg: "Consultation not found", ButtonLink: "/consultations"}
 	}
@@ -682,6 +749,16 @@ func (h ConsultationsHandler) ConsultationAnswerSubmit(ctx context.Context, requ
 	}
 	if !allowed {
 		return nil, answerRefusal(params.ID.String(), target)
+	}
+
+	// The opinion is signed in the doctor's name after it is sent, so it can't be
+	// sent without a key to sign it with.
+	if !hasSigningKey {
+		return nil, herrors.HtmlError{
+			Code:       http.StatusConflict,
+			Msg:        "Your account has no signing key, so the opinion can't be signed. Contact the administrator.",
+			ButtonLink: "/consultations/" + params.ID.String(),
+		}
 	}
 
 	answer := cleanAnswer(request.Answer)
@@ -792,6 +869,12 @@ func (h ConsultationsHandler) ConsultationAnswerSubmit(ctx context.Context, requ
 	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to update consultation answer: %w", err)
+	}
+
+	// Signed by a job, in the same transaction: a finished consultation always
+	// gets its signature, and a failed commit leaves no job behind.
+	if _, err := h.riverClient.InsertTx(ctx, tx, workers.ConsultationSignatureArgs{ConsultationID: params.ID.String()}, nil); err != nil {
+		return nil, fmt.Errorf("failed to enqueue signature: %w", err)
 	}
 
 	if err = tx.Commit(ctx); err != nil {
