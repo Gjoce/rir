@@ -306,6 +306,33 @@ paths:
           $ref: "#/components/responses/200"
         "default":
           $ref: "#/components/responses/default"
+  /consultations/{id}/video:
+    get:
+      security:
+        - sessionCookie: []
+      operationId: consultations_video_form
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "default":
+          $ref: "#/components/responses/default"
+  /video/{id}:
+    get:
+      operationId: video_page_patient
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+        - name: t
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "default":
+          $ref: "#/components/responses/default"
   /dashboard:
     get:
       security:

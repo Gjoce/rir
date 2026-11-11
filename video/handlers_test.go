@@ -227,3 +227,16 @@ func TestSignalingRecordsJoinAndLeaveEvents(t *testing.T) {
 	}
 	t.Errorf("recorded kinds = %v", rig.recorder.Kinds())
 }
+
+func TestSignalingClosesReplacedConnection(t *testing.T) {
+	rig := newSignalingRig(t)
+	first := join(t, rig, "doctor")
+	_ = join(t, rig, "doctor")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, _, err := first.Read(ctx)
+	if got := websocket.CloseStatus(err); got != video.StatusReplaced {
+		t.Fatalf("close status = %d, want %d (err %v)", got, video.StatusReplaced, err)
+	}
+}

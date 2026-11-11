@@ -253,6 +253,7 @@ func (*DefaultStatusCode) consultationFormRes()           {}
 func (*DefaultStatusCode) consultationScheduleFormRes()   {}
 func (*DefaultStatusCode) consultationScheduleSubmitRes() {}
 func (*DefaultStatusCode) consultationsFormRes()          {}
+func (*DefaultStatusCode) consultationsVideoFormRes()     {}
 func (*DefaultStatusCode) dashboardRes()                  {}
 func (*DefaultStatusCode) loginRes()                      {}
 func (*DefaultStatusCode) loginSubmitRes()                {}
@@ -267,6 +268,7 @@ func (*DefaultStatusCode) twoFactorSetupSubmitRes()       {}
 func (*DefaultStatusCode) twoFactorSubmitRes()            {}
 func (*DefaultStatusCode) videoOrderFormRes()             {}
 func (*DefaultStatusCode) videoOrderSubmitRes()           {}
+func (*DefaultStatusCode) videoPagePatientRes()           {}
 func (*DefaultStatusCode) writtenOrderFormRes()           {}
 func (*DefaultStatusCode) writtenOrderSubmitRes()         {}
 
@@ -407,6 +409,7 @@ func (*R200) consultationFormRes()           {}
 func (*R200) consultationScheduleFormRes()   {}
 func (*R200) consultationScheduleSubmitRes() {}
 func (*R200) consultationsFormRes()          {}
+func (*R200) consultationsVideoFormRes()     {}
 func (*R200) dashboardRes()                  {}
 func (*R200) loginRes()                      {}
 func (*R200) loginSubmitRes()                {}
@@ -419,6 +422,7 @@ func (*R200) twoFactorSetupSubmitRes()       {}
 func (*R200) twoFactorSubmitRes()            {}
 func (*R200) videoOrderFormRes()             {}
 func (*R200) videoOrderSubmitRes()           {}
+func (*R200) videoPagePatientRes()           {}
 func (*R200) writtenOrderFormRes()           {}
 func (*R200) writtenOrderSubmitRes()         {}
 

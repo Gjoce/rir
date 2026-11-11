@@ -25,6 +25,10 @@ type ConsultationsFormRes interface {
 	consultationsFormRes()
 }
 
+type ConsultationsVideoFormRes interface {
+	consultationsVideoFormRes()
+}
+
 type DashboardRes interface {
 	dashboardRes()
 }
@@ -79,6 +83,10 @@ type VideoOrderFormRes interface {
 
 type VideoOrderSubmitRes interface {
 	videoOrderSubmitRes()
+}
+
+type VideoPagePatientRes interface {
+	videoPagePatientRes()
 }
 
 type WrittenOrderFormRes interface {

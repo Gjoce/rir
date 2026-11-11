@@ -55,6 +55,13 @@ func (UnimplementedHandler) ConsultationsForm(ctx context.Context, params Consul
 	return r, ht.ErrNotImplemented
 }
 
+// ConsultationsVideoForm implements consultations_video_form operation.
+//
+// GET /consultations/{id}/video
+func (UnimplementedHandler) ConsultationsVideoForm(ctx context.Context, params ConsultationsVideoFormParams) (r ConsultationsVideoFormRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // Dashboard implements dashboard operation.
 //
 // GET /dashboard
@@ -150,6 +157,13 @@ func (UnimplementedHandler) VideoOrderForm(ctx context.Context, params VideoOrde
 //
 // POST /specialists/{id}/video
 func (UnimplementedHandler) VideoOrderSubmit(ctx context.Context, req *ConsultationOrderFormMultipart, params VideoOrderSubmitParams) (r VideoOrderSubmitRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// VideoPagePatient implements video_page_patient operation.
+//
+// GET /video/{id}
+func (UnimplementedHandler) VideoPagePatient(ctx context.Context, params VideoPagePatientParams) (r VideoPagePatientRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

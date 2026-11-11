@@ -78,13 +78,27 @@ func (p *WSPeer) Done() <-chan struct{} {
 	return p.done
 }
 
+// StatusReplaced is the close code sent to a connection that a newer one for
+// the same side of the call took over, e.g. the call opened in a second tab.
+// The page must not reconnect on it, or the two tabs keep replacing each other.
+const StatusReplaced websocket.StatusCode = 4001
+
 // Close terminates the write loop and closes the underlying websocket. Safe
 // to call multiple times; only the first call has effect.
 func (p *WSPeer) Close() {
+	p.closeWith(websocket.StatusNormalClosure, "")
+}
+
+// CloseReplaced closes the connection with StatusReplaced.
+func (p *WSPeer) CloseReplaced() {
+	p.closeWith(StatusReplaced, "opened elsewhere")
+}
+
+func (p *WSPeer) closeWith(code websocket.StatusCode, reason string) {
 	p.once.Do(func() {
 		p.closed.Store(true)
 		close(p.done)
-		_ = p.conn.Close(websocket.StatusNormalClosure, "")
+		_ = p.conn.Close(code, reason)
 	})
 }
 
