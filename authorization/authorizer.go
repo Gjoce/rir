@@ -27,6 +27,9 @@ type Target struct {
 	ConsultationType   string
 	ScheduledAtPast    bool
 	WithinJoinWindow   bool
+	// OpinionDeadlinePassed is true once the 24 hours after a video call for the
+	// doctor's written opinion are over.
+	OpinionDeadlinePassed bool
 }
 
 func (a Authorizer) IsAllowed(ctx context.Context, operationID string, caller Caller, target Target) (bool, error) {

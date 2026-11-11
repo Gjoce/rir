@@ -3,6 +3,7 @@ package html
 import (
     "cybermedico/layouts"
     "cybermedico/cmd/cybermedico/api/util"
+    "time"
     "fmt"
     "strconv"
     "cybermedico/components"
@@ -370,6 +371,13 @@ templ ConsultationFormHtml(consultation Consultation, role string, canAnswerCons
     }
 }
 
+// opinionDeadlinePassed reports whether a held video call can no longer get its
+// written opinion.
+func opinionDeadlinePassed(c Consultation) bool {
+    return c.ConsultationType == "video" && c.ConsultationStatus == "scheduled" &&
+        c.VideoExpiresAt != nil && !time.Now().Before(*c.VideoExpiresAt)
+}
+
 templ consultationActions(consultation Consultation, role string, canAnswer bool, videoCall VideoCallEntry) {
     if role == "doctor" && consultation.ConsultationStatus != "finished" {
         if consultation.ConsultationStatus == "pending" && consultation.ConsultationType == "video" {
@@ -403,6 +411,13 @@ templ consultationActions(consultation Consultation, role string, canAnswer bool
                 <li>
                     <a href={ templ.SafeURL(fmt.Sprintf("/consultations/%s/answer", consultation.ID)) } role="button" class="secondary">Write answer</a>
                 </li>
+                if consultation.ConsultationType == "video" && consultation.VideoExpiresAt != nil {
+                    <li><small>By { util.FormatAppointmentTime(*consultation.VideoExpiresAt) }</small></li>
+                }
+            </ul>
+        } else if opinionDeadlinePassed(consultation) {
+            <ul>
+                <li><small>The 24 hours for the written opinion after the call have passed.</small></li>
             </ul>
         }
     }

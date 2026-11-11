@@ -119,6 +119,10 @@ test_doctor_gives_opinion_after_call if {
 	policies.allow with input as request("answer_consultation", doctor, own_after_appointment("video", "scheduled"))
 }
 
+test_doctor_cannot_give_opinion_after_24_hours if {
+	not policies.allow with input as request("answer_consultation", doctor, own_after_opinion_deadline("video", "scheduled"))
+}
+
 test_doctor_cannot_give_opinion_before_call if {
 	not policies.allow with input as request("answer_consultation", doctor, own("video", "scheduled"))
 }

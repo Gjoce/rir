@@ -423,12 +423,8 @@ func (h ConsultationsHandler) ConsultationForm(ctx context.Context, params api.C
 		}
 	}
 
-	canAnswerConsultation, err := h.authService.IsAllowed(ctx, "answer_consultation", authorization.Target{
-		UserID:             doctorID,
-		ConsultationStatus: consultation.ConsultationStatus,
-		ConsultationType:   consultation.ConsultationType,
-		ScheduledAtPast:    consultation.ScheduledAt != nil && consultation.ScheduledAt.Before(time.Now()),
-	})
+	canAnswerConsultation, err := h.authService.IsAllowed(ctx, "answer_consultation",
+		answerTarget(doctorID, consultation.ConsultationStatus, consultation.ConsultationType, consultation.ScheduledAt, consultation.VideoExpiresAt, time.Now()))
 	if err != nil {
 		return nil, err
 	}
@@ -441,6 +437,32 @@ func (h ConsultationsHandler) ConsultationForm(ctx context.Context, params api.C
 	var buff bytes.Buffer
 
 	return &api.R200{Data: &buff}, ConsultationFormHtml(consultation, role, canAnswerConsultation, videoCall).Render(ctx, &buff)
+}
+
+// answerTarget describes a consultation for the answer_consultation policy.
+// opinionDeadline is the video consultation's expires_at_after_video, 24 hours
+// after the call.
+func answerTarget(doctorID, status, consultationType string, scheduledAt, opinionDeadline *time.Time, now time.Time) authorization.Target {
+	return authorization.Target{
+		UserID:                doctorID,
+		ConsultationStatus:    status,
+		ConsultationType:      consultationType,
+		ScheduledAtPast:       scheduledAt != nil && scheduledAt.Before(now),
+		OpinionDeadlinePassed: opinionDeadline != nil && !now.Before(*opinionDeadline),
+	}
+}
+
+func answerRefusal(consultationID string, target authorization.Target) error {
+	msg := "You don't have permission to answer this consultation"
+	if target.ConsultationType == "video" && target.ConsultationStatus == "scheduled" && target.OpinionDeadlinePassed {
+		msg = "The 24 hours for the written opinion after the call have passed"
+	}
+
+	return herrors.HtmlError{
+		Code:       http.StatusForbidden,
+		Msg:        msg,
+		ButtonLink: "/consultations/" + consultationID,
+	}
 }
 
 // CallEvent is one line of a video consultation's call log.
@@ -590,14 +612,14 @@ func answerHasText(answer string) bool {
 
 func (h ConsultationsHandler) ConsultationAnswerForm(ctx context.Context, params api.ConsultationAnswerFormParams) (api.ConsultationAnswerFormRes, error) {
 	var doctorID, consultationStatus, consultationType string
-	var scheduledAt *time.Time
+	var scheduledAt, opinionDeadline *time.Time
 
 	err := h.db.QueryRow(ctx, `
-		SELECT c.doctor_id, c.consultation_status, c.consultation_type, vc.scheduled_at
+		SELECT c.doctor_id, c.consultation_status, c.consultation_type, vc.scheduled_at, vc.expires_at_after_video
 		FROM consultations c
 		LEFT JOIN video_consultations vc ON vc.consultation_id = c.id
 		WHERE c.id = @id
-	`, pgx.NamedArgs{"id": params.ID.String()}).Scan(&doctorID, &consultationStatus, &consultationType, &scheduledAt)
+	`, pgx.NamedArgs{"id": params.ID.String()}).Scan(&doctorID, &consultationStatus, &consultationType, &scheduledAt, &opinionDeadline)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, herrors.HtmlError{Code: http.StatusNotFound, Msg: "Consultation not found", ButtonLink: "/consultations"}
 	}
@@ -605,21 +627,13 @@ func (h ConsultationsHandler) ConsultationAnswerForm(ctx context.Context, params
 		return nil, fmt.Errorf("failed to query consultation owner: %w", err)
 	}
 
-	allowed, err := h.authService.IsAllowed(ctx, "answer_consultation", authorization.Target{
-		UserID:             doctorID,
-		ConsultationStatus: consultationStatus,
-		ConsultationType:   consultationType,
-		ScheduledAtPast:    scheduledAt != nil && scheduledAt.Before(time.Now()),
-	})
+	target := answerTarget(doctorID, consultationStatus, consultationType, scheduledAt, opinionDeadline, time.Now())
+	allowed, err := h.authService.IsAllowed(ctx, "answer_consultation", target)
 	if err != nil {
 		return nil, err
 	}
 	if !allowed {
-		return nil, herrors.HtmlError{
-			Code:       http.StatusForbidden,
-			Msg:        "You don't have permission to answer this consultation",
-			ButtonLink: "/",
-		}
+		return nil, answerRefusal(params.ID.String(), target)
 	}
 
 	var consultation answerConsultation
@@ -644,16 +658,16 @@ func (h ConsultationsHandler) ConsultationAnswerForm(ctx context.Context, params
 
 func (h ConsultationsHandler) ConsultationAnswerSubmit(ctx context.Context, request *api.ConsultationAnswerSubmitReq, params api.ConsultationAnswerSubmitParams) (api.ConsultationAnswerSubmitRes, error) {
 	var doctorID, consultationStatus, consultationType string
-	var scheduledAt *time.Time
+	var scheduledAt, opinionDeadline *time.Time
 	var totpSecret *string
 
 	err := h.db.QueryRow(ctx, `
-		SELECT c.doctor_id, c.consultation_status, c.consultation_type, vc.scheduled_at, u.totp_secret
+		SELECT c.doctor_id, c.consultation_status, c.consultation_type, vc.scheduled_at, vc.expires_at_after_video, u.totp_secret
 		FROM consultations c
 		LEFT JOIN video_consultations vc ON vc.consultation_id = c.id
 		JOIN users u ON u.id = c.doctor_id
 		WHERE c.id = @id
-	`, pgx.NamedArgs{"id": params.ID.String()}).Scan(&doctorID, &consultationStatus, &consultationType, &scheduledAt, &totpSecret)
+	`, pgx.NamedArgs{"id": params.ID.String()}).Scan(&doctorID, &consultationStatus, &consultationType, &scheduledAt, &opinionDeadline, &totpSecret)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, herrors.HtmlError{Code: http.StatusNotFound, Msg: "Consultation not found", ButtonLink: "/consultations"}
 	}
@@ -661,21 +675,13 @@ func (h ConsultationsHandler) ConsultationAnswerSubmit(ctx context.Context, requ
 		return nil, fmt.Errorf("failed to query consultation owner: %w", err)
 	}
 
-	allowed, err := h.authService.IsAllowed(ctx, "answer_consultation", authorization.Target{
-		UserID:             doctorID,
-		ConsultationStatus: consultationStatus,
-		ConsultationType:   consultationType,
-		ScheduledAtPast:    scheduledAt != nil && scheduledAt.Before(time.Now()),
-	})
+	target := answerTarget(doctorID, consultationStatus, consultationType, scheduledAt, opinionDeadline, time.Now())
+	allowed, err := h.authService.IsAllowed(ctx, "answer_consultation", target)
 	if err != nil {
 		return nil, err
 	}
 	if !allowed {
-		return nil, herrors.HtmlError{
-			Code:       http.StatusForbidden,
-			Msg:        "You don't have permission to answer this consultation",
-			ButtonLink: "/",
-		}
+		return nil, answerRefusal(params.ID.String(), target)
 	}
 
 	answer := cleanAnswer(request.Answer)

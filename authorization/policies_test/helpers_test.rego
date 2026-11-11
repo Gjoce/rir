@@ -20,6 +20,7 @@ own(type, status) := {
 	"ConsultationStatus": status,
 	"ScheduledAtPast": false,
 	"WithinJoinWindow": false,
+	"OpinionDeadlinePassed": false,
 }
 
 other_doctors(type, status) := object.union(own(type, status), {"UserID": "other-doctor-id"})
@@ -27,3 +28,5 @@ other_doctors(type, status) := object.union(own(type, status), {"UserID": "other
 own_in_join_window(type, status) := object.union(own(type, status), {"WithinJoinWindow": true})
 
 own_after_appointment(type, status) := object.union(own(type, status), {"ScheduledAtPast": true})
+
+own_after_opinion_deadline(type, status) := object.union(own_after_appointment(type, status), {"OpinionDeadlinePassed": true})
