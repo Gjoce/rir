@@ -275,6 +275,7 @@ type Consultation struct {
 	Allergies               *string // nullable
 	Medication              *string // nullable
 	Attachments             []ConsultationAttachment
+	CallEvents              []CallEvent
 	CreatedAt               time.Time
 	FinishedAt              *time.Time // nullable
 	DoctorAnswer            *string    // nullable
@@ -415,6 +416,13 @@ func (h ConsultationsHandler) ConsultationForm(ctx context.Context, params api.C
 		return nil, fmt.Errorf("failed to iterate attachments: %w", err)
 	}
 
+	if consultation.ConsultationType == "video" {
+		consultation.CallEvents, err = h.loadCallEvents(ctx, consultation.ID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	canAnswerConsultation, err := h.authService.IsAllowed(ctx, "answer_consultation", authorization.Target{
 		UserID:             doctorID,
 		ConsultationStatus: consultation.ConsultationStatus,
@@ -433,6 +441,70 @@ func (h ConsultationsHandler) ConsultationForm(ctx context.Context, params api.C
 	var buff bytes.Buffer
 
 	return &api.R200{Data: &buff}, ConsultationFormHtml(consultation, role, canAnswerConsultation, videoCall).Render(ctx, &buff)
+}
+
+// CallEvent is one line of a video consultation's call log.
+type CallEvent struct {
+	Time  string
+	Label string
+}
+
+// callEventLabels describes each event kind; %s is "doctor" or "patient" for the
+// events that carry who caused them.
+var callEventLabels = map[string]string{
+	"doctor_joined":  "Doctor joined",
+	"doctor_left":    "Doctor left",
+	"patient_joined": "Patient joined",
+	"patient_left":   "Patient left",
+	"ice_connected":  "Connection established (%s)",
+	"ice_relay_used": "Connected through the relay server (%s)",
+	"ice_failed":     "Connection failed (%s)",
+	"call_ended":     "Call ended by the %s",
+}
+
+func (h ConsultationsHandler) loadCallEvents(ctx context.Context, consultationID string) ([]CallEvent, error) {
+	rows, err := h.db.Query(ctx, `
+		SELECT kind, occurred_at, COALESCE(detail->>'by', '')
+		FROM consultation_call_events
+		WHERE consultation_id = @id
+		ORDER BY occurred_at, id
+	`, pgx.NamedArgs{"id": consultationID})
+	if err != nil {
+		return nil, fmt.Errorf("failed to query call events: %w", err)
+	}
+
+	events, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (CallEvent, error) {
+		var kind, by string
+		var occurredAt time.Time
+		if err := row.Scan(&kind, &occurredAt, &by); err != nil {
+			return CallEvent{}, err
+		}
+
+		return CallEvent{
+			Time:  util.FormatInSkopje(occurredAt, "02.01.2006 15:04:05"),
+			Label: callEventLabel(kind, by),
+		}, nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to read call events: %w", err)
+	}
+
+	return events, nil
+}
+
+func callEventLabel(kind, by string) string {
+	label, ok := callEventLabels[kind]
+	if !ok {
+		return kind
+	}
+	if !strings.Contains(label, "%s") {
+		return label
+	}
+	if by == "" {
+		by = "unknown"
+	}
+
+	return fmt.Sprintf(label, by)
 }
 
 // VideoCallEntry is the join button on a video consultation.

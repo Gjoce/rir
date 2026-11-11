@@ -18,6 +18,18 @@ import (
 // door on accidental or malicious large payloads.
 const wsReadLimit = 64 << 10
 
+// maxReportsPerConnection caps the events one connection can record, so a
+// client can't fill the table. A real call reports a handful.
+const maxReportsPerConnection = 30
+
+// reportableKinds are the call events only the browser knows about. Joining,
+// leaving and hanging up are recorded by the server itself.
+var reportableKinds = map[string]bool{
+	"ice_connected":  true,
+	"ice_relay_used": true,
+	"ice_failed":     true,
+}
+
 var (
 	// ErrJoinUnauthorized means the caller is neither a logged-in doctor nor holds a join token.
 	ErrJoinUnauthorized = errors.New("video: not logged in and no join token")
@@ -157,6 +169,7 @@ func (h *SignalingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // relay. Returns when the connection closes or the request context is
 // cancelled.
 func (h *SignalingHandler) readLoop(ctx context.Context, conn *websocket.Conn, cid uuid.UUID, role Role) {
+	reports := 0
 	for {
 		_, data, err := conn.Read(ctx)
 		if err != nil {
@@ -174,6 +187,15 @@ func (h *SignalingHandler) readLoop(ctx context.Context, conn *websocket.Conn, c
 			continue
 		}
 
+		if msg.Type == MsgReport {
+			if reports < maxReportsPerConnection {
+				reports++
+				h.recordReport(cid, role, msg.Data)
+			}
+
+			continue
+		}
+
 		if !isClientMessageType(msg.Type) {
 			h.logger.Debug("video signaling: rejected message type",
 				"type", msg.Type,
@@ -184,8 +206,29 @@ func (h *SignalingHandler) readLoop(ctx context.Context, conn *websocket.Conn, c
 			continue
 		}
 
+		if msg.Type == MsgBye {
+			h.recordEvent(cid, "call_ended", map[string]any{"by": string(role)})
+		}
+
 		h.broker.Relay(cid, role, msg)
 	}
+}
+
+// recordReport records an event the browser reported, if it is one it may report.
+func (h *SignalingHandler) recordReport(cid uuid.UUID, role Role, data json.RawMessage) {
+	var report struct {
+		Kind string `json:"kind"`
+	}
+	if err := json.Unmarshal(data, &report); err != nil || !reportableKinds[report.Kind] {
+		h.logger.Debug("video signaling: rejected report",
+			"consultation_id", cid,
+			"role", role,
+		)
+
+		return
+	}
+
+	h.recordEvent(cid, report.Kind, map[string]any{"by": string(role)})
 }
 
 // recordEvent enqueues an event write on a background goroutine so DB

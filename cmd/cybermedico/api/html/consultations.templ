@@ -300,6 +300,32 @@ templ ConsultationFormHtml(consultation Consultation, role string, canAnswerCons
                 </ul>
             </article>
         }
+        if len(consultation.CallEvents) > 0 {
+            @components.HeadingGroup(components.Config{
+                Description: "What happened in the video call, in Skopje time.",
+                Breadcrumbs: []components.Breadcrumb{
+                    {Title: "Call log"},
+                },
+            })
+            <article>
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Time</th>
+                            <th scope="col">Event</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        for _, e := range consultation.CallEvents {
+                            <tr>
+                                <td>{ e.Time }</td>
+                                <td>{ e.Label }</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </article>
+        }
         @components.HeadingGroup(components.Config{
             Description: "Metadata about the consultation.",
             Breadcrumbs: []components.Breadcrumb{

@@ -56,6 +56,7 @@ class VideoCall {
     this.ws = null;
     this.peerConnected = false;
     this.peerSaidBye = false;
+    this.iceUp = false;
     this.makingOffer = false;
     this.ignoreOffer = false;
     this.hangingUp = false;
@@ -199,10 +200,19 @@ class VideoCall {
       log("iceConnectionState:", s);
       if (s === "connected" || s === "completed") {
         this.setStatus("connected");
+        // "completed" follows "connected"; report the connection once.
+        if (!this.iceUp) {
+          this.iceUp = true;
+          this.report("ice_connected");
+          this.reportRelayUse();
+        }
       } else if (s === "failed" && this.peerConnected) {
+        this.iceUp = false;
+        this.report("ice_failed");
         pc.restartIce();
         this.setStatus("reconnecting");
       } else if (s === "disconnected" && this.peerConnected) {
+        this.iceUp = false;
         this.setStatus("reconnecting");
       }
     };
@@ -364,6 +374,41 @@ class VideoCall {
       }
     } catch (e) {
       err("onSignal:", e);
+    }
+  }
+
+  // report tells the server how the connection went, for the consultation's
+  // call log. The server records it and doesn't pass it on.
+  report(kind) {
+    this.sendSignal({ type: "report", data: { kind } });
+  }
+
+  // reportRelayUse reports when media goes through the TURN server, i.e. a
+  // direct connection wasn't possible.
+  async reportRelayUse() {
+    try {
+      const stats = await this.pc.getStats();
+      let pair = null;
+      stats.forEach((r) => {
+        if (r.type === "transport" && r.selectedCandidatePairId) {
+          pair = stats.get(r.selectedCandidatePairId);
+        }
+      });
+      if (!pair) {
+        stats.forEach((r) => {
+          if (r.type === "candidate-pair" && r.nominated && r.state === "succeeded") {
+            pair = r;
+          }
+        });
+      }
+      if (!pair) return;
+      const local = stats.get(pair.localCandidateId);
+      const remote = stats.get(pair.remoteCandidateId);
+      if (local?.candidateType === "relay" || remote?.candidateType === "relay") {
+        this.report("ice_relay_used");
+      }
+    } catch (e) {
+      warn("getStats:", e);
     }
   }
 
