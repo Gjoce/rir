@@ -1,0 +1,40 @@
+package email_templates
+
+// DeadlineReminder reminds a doctor of a consultation deadline.
+type DeadlineReminder struct {
+    DoctorName       string
+    PatientName      string
+    ConsultationType string
+    // Action is what the doctor still has to do, e.g. "answer the patient".
+    Action   string
+    Deadline string
+    Link     string
+}
+
+templ DoctorDeadlineReminder(r DeadlineReminder) {
+    @EmailHead("Consultation deadline reminder", "en") {
+        <div class="title">Consultation deadline reminder</div>
+
+        <div class="content">
+            <p>Dear <strong>{ r.DoctorName }</strong>,</p>
+            <p>Please { r.Action } before the deadline.</p>
+        </div>
+
+        <div class="info-box">
+            <p><strong>Patient:</strong> { r.PatientName }</p>
+            <p><strong>Consultation type:</strong> { r.ConsultationType }</p>
+        </div>
+
+        <div class="datetime-block">
+            Deadline:<br/>
+            <span>{ r.Deadline }</span>
+        </div>
+
+        <div class="button-wrapper">
+            <a href={ templ.SafeURL(r.Link) } class="button">Open the consultation</a>
+        </div>
+
+        @EmailHelper()
+        @EmailFooter()
+    }
+}

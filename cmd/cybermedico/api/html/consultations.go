@@ -1072,13 +1072,20 @@ func (h ConsultationsHandler) ConsultationScheduleSubmit(ctx context.Context, re
 	}
 
 	// A trigger sets the deadline for the opinion from scheduled_at.
-	_, err = tx.Exec(ctx, `
+	var opinionDeadline time.Time
+	err = tx.QueryRow(ctx, `
 		UPDATE video_consultations
 		SET scheduled_at = @scheduled_at
 		WHERE consultation_id = @id
-	`, pgx.NamedArgs{"scheduled_at": scheduledAt, "id": params.ID.String()})
+		RETURNING expires_at_after_video
+	`, pgx.NamedArgs{"scheduled_at": scheduledAt, "id": params.ID.String()}).Scan(&opinionDeadline)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update video consultation: %w", err)
+	}
+
+	reminder, reminderOpts := workers.DoctorDeadlineReminderJob(params.ID.String(), workers.DeadlineVideoOpinion, opinionDeadline)
+	if _, err = h.riverClient.InsertTx(ctx, tx, reminder, reminderOpts); err != nil {
+		return nil, fmt.Errorf("failed to enqueue opinion reminder: %w", err)
 	}
 
 	if _, err = h.riverClient.InsertTx(ctx, tx, workers.ScheduledVideoEmailArgs{ConsultationID: params.ID.String()}, &river.InsertOpts{MaxAttempts: 5}); err != nil {

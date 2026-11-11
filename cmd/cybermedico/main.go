@@ -404,6 +404,7 @@ func initializeRiver(ctx context.Context, dbPool *pgxpool.Pool, mailer *email.Em
 	river.AddWorker(riverWorkers, workers.NewScheduledVideoEmailWorker(dbPool, mailer, videoURLBuilder, log.Logger))
 	river.AddWorker(riverWorkers, workers.NewVideoCallReminderWorker(dbPool, mailer, videoURLBuilder, log.Logger))
 	river.AddWorker(riverWorkers, workers.NewConsultationSignatureWorker(dbPool, storageService, keyCipher, log.Logger))
+	river.AddWorker(riverWorkers, workers.NewDoctorDeadlineReminderWorker(dbPool, mailer, videoURLBuilder.BaseURL, log.Logger))
 
 	riverClient, err := river.NewClient(riverpgxv5.New(dbPool), &river.Config{
 		Logger: log.Logger,
