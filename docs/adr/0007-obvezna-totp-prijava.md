@@ -8,7 +8,7 @@ decision-makers: razvojna ekipa CyberMedico
 
 ## Kontekst in problem
 
-Zdravniki in administratorji dostopajo do zdravstvenih podatkov pacientov. Ukradeno ali uganjeno geslo ne sme zadostovati za dostop. Poleg tega zdravnikov odgovor sistem digitalno podpiše v njegovem imenu ([ADR-0010](0010-digitalni-podpis-ed25519-kms.md)), zato je pomembno, da ga odda res zdravnik, ne nekdo z dostopom do odprte seje.
+Zdravniki in administratorji dostopajo do zdravstvenih podatkov pacientov. Ukradeno ali uganjeno geslo ne sme zadostovati za dostop. Poleg tega zdravnikov odgovor sistem digitalno podpiše v njegovem imenu ([ADR-0010](0010-digitalni-podpis-ed25519.md)), zato je pomembno, da ga odda res zdravnik, ne nekdo z dostopom do odprte seje.
 
 ## Odločitveni dejavniki
 

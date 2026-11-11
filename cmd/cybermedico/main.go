@@ -9,6 +9,7 @@ import (
 	"cybermedico/cmd/cybermedico/api/util"
 	"cybermedico/cmd/cybermedico/email"
 	"cybermedico/cmd/cybermedico/ogen"
+	"cybermedico/cmd/cybermedico/signing"
 	"cybermedico/cmd/cybermedico/storage"
 	"cybermedico/video"
 	"cybermedico/workers"
@@ -58,6 +59,12 @@ func main() {
 		log.Logger.Warn("Failed to apply seed data", "error", err)
 	}
 	defer dbPool.Close()
+
+	keyCipher := initializeSigning()
+	if err := ensureDoctorKeys(ctx, dbPool, keyCipher); err != nil {
+		log.Logger.Error("Failed to create doctor signing keys", "error", err)
+		panic(err)
+	}
 
 	mailer := initializeMailer()
 
@@ -296,6 +303,57 @@ func initializeStorage(ctx context.Context) *storage.Service {
 	log.Logger.Info("Initialized production-ready storage service")
 
 	return svc
+}
+
+// initializeSigning reads SIGNING_KEY, the key that encrypts doctors' private
+// signing keys. Generate one with: openssl rand -base64 32
+func initializeSigning() *signing.KeyCipher {
+	keyCipher, err := signing.NewKeyCipher(os.Getenv("SIGNING_KEY"))
+	if err != nil {
+		panic(fmt.Errorf("SIGNING_KEY: %w", err))
+	}
+
+	return keyCipher
+}
+
+// ensureDoctorKeys gives every doctor without a key pair a new one, so a doctor
+// can sign as soon as their account exists.
+func ensureDoctorKeys(ctx context.Context, dbPool *pgxpool.Pool, keyCipher *signing.KeyCipher) error {
+	rows, err := dbPool.Query(ctx, `
+		SELECT u.id::text
+		FROM users u
+		JOIN users_roles ur ON ur.user_id = u.id
+		WHERE ur.role_id = 'doctor' AND u.public_key IS NULL
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to query doctors without keys: %w", err)
+	}
+	doctorIDs, err := pgx.CollectRows(rows, pgx.RowTo[string])
+	if err != nil {
+		return fmt.Errorf("failed to read doctors without keys: %w", err)
+	}
+
+	for _, doctorID := range doctorIDs {
+		publicKey, encryptedPrivateKey, err := keyCipher.GenerateKeyPair(doctorID)
+		if err != nil {
+			return err
+		}
+
+		// The condition keeps a key that another instance created meanwhile.
+		_, err = dbPool.Exec(ctx, `
+			UPDATE users SET public_key = @public_key, encrypted_private_key = @encrypted_private_key
+			WHERE id = @id AND public_key IS NULL
+		`, pgx.NamedArgs{"id": doctorID, "public_key": publicKey, "encrypted_private_key": encryptedPrivateKey})
+		if err != nil {
+			return fmt.Errorf("failed to store doctor key pair: %w", err)
+		}
+	}
+
+	if len(doctorIDs) > 0 {
+		log.Logger.Info("Created signing keys for doctors", "count", len(doctorIDs))
+	}
+
+	return nil
 }
 
 // initializeVideoURLBuilder reads the env vars needed to mint patient join links.
