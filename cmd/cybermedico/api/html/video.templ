@@ -33,7 +33,8 @@ templ VideoCallView(d VideoPageData) {
              data-consultation-id={ d.ConsultationID }
              data-token={ d.Token }
              data-scheduled-at={ scheduledAtISO(d.ScheduledAt) }
-             data-ws-url={ fmt.Sprintf("/ws/video/%s/signal", d.ConsultationID) }>
+             data-ws-url={ fmt.Sprintf("/ws/video/%s/signal", d.ConsultationID) }
+             data-ice-url={ fmt.Sprintf("/api/video/%s/ice", d.ConsultationID) }>
         <header>
             <hgroup>
                 <h2>Video consultation</h2>

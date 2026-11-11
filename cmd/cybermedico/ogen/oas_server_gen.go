@@ -92,6 +92,10 @@ type Handler interface {
 	//
 	// POST /specialists/{id}/video
 	VideoOrderSubmit(ctx context.Context, req *ConsultationOrderFormMultipart, params VideoOrderSubmitParams) (VideoOrderSubmitRes, error)
+	// VideoPageIce implements video_page_ice operation.
+	//
+	// GET /api/video/{id}/ice
+	VideoPageIce(ctx context.Context, params VideoPageIceParams) (VideoPageIceRes, error)
 	// VideoPagePatient implements video_page_patient operation.
 	//
 	// GET /video/{id}

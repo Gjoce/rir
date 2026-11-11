@@ -42,6 +42,30 @@ services:
     volumes:
       - minio_data:/data
 
+  # TURN relay for video calls. Local only: it announces 127.0.0.1, so it relays
+  # between browsers on this machine, which is enough to test the credentials.
+  coturn:
+    image: coturn/coturn:4.7.0
+    command:
+      - -n
+      - --log-file=stdout
+      - --use-auth-secret
+      - --static-auth-secret=${TURN_SHARED_SECRET}
+      - --realm=cybermedico.local
+      - --listening-port=3478
+      - --min-port=49160
+      - --max-port=49200
+      - --external-ip=127.0.0.1
+      - --allow-loopback-peers
+      - --fingerprint
+      - --no-tls
+      - --no-dtls
+      - --no-cli
+    ports:
+      - "3478:3478/udp"
+      - "3478:3478/tcp"
+      - "49160-49200:49160-49200/udp"
+
 volumes:
   db_data:
   mailpit_data:

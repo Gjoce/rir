@@ -85,6 +85,10 @@ type VideoOrderSubmitRes interface {
 	videoOrderSubmitRes()
 }
 
+type VideoPageIceRes interface {
+	videoPageIceRes()
+}
+
 type VideoPagePatientRes interface {
 	videoPagePatientRes()
 }

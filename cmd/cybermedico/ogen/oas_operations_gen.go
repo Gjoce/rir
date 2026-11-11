@@ -27,6 +27,7 @@ const (
 	TwoFactorSubmitOperation            OperationName = "TwoFactorSubmit"
 	VideoOrderFormOperation             OperationName = "VideoOrderForm"
 	VideoOrderSubmitOperation           OperationName = "VideoOrderSubmit"
+	VideoPageIceOperation               OperationName = "VideoPageIce"
 	VideoPagePatientOperation           OperationName = "VideoPagePatient"
 	WrittenOrderFormOperation           OperationName = "WrittenOrderForm"
 	WrittenOrderSubmitOperation         OperationName = "WrittenOrderSubmit"
