@@ -58,6 +58,9 @@ type Consultations struct {
 	ExpiresAt               *time.Time
 	VideoExpiresAt          *time.Time
 	VideoRequiresResponseBy *time.Time
+	// DeadlineAt is the deadline the consultation is waiting on, or was missed:
+	// the written answer, scheduling the call, or the opinion after it.
+	DeadlineAt *time.Time
 }
 
 type ConsultationFilters struct {
@@ -166,7 +169,12 @@ func (h ConsultationsHandler) ConsultationsForm(ctx context.Context, params api.
 		dp.display_name AS doctor_display_name,
 		wc.expires_at AS expires_at,
 		vc.expires_at_after_video AS video_expires_at,
-		vc.requires_response_by_schedule AS video_requires_response_by
+		vc.requires_response_by_schedule AS video_requires_response_by,
+		CASE
+			WHEN c.consultation_type = 'written' THEN wc.expires_at
+			WHEN vc.scheduled_at IS NOT NULL THEN vc.expires_at_after_video
+			ELSE vc.requires_response_by_schedule
+		END AS deadline_at
 	FROM consultations c
 	LEFT JOIN doctor_profile dp ON c.doctor_id = dp.id
 	LEFT JOIN written_consultations wc ON wc.consultation_id = c.id
@@ -192,7 +200,12 @@ func (h ConsultationsHandler) ConsultationsForm(ctx context.Context, params api.
 		dp.display_name AS doctor_display_name,
 		wc.expires_at AS expires_at,
 		vc.expires_at_after_video AS video_expires_at,
-		vc.requires_response_by_schedule AS video_requires_response_by
+		vc.requires_response_by_schedule AS video_requires_response_by,
+		CASE
+			WHEN c.consultation_type = 'written' THEN wc.expires_at
+			WHEN vc.scheduled_at IS NOT NULL THEN vc.expires_at_after_video
+			ELSE vc.requires_response_by_schedule
+		END AS deadline_at
 	FROM consultations c
 	LEFT JOIN doctor_profile dp ON c.doctor_id = dp.id
 	LEFT JOIN written_consultations wc ON wc.consultation_id = c.id
@@ -443,6 +456,19 @@ func (h ConsultationsHandler) ConsultationForm(ctx context.Context, params api.C
 	var buff bytes.Buffer
 
 	return &api.R200{Data: &buff}, ConsultationFormHtml(consultation, role, canAnswerConsultation, videoCall).Render(ctx, &buff)
+}
+
+// statusConflict explains why a consultation changed under the doctor: usually
+// another tab, but it may also have been marked not attended at its deadline.
+func (h ConsultationsHandler) statusConflict(ctx context.Context, consultationID, msg string) error {
+	var status string
+	err := h.db.QueryRow(ctx, `SELECT consultation_status FROM consultations WHERE id = @id`,
+		pgx.NamedArgs{"id": consultationID}).Scan(&status)
+	if err == nil && status == "not_attended" {
+		msg = "The deadline passed, so this consultation was marked as not attended"
+	}
+
+	return herrors.HtmlError{Code: http.StatusConflict, Msg: msg, ButtonLink: "/consultations"}
 }
 
 // answerTarget describes a consultation for the answer_consultation policy.
@@ -852,7 +878,7 @@ func (h ConsultationsHandler) ConsultationAnswerSubmit(ctx context.Context, requ
 		return nil, fmt.Errorf("failed to update consultation status: %w", err)
 	}
 	if tag.RowsAffected() == 0 {
-		return nil, herrors.HtmlError{Code: http.StatusConflict, Msg: "This consultation was already answered", ButtonLink: "/consultations"}
+		return nil, h.statusConflict(ctx, params.ID.String(), "This consultation was already answered")
 	}
 
 	switch consultationType {
@@ -1068,7 +1094,7 @@ func (h ConsultationsHandler) ConsultationScheduleSubmit(ctx context.Context, re
 		return nil, fmt.Errorf("failed to update consultation status: %w", err)
 	}
 	if tag.RowsAffected() == 0 {
-		return nil, herrors.HtmlError{Code: http.StatusConflict, Msg: "This consultation was already scheduled", ButtonLink: fmt.Sprintf("/consultations/%s", params.ID.String())}
+		return nil, h.statusConflict(ctx, params.ID.String(), "This consultation was already scheduled")
 	}
 
 	// A trigger sets the deadline for the opinion from scheduled_at.
@@ -1086,6 +1112,11 @@ func (h ConsultationsHandler) ConsultationScheduleSubmit(ctx context.Context, re
 	reminder, reminderOpts := workers.DoctorDeadlineReminderJob(params.ID.String(), workers.DeadlineVideoOpinion, opinionDeadline)
 	if _, err = h.riverClient.InsertTx(ctx, tx, reminder, reminderOpts); err != nil {
 		return nil, fmt.Errorf("failed to enqueue opinion reminder: %w", err)
+	}
+
+	// Marks the consultation not attended if the opinion isn't written in time.
+	if _, err = h.riverClient.InsertTx(ctx, tx, workers.VideoScheduledNotAttendedArgs{ConsultationID: params.ID.String()}, workers.NotAttendedJobOpts(opinionDeadline)); err != nil {
+		return nil, fmt.Errorf("failed to enqueue not attended marker: %w", err)
 	}
 
 	if _, err = h.riverClient.InsertTx(ctx, tx, workers.ScheduledVideoEmailArgs{ConsultationID: params.ID.String()}, &river.InsertOpts{MaxAttempts: 5}); err != nil {

@@ -115,6 +115,9 @@ templ ConsultationsSSE(consultations []Consultations, filters ConsultationFilter
                             if showTimeLeft {
                                 <th>Time Left</th>
                             }
+                            if filters.Type == "not_attended" {
+                                <th>Deadline Passed</th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -149,6 +152,13 @@ templ ConsultationsSSE(consultations []Consultations, filters ConsultationFilter
                                         </kbd>
                                     </td>
                                  }
+                                if filters.Type == "not_attended" {
+                                    <td>
+                                        if consultation.DeadlineAt != nil {
+                                            { util.FormatAppointmentTime(*consultation.DeadlineAt) }
+                                        }
+                                    </td>
+                                }
                             </tr>
                         }
                     </tbody>
