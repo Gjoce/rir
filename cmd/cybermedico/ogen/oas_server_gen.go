@@ -32,6 +32,10 @@ type Handler interface {
 	//
 	// GET /consultations
 	ConsultationsForm(ctx context.Context, params ConsultationsFormParams) (ConsultationsFormRes, error)
+	// ConsultationsVideoForm implements consultations_video_form operation.
+	//
+	// GET /consultations/{id}/video
+	ConsultationsVideoForm(ctx context.Context, params ConsultationsVideoFormParams) (ConsultationsVideoFormRes, error)
 	// Dashboard implements dashboard operation.
 	//
 	// GET /dashboard
@@ -88,6 +92,10 @@ type Handler interface {
 	//
 	// POST /specialists/{id}/video
 	VideoOrderSubmit(ctx context.Context, req *ConsultationOrderFormMultipart, params VideoOrderSubmitParams) (VideoOrderSubmitRes, error)
+	// VideoPagePatient implements video_page_patient operation.
+	//
+	// GET /video/{id}
+	VideoPagePatient(ctx context.Context, params VideoPagePatientParams) (VideoPagePatientRes, error)
 	// WrittenOrderForm implements written_order_form operation.
 	//
 	// GET /specialists/{id}/written

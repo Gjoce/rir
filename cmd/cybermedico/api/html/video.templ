@@ -1,0 +1,163 @@
+package html
+
+import (
+    "cybermedico/layouts"
+    "fmt"
+    "time"
+)
+
+templ DoctorVideoPage(d VideoPageData) {
+    @layouts.Dashboard(nil) {
+        @VideoCallView(d)
+    }
+}
+
+templ PatientVideoPage(d VideoPageData) {
+    @layouts.Public() {
+        @VideoCallView(d)
+    }
+}
+
+func scheduledAtISO(t *time.Time) string {
+    if t == nil {
+        return ""
+    }
+    return t.UTC().Format(time.RFC3339)
+}
+
+// VideoCallView is the shared call UI. Both roles see the same elements; the
+// JS varies behavior based on the data-role attribute.
+templ VideoCallView(d VideoPageData) {
+    <article id="video-call"
+             data-role={ d.Role }
+             data-consultation-id={ d.ConsultationID }
+             data-token={ d.Token }
+             data-scheduled-at={ scheduledAtISO(d.ScheduledAt) }
+             data-ws-url={ fmt.Sprintf("/ws/video/%s/signal", d.ConsultationID) }>
+        <header>
+            <hgroup>
+                <h2>Video consultation</h2>
+                <p id="call-status">Connecting...</p>
+            </hgroup>
+        </header>
+        <div class="video-stage">
+            <video id="remote-video" autoplay playsinline></video>
+            <video id="local-video" autoplay playsinline muted></video>
+        </div>
+        <section id="media-help" role="alert" hidden>
+            <p data-reason="denied" hidden>
+                <strong>Camera or microphone access was blocked.</strong>
+                The call needs both. To allow them:
+            </p>
+            <ol data-reason="denied" hidden>
+                <li>Click the camera or lock icon at the left of the address bar.</li>
+                <li>Set <em>Camera</em> and <em>Microphone</em> to <em>Allow</em>.</li>
+                <li>Reload this page.</li>
+            </ol>
+            <p data-reason="missing" hidden>
+                <strong>No camera or microphone was found.</strong>
+                Connect one, check that no other application is using it, and reload this page.
+            </p>
+            <p data-reason="unsupported" hidden>
+                <strong>This browser can't make video calls here.</strong>
+                Open the link in an up-to-date Chrome, Firefox, Edge or Safari.
+            </p>
+        </section>
+        <footer class="call-controls">
+            <button id="mic-btn" type="button" class="secondary" aria-pressed="false">
+                Turn off microphone
+            </button>
+            <button id="cam-btn" type="button" class="secondary" aria-pressed="false">
+                Turn off camera
+            </button>
+            <button id="hangup-btn" type="button" class="contrast">
+                Leave
+            </button>
+        </footer>
+        <noscript>
+            <p role="alert">JavaScript is needed for the video call.</p>
+        </noscript>
+    </article>
+    <style>
+        #video-call {
+            display: flex;
+            flex-direction: column;
+            height: calc(100dvh - 6rem);
+            overflow: hidden;
+        }
+        #video-call header {
+            padding-bottom: 0.5rem;
+            flex-shrink: 0;
+        }
+        #video-call header hgroup {
+            margin-bottom: 0;
+        }
+        #video-call header hgroup h2 {
+            font-size: 1.1rem;
+            margin-bottom: 0.1rem;
+        }
+        #video-call header hgroup p {
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+        #video-call .video-stage {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            background: #000;
+            border-radius: var(--pico-border-radius);
+            overflow: hidden;
+        }
+        #video-call #remote-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #000;
+        }
+        #video-call #local-video {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            width: 22%;
+            min-width: 100px;
+            max-width: 200px;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            background: #111;
+        }
+        #video-call .call-controls {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            padding: 0.75rem 0 0;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        #video-call .call-controls button {
+            min-width: 120px;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.85rem;
+        }
+        #video-call #media-help {
+            flex-shrink: 0;
+            margin: 0.75rem 0 0;
+            padding: 0.75rem 1rem;
+            border-left: 4px solid var(--pico-form-element-invalid-border-color);
+            background: var(--pico-card-sectioning-background-color);
+            border-radius: var(--pico-border-radius);
+            font-size: 0.9rem;
+        }
+        #video-call #media-help ol {
+            margin-bottom: 0;
+        }
+        #video-call #call-status[data-state="error"] {
+            color: var(--pico-form-element-invalid-border-color);
+        }
+        #video-call #call-status[data-state="connected"] {
+            color: var(--pico-form-element-valid-border-color);
+        }
+    </style>
+    <script type="module" src="/static/js/video-call.js"></script>
+}

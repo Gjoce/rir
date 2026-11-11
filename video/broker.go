@@ -169,7 +169,11 @@ func (b *Broker) Join(consultationID uuid.UUID, role Role, peer Peer) error {
 	if hadPrev {
 		// Close after replacing so a Leave call from the old peer's goroutine
 		// sees the new peer in the map and noops.
-		prev.Close()
+		if r, ok := prev.(interface{ CloseReplaced() }); ok {
+			r.CloseReplaced()
+		} else {
+			prev.Close()
+		}
 	}
 
 	if other, ok := room.peers[otherRole(role)]; ok {

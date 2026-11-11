@@ -72,7 +72,7 @@ func main() {
 
 	signalHandler := initializeVideo(ctx, dbPool, authService, videoURLBuilder)
 
-	htmlServer := initializeHTMLServer(dbPool, authService, storageService, riverClient)
+	htmlServer := initializeHTMLServer(dbPool, authService, storageService, riverClient, videoURLBuilder)
 	httpServer := initializeHTTPServer(htmlServer, authService, signalHandler)
 	startHTTPServer(httpServer)
 
@@ -391,7 +391,7 @@ func initializeAuth(ctx context.Context, db *pgxpool.Pool) (*html.AuthService, a
 	return authService, authorizer
 }
 
-func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, storageService *storage.Service, riverClient *river.Client[pgx.Tx]) *ogen.Server {
+func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, storageService *storage.Service, riverClient *river.Client[pgx.Tx], videoURLBuilder *video.URLBuilder) *ogen.Server {
 	authHandler := html.NewAuthHandler(dbPool, authService)
 
 	htmlServer, err := ogen.NewServer(struct {
@@ -402,6 +402,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 		html.AuthHandler
 		html.DashboardHandler
 		html.ConsultationsHandler
+		html.VideoPageHandler
 	}{
 		html.NewRootHandler(dbPool),
 		html.NewSpecialistsHandler(dbPool),
@@ -410,6 +411,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 		authHandler,
 		html.NewDashboardHandler(authService),
 		html.NewConsultationsHandler(dbPool, authService, storageService, riverClient),
+		html.NewVideoPageHandler(dbPool, authService, videoURLBuilder.JoinSecret),
 	},
 		authHandler,
 		ogen.WithErrorHandler(errors.ErrorHandler),

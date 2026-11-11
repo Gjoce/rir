@@ -12,6 +12,7 @@ const (
 	ConsultationScheduleFormOperation   OperationName = "ConsultationScheduleForm"
 	ConsultationScheduleSubmitOperation OperationName = "ConsultationScheduleSubmit"
 	ConsultationsFormOperation          OperationName = "ConsultationsForm"
+	ConsultationsVideoFormOperation     OperationName = "ConsultationsVideoForm"
 	DashboardOperation                  OperationName = "Dashboard"
 	LoginOperation                      OperationName = "Login"
 	LoginSubmitOperation                OperationName = "LoginSubmit"
@@ -26,6 +27,7 @@ const (
 	TwoFactorSubmitOperation            OperationName = "TwoFactorSubmit"
 	VideoOrderFormOperation             OperationName = "VideoOrderForm"
 	VideoOrderSubmitOperation           OperationName = "VideoOrderSubmit"
+	VideoPagePatientOperation           OperationName = "VideoPagePatient"
 	WrittenOrderFormOperation           OperationName = "WrittenOrderForm"
 	WrittenOrderSubmitOperation         OperationName = "WrittenOrderSubmit"
 )

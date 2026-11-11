@@ -40,6 +40,7 @@ var operationRolesSessionCookie = map[string][]string{
 	ConsultationScheduleFormOperation:   []string{},
 	ConsultationScheduleSubmitOperation: []string{},
 	ConsultationsFormOperation:          []string{},
+	ConsultationsVideoFormOperation:     []string{},
 	DashboardOperation:                  []string{},
 	LogoutOperation:                     []string{},
 }
