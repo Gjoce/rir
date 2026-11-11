@@ -395,7 +395,7 @@ func initializeRiver(ctx context.Context, dbPool *pgxpool.Pool, mailer *email.Em
 
 	riverWorkers := river.NewWorkers()
 
-	doctorAnswerEmailWorker := workers.NewDoctorAnswerEmailWorker(mailer, log.Logger)
+	doctorAnswerEmailWorker := workers.NewDoctorAnswerEmailWorker(dbPool, storageService, mailer, log.Logger)
 
 	orderConfirmationEmailWorker := workers.NewOrderConfirmationEmailWorker(dbPool, mailer, log.Logger)
 
