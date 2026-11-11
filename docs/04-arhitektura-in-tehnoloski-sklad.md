@@ -9,7 +9,6 @@
 - **Delavci v ozadju (River)** - opomniki po e-pošti, podpisovanje mnenj, označevanje neopravljenih konzultacij, obvestila o spremembi provizije.
 - **PostgreSQL** - vsi podatki aplikacije, seje in čakalna vrsta opravil.
 - **Objektna shramba (S3 / MinIO)** - priloge pacientov in podpisi mnenj.
-- **AWS KMS** - šifriranje zasebnih ključev zdravnikov za digitalni podpis.
 - **SMTP strežnik** - pošiljanje e-pošte (lokalno Mailpit).
 - **Caddy** - povratni posrednik (reverse proxy) s HTTPS in omejevanjem števila zahtev.
 
@@ -18,7 +17,7 @@
 - Brskalnik ↔ Caddy ↔ aplikacija: **HTTPS**. Strani se izrisujejo na strežniku, delne posodobitve strani prek **Datastar** (strežniški dogodki, SSE).
 - Video: brskalnika izmenjata SDP/ICE sporočila prek **WebSocket** povezave na aplikacijo, nato se povežeta neposredno prek **WebRTC** (STUN/TURN za prehod NAT).
 - Aplikacija → delavci: opravila se vpišejo v tabelo River v isti bazi, **v isti transakciji** kot sprememba podatkov (River je embedded in upošteva PostgreSQL transakcije).
-- Aplikacija → S3 / KMS: **AWS SDK** (HTTPS). Aplikacija → e-pošta: **SMTP**.
+- Aplikacija → S3: **AWS SDK** (HTTPS). Aplikacija → e-pošta: **SMTP**.
 
 ### Podatkovna baza
 
@@ -71,7 +70,6 @@ flowchart LR
     W[River delavci] --> DB
     A --> S3[(S3 / MinIO<br/>priloge, podpisi)]
     W --> S3
-    A --> KMS[AWS KMS]
     W --> M[SMTP / Mailpit]
     M -. e-pošta .-> P
 ```
@@ -85,7 +83,7 @@ flowchart LR
 | **Podatkovna baza**               | **PostgreSQL 18**, pgx (gonilnik), golang-migrate (migracije)                                                                                                                                                               |
 | **Avtentikacija in avtorizacija** | bcrypt (gesla), pquerna/otp (TOTP), scs + pgxstore (seje), **Open Policy Agent** (Rego pravila), HMAC žetoni (vstop pacienta v video klic)                                                                                  |
 | **Lokalni razvoj**                | **mise** (različice orodij in opravila), Docker Compose (PostgreSQL, MinIO, Mailpit), templ watch, golangci-lint, Hurl (HTTP testi), Caddy                                                                                  |
-| **Drugo**                         | S3 / MinIO (datoteke), AWS KMS + Ed25519 (digitalni podpis mnenj), coturn (TURN), SMTP (e-pošta), coder/websocket (signalizacija)                                                                                           |
+| **Drugo**                         | S3 / MinIO (datoteke), Ed25519 (digitalni podpis mnenj; zasebni ključi zdravnikov šifrirani z AES-256-GCM in aplikacijskim ključem `SIGNING_KEY`), coturn (TURN), SMTP (e-pošta), coder/websocket (signalizacija)                                                                                           |
 
 ## Arhitekturne odločitve
 
@@ -98,6 +96,6 @@ flowchart LR
 - **Obvezna TOTP prijava** - zdravniki in administratorji dostopajo do zdravstvenih podatkov, zato samo geslo ni dovolj.
 - **Pacient brez računa, vstop z žetonom** - manj trenja za enkratnega uporabnika; žeton velja samo za eno konzultacijo in samo v času termina.
 - **WebRTC peer-to-peer** - video ne teče prek našega strežnika (manjša obremenitev, boljša zasebnost); TURN le kot rezerva, ko neposredna povezava ni mogoča.
-- **Digitalni podpis z Ed25519 in KMS** - podpis dokazuje, da mnenja po oddaji nihče ni spremenil; zasebni ključ zdravnika je šifriran s ključem v KMS in ni nikoli shranjen v čistopisu.
+- **Digitalni podpis z Ed25519** - podpis dokazuje, da mnenja po oddaji nihče ni spremenil; zasebni ključ zdravnika je šifriran z aplikacijskim ključem (`SIGNING_KEY`) in ni nikoli shranjen v čistopisu.
 - **mise namesto Make in ročne namestitve orodij** - en `mise.toml` določa različice orodij in opravila, zato ima vsak razvijalec enako okolje z enim ukazom (`mise install`). Opravilo `develop` poveže vse procese (baza, Mailpit, Caddy, aplikacija, templ) v en ukaz namesto več terminalov; opravila delujejo enako na Windows, Linux in macOS.
 - **S3-združljiva shramba** - datoteke niso v bazi; lokalno MinIO, v produkciji katerikoli S3 ponudnik brez spremembe kode.
