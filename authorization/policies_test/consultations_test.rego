@@ -97,6 +97,24 @@ test_admin_cannot_join_call if {
 	not policies.allow with input as request("join_video_consultation", admin, own_in_join_window("video", "scheduled"))
 }
 
+test_doctor_sees_own_call_before_window if {
+	policies.allow with input as request("view_video_call", doctor, own("video", "scheduled"))
+}
+
+test_doctor_does_not_see_other_doctors_call if {
+	target := object.union(own("video", "scheduled"), {"UserID": "other-doctor-id"})
+	not policies.allow with input as request("view_video_call", doctor, target)
+}
+
+test_doctor_does_not_see_unscheduled_call if {
+	not policies.allow with input as request("view_video_call", doctor, own("video", "pending"))
+	not policies.allow with input as request("view_video_call", doctor, own("video", "finished"))
+}
+
+test_admin_does_not_see_call if {
+	not policies.allow with input as request("view_video_call", admin, own("video", "scheduled"))
+}
+
 test_doctor_gives_opinion_after_call if {
 	policies.allow with input as request("answer_consultation", doctor, own_after_appointment("video", "scheduled"))
 }

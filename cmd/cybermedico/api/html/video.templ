@@ -21,21 +21,33 @@ templ PatientVideoPage(d VideoPageData) {
 // PatientJoinNoticePage tells a patient why the call can't be entered right now.
 templ PatientJoinNoticePage(n JoinNotice) {
     @layouts.Public() {
-        <article id="join-notice">
-            <header>
-                <h2>{ n.Title }</h2>
-            </header>
-            if n.AppointmentTime != "" {
-                <p>Appointment: <strong>{ n.AppointmentTime }</strong></p>
-            }
-            <p>{ n.Text }</p>
-        </article>
-        if n.ReloadIn > 0 {
-            // A couple of seconds late, so the server already counts the call as open.
-            <script data-reload-in-ms={ fmt.Sprint(n.ReloadIn.Milliseconds() + 2000) }>
-                setTimeout(() => location.reload(), Number(document.currentScript.dataset.reloadInMs));
-            </script>
+        @joinNoticeView(n)
+    }
+}
+
+// DoctorJoinNoticePage tells the doctor their call isn't open right now.
+templ DoctorJoinNoticePage(consultationID string, n JoinNotice) {
+    @layouts.Dashboard(nil) {
+        @joinNoticeView(n)
+        <a href={ templ.URL("/consultations/" + consultationID) } role="button" class="secondary">Back to the consultation</a>
+    }
+}
+
+templ joinNoticeView(n JoinNotice) {
+    <article id="join-notice">
+        <header>
+            <h2>{ n.Title }</h2>
+        </header>
+        if n.AppointmentTime != "" {
+            <p>Appointment: <strong>{ n.AppointmentTime }</strong></p>
         }
+        <p>{ n.Text }</p>
+    </article>
+    if n.ReloadIn > 0 {
+        // A couple of seconds late, so the server already counts the call as open.
+        <script data-reload-in-ms={ fmt.Sprint(n.ReloadIn.Milliseconds() + 2000) }>
+            setTimeout(() => location.reload(), Number(document.currentScript.dataset.reloadInMs));
+        </script>
     }
 }
 

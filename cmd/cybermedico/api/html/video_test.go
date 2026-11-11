@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func TestPatientJoinNotice(t *testing.T) {
+func TestJoinNotice(t *testing.T) {
 	start := time.Date(2026, 6, 1, 10, 0, 0, 0, time.UTC) // 12:00 in Skopje
 	scheduled := func(status string) videoConsultation {
 		return videoConsultation{ConsultationStatus: status, ConsultationType: "video", ScheduledAt: &start}
@@ -33,7 +33,7 @@ func TestPatientJoinNotice(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			notice, ok := patientJoinNotice(tt.c, tt.linkExpired, tt.now)
+			notice, ok := joinNotice(tt.c, tt.linkExpired, tt.now)
 			if ok != tt.wantNotice {
 				t.Fatalf("notice = %v, want %v", ok, tt.wantNotice)
 			}

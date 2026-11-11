@@ -150,7 +150,29 @@ func (h VideoPageHandler) ConsultationsVideoForm(ctx context.Context, params api
 		return nil, fmt.Errorf("failed to query consultation: %w", err)
 	}
 
-	allowed, err := h.authService.IsAllowed(ctx, "join_video_consultation", consultation.target())
+	target := consultation.target()
+	canView, err := h.authService.IsAllowed(ctx, "view_video_call", target)
+	if err != nil {
+		return nil, err
+	}
+	if !canView {
+		return nil, herrors.HtmlError{
+			Code:       http.StatusForbidden,
+			Msg:        "You don't have permission to enter video call",
+			ButtonLink: "/consultations",
+		}
+	}
+
+	// The doctor's own call, but not open yet or any more.
+	if notice, ok := joinNotice(consultation, false, time.Now()); ok {
+		var buff bytes.Buffer
+
+		return &api.R200{
+			Data: &buff,
+		}, DoctorJoinNoticePage(params.ID.String(), notice).Render(ctx, &buff)
+	}
+
+	allowed, err := h.authService.IsAllowed(ctx, "join_video_consultation", target)
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +234,7 @@ func (h VideoPageHandler) VideoPagePatient(ctx context.Context, params api.Video
 		return nil, fmt.Errorf("failed to query consultation: %w", err)
 	}
 
-	if notice, ok := patientJoinNotice(consultation, linkExpired, now); ok {
+	if notice, ok := joinNotice(consultation, linkExpired, now); ok {
 		var buff bytes.Buffer
 
 		return &api.R200{
@@ -246,7 +268,7 @@ func (h VideoPageHandler) VideoPagePatient(ctx context.Context, params api.Video
 	}, PatientVideoPage(data).Render(ctx, &buff)
 }
 
-// JoinNotice is shown to a patient whose link can't open the call right now.
+// JoinNotice is shown instead of the call when it can't be entered right now.
 type JoinNotice struct {
 	Title string
 	Text  string
@@ -261,9 +283,10 @@ type JoinNotice struct {
 // fire longer timers early, and nobody keeps a tab open that long anyway.
 const maxNoticeReload = 24 * time.Hour
 
-// patientJoinNotice decides whether the patient sees a notice instead of the
-// call, and which one. ok is false when the call may be entered now.
-func patientJoinNotice(c videoConsultation, linkExpired bool, now time.Time) (JoinNotice, bool) {
+// joinNotice decides whether a notice is shown instead of the call, and which
+// one. ok is false when the call may be entered now. The doctor only gets here
+// for their own scheduled call, so only the window cases apply to them.
+func joinNotice(c videoConsultation, linkExpired bool, now time.Time) (JoinNotice, bool) {
 	if c.ConsultationStatus == "finished" {
 		return JoinNotice{
 			Title: "This consultation has finished",
