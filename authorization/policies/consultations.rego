@@ -45,6 +45,7 @@ allow if {
 	input.target.ConsultationStatus == "scheduled"
 	input.target.ConsultationType == "video"
 	input.target.ScheduledAtPast == true
+	not input.target.OpinionDeadlinePassed
 }
 
 allow if {
