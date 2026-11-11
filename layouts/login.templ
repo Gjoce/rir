@@ -1,12 +1,18 @@
 package layouts
 
-import "cybermedico/cmd/cybermedico/api/util"
+import (
+    "cybermedico/cmd/cybermedico/api/util"
+    "cybermedico/components"
+)
 
 templ Login() {
     <!DOCTYPE html>
     <html lang="en" if util.GetTheme(ctx) != "auto" { data-theme={ util.GetTheme(ctx) } }>
         @head()
         <body class="container">
+            <header>
+                @components.Navbar()
+            </header>
             <main>
                 { children...}
             </main>

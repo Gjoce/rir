@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 )
 
 func RootHtml(comp templ.Component, specializations []string, filters PublicDoctorsFilters) templ.Component {
@@ -46,21 +47,107 @@ func RootHtml(comp templ.Component, specializations []string, filters PublicDoct
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = landingStyles().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"landing-hero\" aria-labelledby=\"landing-title\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = heroBackdrop().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"grid\"><div><hgroup><p class=\"landing-eyebrow\">Online specialist consultations</p><h1 id=\"landing-title\">A specialist's opinion, without the waiting room</h1><p>Choose a specialist, describe your problem and attach your results. You get a written opinion by email, or talk to the doctor in a video call in your browser.</p></hgroup><p class=\"landing-actions\"><a href=\"#specialists\" role=\"button\">Choose a specialist</a> <a href=\"#how-it-works\" role=\"button\" class=\"secondary outline\">How it works</a></p><ul class=\"landing-facts\"><li>No account needed</li><li>Answer within 72 hours</li><li>Digitally signed opinion</li></ul></div><figure class=\"landing-preview\" aria-label=\"Example of an opinion as the patient receives it\"><article><header><small>Written opinion</small> <strong>Cardiology consultation</strong></header><p>Based on the results you sent, the findings are consistent with well-controlled hypertension. Continue the current therapy and measure your blood pressure twice a day for two weeks.</p><footer><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"></path> <path d=\"m9 12 2 2 4-4\"></path></svg> <small>Digitally signed by the doctor</small></footer></article></figure></div></section><section id=\"how-it-works\" class=\"landing-process\" aria-labelledby=\"how-title\"><div class=\"landing-process-intro\"><hgroup><h2 id=\"how-title\">How it works</h2><p>Three steps, all from home.</p></hgroup> <img src=\"/static/medical-care.svg\" alt=\"A doctor holding a medical record\" width=\"280\" height=\"195\" loading=\"lazy\"></div><div class=\"grid\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var3 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<circle cx=\"11\" cy=\"11\" r=\"8\"></circle> <path d=\"m21 21-4.3-4.3\"></path>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = landingStep("1", "Choose a specialist", "Compare doctors by specialization, workplace, languages and price.").Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var4 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"></path> <path d=\"M14 2v4a2 2 0 0 0 2 2h4\"></path> <path d=\"M10 9H8\"></path> <path d=\"M16 13H8\"></path> <path d=\"M16 17H8\"></path>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = landingStep("2", "Describe your problem", "Fill in a short form and attach up to five reports or images.").Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<rect width=\"20\" height=\"16\" x=\"2\" y=\"4\" rx=\"2\"></rect> <path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"></path>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = landingStep("3", "Receive the opinion", "The doctor's opinion arrives by email, digitally signed.").Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></section><section class=\"landing-consultations\" aria-labelledby=\"types-title\"><hgroup><h2 id=\"types-title\">Two ways to consult</h2><p>Pick what suits your question.</p></hgroup><div class=\"grid\"><article class=\"landing-option\"><header><strong>Written consultation</strong></header><div class=\"landing-option-content\"><ul><li>Describe your problem and attach your results</li><li>Answer within <strong>72 hours</strong></li><li>Opinion by email, digitally signed</li></ul><img src=\"/static/doctors-orders.svg\" alt=\"A doctor reviewing written medical instructions\" width=\"110\" height=\"175\" loading=\"lazy\"></div></article><article class=\"landing-option\"><header><strong>Video consultation</strong></header><ul><li>Choose the part of the day that suits you</li><li>Appointment within <strong>12 hours</strong> (urgent: <strong>8 hours</strong>)</li><li>Join the call in your browser, nothing to install</li><li>Written opinion after the call</li></ul></article></div></section><section id=\"specialists\" class=\"landing-specialists\" aria-labelledby=\"specialists-title\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			filtersJson, _ := json.Marshal(filters)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<hgroup><h2>Choose a specialist</h2><p>Order a written or video consultation from your home.</p></hgroup><div data-signals__ifmissing=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<hgroup><h2 id=\"specialists-title\">Choose a specialist</h2><p>Order a written or video consultation from your home.</p></hgroup><div class=\"landing-filter\" data-signals__ifmissing=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templruntime.NewAttributeExpression(string(filtersJson)).Resolve(ctx)
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templruntime.NewAttributeExpression(string(filtersJson)).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 18, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 115, Col: 85}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-on:change=\"@get('/')\" style=\"max-width: 24rem;\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" data-on:change=\"@get('/')\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -73,7 +160,7 @@ func RootHtml(comp templ.Component, specializations []string, filters PublicDoct
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -81,9 +168,151 @@ func RootHtml(comp templ.Component, specializations []string, filters PublicDoct
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</section><section class=\"landing-trust\" aria-labelledby=\"trust-title\"><hgroup><h2 id=\"trust-title\">Your health data is handled with care</h2><p>Built for medical opinions you can rely on.</p></hgroup><div class=\"grid\"><article class=\"landing-assurance\"><h3>Signed opinions</h3><p>Every opinion is signed with the doctor's own key. Any change afterwards shows, so you can present it to another doctor as authentic.</p></article><article class=\"landing-assurance\"><h3>Verified doctors</h3><p>Doctors sign in with a password and a code from their phone, and confirm every opinion again before it is sent.</p></article><article class=\"landing-assurance\"><h3>Private video calls</h3><p>Your call link is personal and only works for your appointment. The video is encrypted between your browser and the doctor's.</p></article></div></section><footer class=\"landing-footer\"><small>© ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(time.Now().Year()))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 148, Col: 53}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " CyberMedico</small> <small><a href=\"/auth/login\" class=\"secondary\">Log in for doctors</a></small></footer>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			return nil
 		})
 		templ_7745c5c3_Err = layouts.Public().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// heroBackdrop draws the hero's background: a soft tint in the brand colour, a
+// faint dot grid and a heartbeat line, in the theme's colours.
+func heroBackdrop() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"landing-backdrop\" aria-hidden=\"true\"><svg class=\"landing-pulse\" viewBox=\"0 0 1200 200\" preserveAspectRatio=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 120 H380 l20 -10 l15 10 H470 l14 -78 l22 150 l18 -112 l12 40 H640 l18 -14 l16 14 H1200\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"></path></svg></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func landingStep(number, title, text string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<article class=\"landing-step\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ_7745c5c3_Var9.Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</svg><p class=\"landing-step-number\"><small>Step ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(number)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 169, Col: 59}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</small></p><h3>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 170, Col: 19}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</h3><p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(text)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 171, Col: 17}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</p></article>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func landingStyles() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<style>\n        /* The hero band reaches the window edges while the content stays in the container. */\n        body { overflow-x: clip; }\n\n        .landing-hero {\n            position: relative;\n            isolation: isolate;\n            /* The bottom padding leaves room for the heartbeat line under the content. */\n            padding: calc(var(--pico-spacing) * 4) 0 8.5rem;\n            margin-bottom: calc(var(--pico-spacing) * 3);\n        }\n        .landing-hero .grid { align-items: center; gap: calc(var(--pico-spacing) * 3); }\n        .landing-hero h1 { font-size: clamp(2rem, 4.5vw, 3rem); line-height: 1.15; margin-bottom: var(--pico-spacing); }\n        .landing-hero hgroup > p:last-child { font-size: 1.1rem; max-width: 36rem; }\n        .landing-eyebrow {\n            text-transform: uppercase;\n            letter-spacing: 0.08em;\n            font-size: 0.8rem;\n            font-weight: 600;\n            color: var(--pico-primary) !important;\n        }\n        .landing-actions { display: flex; flex-wrap: wrap; gap: var(--pico-spacing); }\n        .landing-facts {\n            display: flex;\n            flex-wrap: wrap;\n            gap: 0.5rem 1.5rem;\n            padding: 0;\n            margin: 0;\n            color: var(--pico-muted-color);\n            font-size: 0.9rem;\n        }\n        .landing-facts li { list-style: none; margin: 0; }\n        .landing-facts li::before { content: \"✓\"; color: var(--pico-primary); margin-right: 0.4rem; font-weight: 700; }\n\n        .landing-backdrop {\n            position: absolute;\n            inset: 0;\n            left: 50%;\n            width: 100vw;\n            transform: translateX(-50%);\n            z-index: -1;\n            color: var(--pico-primary);\n            background:\n                radial-gradient(ellipse 60% 70% at 85% 10%, color-mix(in srgb, var(--pico-primary) 16%, transparent), transparent 70%),\n                radial-gradient(ellipse 50% 60% at 0% 100%, color-mix(in srgb, var(--pico-primary) 8%, transparent), transparent 70%);\n            border-bottom: 1px solid var(--pico-muted-border-color);\n        }\n        .landing-backdrop::before {\n            content: \"\";\n            position: absolute;\n            inset: 0;\n            background-image: radial-gradient(color-mix(in srgb, var(--pico-primary) 28%, transparent) 1px, transparent 1.5px);\n            background-size: 24px 24px;\n            mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 80%);\n        }\n        .landing-pulse {\n            position: absolute;\n            left: 0;\n            bottom: 0.75rem;\n            width: 100%;\n            height: 7rem;\n            opacity: 0.55;\n        }\n        @media (prefers-reduced-motion: no-preference) {\n            .landing-pulse path {\n                stroke-dasharray: 2600;\n                stroke-dashoffset: 2600;\n                animation: landing-pulse 3.5s ease-out 0.3s forwards;\n            }\n            @keyframes landing-pulse { to { stroke-dashoffset: 0; } }\n        }\n\n        .landing-preview { margin: 0; }\n        .landing-preview article {\n            margin: 0;\n            box-shadow: 0 1.5rem 3rem -1.5rem color-mix(in srgb, var(--pico-primary) 45%, transparent);\n        }\n        .landing-preview header { display: flex; flex-direction: column; }\n        .landing-preview header small { color: var(--pico-muted-color); }\n        .landing-preview footer { display: flex; align-items: center; gap: 0.5rem; color: var(--pico-ins-color); }\n\n        main > section { margin-bottom: calc(var(--pico-spacing) * 4); }\n        main > section:not(.landing-hero) { position: relative; }\n        main > section > hgroup { margin-bottom: calc(var(--pico-spacing) * 2); }\n        main > section > hgroup h2 { letter-spacing: -0.025em; }\n        main > section > hgroup p { max-width: 42rem; }\n        .landing-process {\n            position: relative;\n            isolation: isolate;\n            overflow: hidden;\n            padding: calc(var(--pico-spacing) * 2.5);\n            border: 1px solid var(--pico-muted-border-color);\n            border-radius: calc(var(--pico-border-radius) * 1.5);\n            background: linear-gradient(135deg,\n                color-mix(in srgb, var(--pico-primary) 5%, var(--pico-card-background-color)),\n                var(--pico-card-background-color) 65%);\n        }\n        .landing-process::before {\n            content: \"\";\n            position: absolute;\n            inset: 0;\n            z-index: -1;\n            pointer-events: none;\n            background-image:\n                linear-gradient(color-mix(in srgb, var(--pico-primary) 6%, transparent) 1px, transparent 1px),\n                linear-gradient(90deg, color-mix(in srgb, var(--pico-primary) 6%, transparent) 1px, transparent 1px);\n            background-size: 34px 34px;\n            mask-image: radial-gradient(ellipse at 85% 18%, #000 0%, transparent 72%);\n        }\n        .landing-process .grid { gap: calc(var(--pico-spacing) * 1.5); }\n        .landing-process-intro {\n            display: grid;\n            grid-template-columns: minmax(0, 1fr) minmax(10rem, 17rem);\n            align-items: center;\n            gap: calc(var(--pico-spacing) * 2);\n            margin-bottom: calc(var(--pico-spacing) * 2);\n        }\n        .landing-process-intro hgroup { margin-bottom: 0; }\n        .landing-process-intro img { display: block; width: 100%; height: auto; }\n        .landing-step {\n            height: 100%;\n            padding: calc(var(--pico-spacing) * 1.5);\n            border: 1px solid var(--pico-muted-border-color);\n            border-radius: var(--pico-border-radius);\n            background: var(--pico-card-background-color);\n            box-shadow: 0 0.75rem 2rem -1.75rem var(--pico-primary);\n        }\n        .landing-step svg { color: var(--pico-primary); margin-bottom: var(--pico-spacing); }\n        .landing-step-number { color: var(--pico-muted-color); margin-bottom: 0.25rem; }\n        .landing-step h3 { font-size: 1.15rem; margin: 0 0 0.5rem; }\n        main > section[id] { scroll-margin-top: var(--pico-spacing); }\n        .landing-step > p:last-child { margin-bottom: 0; }\n\n        .landing-consultations .grid { align-items: stretch; gap: calc(var(--pico-spacing) * 1.5); }\n        .landing-option {\n            margin: 0;\n            height: 100%;\n            border: 1px solid var(--pico-muted-border-color);\n            box-shadow: 0 1rem 2.5rem -2.1rem var(--pico-primary);\n        }\n        .landing-option header { color: var(--pico-primary); }\n        .landing-option-content {\n            display: grid;\n            grid-template-columns: minmax(0, 1fr) 5.5rem;\n            align-items: center;\n            gap: var(--pico-spacing);\n        }\n        .landing-option-content ul { margin-bottom: 0; }\n        .landing-option-content img { display: block; width: 100%; height: auto; }\n\n        .landing-specialists {\n            padding: calc(var(--pico-spacing) * 3) 0;\n            border-top: 1px solid var(--pico-muted-border-color);\n            border-bottom: 1px solid var(--pico-muted-border-color);\n            background: linear-gradient(180deg,\n                color-mix(in srgb, var(--pico-primary) 3%, transparent), transparent 48%);\n        }\n        .landing-filter { max-width: 24rem; margin-bottom: calc(var(--pico-spacing) * 1.5); }\n        .landing-doctor-grid { gap: calc(var(--pico-spacing) * 1.25) !important; }\n        .landing-doctor-card {\n            height: 100%;\n            overflow: hidden;\n            border: 1px solid var(--pico-muted-border-color);\n            box-shadow: 0 1rem 2.5rem -2.25rem var(--pico-primary);\n        }\n        .landing-doctor-card > img {\n            background: color-mix(in srgb, var(--pico-primary) 5%, var(--pico-card-background-color));\n        }\n        .landing-doctor-card hgroup { min-height: 3.4rem; }\n        .landing-doctor-card hgroup h4 { margin-bottom: 0.25rem; }\n        .landing-doctor-card footer { border-top: 1px solid var(--pico-muted-border-color); }\n\n        .landing-trust {\n            padding: calc(var(--pico-spacing) * 3);\n            border: 1px solid var(--pico-muted-border-color);\n            border-radius: calc(var(--pico-border-radius) * 1.5);\n            background: radial-gradient(ellipse at 100% 0%,\n                color-mix(in srgb, var(--pico-primary) 7%, transparent), transparent 55%);\n        }\n        .landing-trust h3 { font-size: 1.1rem; }\n        .landing-trust .grid { gap: calc(var(--pico-spacing) * 1.5); }\n        .landing-assurance { margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }\n        .landing-assurance h3 { margin-bottom: 0.5rem; }\n        .landing-assurance p { margin-bottom: 0; color: var(--pico-muted-color); }\n\n        .landing-footer {\n            display: flex;\n            justify-content: space-between;\n            flex-wrap: wrap;\n            gap: var(--pico-spacing);\n            padding: calc(var(--pico-spacing) * 2) 0;\n            border-top: 1px solid var(--pico-muted-border-color);\n            color: var(--pico-muted-color);\n        }\n        @media (max-width: 576px) {\n            .landing-process, .landing-trust { padding: calc(var(--pico-spacing) * 1.5); }\n            .landing-step { padding: var(--pico-spacing); }\n            .landing-process-intro { grid-template-columns: minmax(0, 1fr) 7rem; gap: var(--pico-spacing); }\n            .landing-option-content { grid-template-columns: minmax(0, 1fr) 4rem; }\n        }\n    </style>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -108,12 +337,12 @@ func PublicDoctorsSSE(doctors []PublicDoctor, filters PublicDoctorsFilters) temp
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"public-doctors\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div id=\"public-doctors\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(doctors) == 0 {
-			templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var15 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -125,173 +354,173 @@ func PublicDoctorsSSE(doctors []PublicDoctor, filters PublicDoctorsFilters) temp
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p>No doctors are currently available.</p><a href=\"/\">Show all doctors</a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<p>No doctors are currently available.</p><a href=\"/\">Show all doctors</a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = components.MessageCard().Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.MessageCard().Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div style=\"display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: var(--pico-spacing);\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"landing-doctor-grid\" style=\"display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, doctor := range doctors {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<article style=\"margin: 0;\"><img src=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<article class=\"landing-doctor-card\" style=\"margin: 0;\"><img src=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templruntime.NewAttributeExpression(doctor.PhotoUrl).ResolveURL(ctx)
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templruntime.NewAttributeExpression(doctor.PhotoUrl).ResolveURL(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 42, Col: 49}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 391, Col: 49}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" alt=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templruntime.NewAttributeExpression(doctor.DisplayName).Resolve(ctx)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 43, Col: 52}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" alt=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" style=\"width: 100%; height: 14rem; object-fit: contain; border-radius: var(--pico-border-radius); display: block; margin-bottom: var(--pico-spacing);\"> <hgroup><h4><a href=\"")
+				var templ_7745c5c3_Var17 string
+				templ_7745c5c3_Var17, templ_7745c5c3_Err = templruntime.NewAttributeExpression(doctor.DisplayName).Resolve(ctx)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 392, Col: 52}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL(fmt.Sprintf("/specialists/%s", doctor.ID))).ResolveURL(ctx)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 47, Col: 98}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" style=\"width: 100%; height: 14rem; object-fit: cover; display: block; margin-bottom: var(--pico-spacing);\"> <hgroup><h4><a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\">")
+				var templ_7745c5c3_Var18 string
+				templ_7745c5c3_Var18, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL(fmt.Sprintf("/specialists/%s", doctor.ID))).ResolveURL(ctx)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 396, Col: 98}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(doctor.DisplayName)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 47, Col: 121}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</a></h4>")
+				var templ_7745c5c3_Var19 string
+				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(doctor.DisplayName)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 396, Col: 121}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</a></h4>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if doctor.Subspecialization != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p style=\"font-style: italic;\"><small>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<p style=\"font-style: italic;\"><small>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var10 string
-					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(doctor.Subspecialization)
+					var templ_7745c5c3_Var20 string
+					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(doctor.Subspecialization)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 49, Col: 96}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 398, Col: 96}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</small></p>")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</small></p>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</hgroup><p><kbd>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</hgroup><p><kbd>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(doctor.Specialization)
+				var templ_7745c5c3_Var21 string
+				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(doctor.Specialization)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 52, Col: 55}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 401, Col: 55}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</kbd></p><address>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(doctor.Workplace)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 53, Col: 51}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</kbd></p><address>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</address><p style=\"text-transform: capitalize;\"><small>")
+				var templ_7745c5c3_Var22 string
+				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(doctor.Workplace)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 402, Col: 51}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(strings.Join(doctor.Languages, ", "))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 54, Col: 108}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</address><p style=\"text-transform: capitalize;\"><small>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</small></p><footer style=\"display: flex; justify-content: space-between;\"><span>Written: <strong>")
+				var templ_7745c5c3_Var23 string
+				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(strings.Join(doctor.Languages, ", "))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 403, Col: 108}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(doctor.PriceWritten)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 56, Col: 72}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</small></p><footer style=\"display: flex; justify-content: space-between;\"><span>Written: <strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " €</strong></span> <span>Video: <strong>")
+				var templ_7745c5c3_Var24 string
+				templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(doctor.PriceWritten)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 405, Col: 72}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(doctor.PriceVideo)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 57, Col: 68}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, " €</strong></span> <span>Video: <strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " €</strong></span></footer></article>")
+				var templ_7745c5c3_Var25 string
+				templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(doctor.PriceVideo)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/cybermedico/api/html/root.templ`, Line: 406, Col: 68}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, " €</strong></span></footer></article>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

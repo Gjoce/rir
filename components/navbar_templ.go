@@ -9,7 +9,16 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "cybermedico/cmd/cybermedico/api/util"
+import (
+	"cybermedico/cmd/cybermedico/api/util"
+	"strings"
+)
+
+// inStaffArea reports whether the page is part of the logged-in area, which has
+// its own sidebar, so the navbar doesn't need a dashboard link there.
+func inStaffArea(path string) bool {
+	return strings.HasPrefix(path, "/dashboard") || strings.HasPrefix(path, "/consultations")
+}
 
 func Navbar() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -52,18 +61,31 @@ func Navbar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if util.GetUserID(ctx) != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<li><a role=\"button\" data-tooltip=\"Logout\" onclick=\"document.getElementById('logout-modal').showModal()\" style=\"margin: 0;\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m16 17 5-5-5-5\"></path> <path d=\"M21 12H9\"></path> <path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"></path></svg></a></li>")
+		if util.GetUserID(ctx) == "" {
+			if !strings.HasPrefix(util.GetCurrentPath(ctx), "/auth") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<li><a href=\"/auth/login\" role=\"button\" class=\"outline nav-login\" data-tooltip=\"For doctors and administrators\" data-placement=\"bottom\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m10 17 5-5-5-5\"></path> <path d=\"M15 12H3\"></path> <path d=\"M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4\"></path></svg> <span>Log in</span></a></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+		} else {
+			if !inStaffArea(util.GetCurrentPath(ctx)) {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<li><a href=\"/dashboard\" role=\"button\" class=\"outline nav-login\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"></rect> <rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"></rect> <rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"></rect> <rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"></rect></svg> <span>Dashboard</span></a></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " <li><a role=\"button\" aria-label=\"Logout\" data-tooltip=\"Logout\" onclick=\"document.getElementById('logout-modal').showModal()\" style=\"margin: 0;\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m16 17 5-5-5-5\"></path> <path d=\"M21 12H9\"></path> <path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"></path></svg></a></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</ul></nav>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</ul></nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if util.GetUserID(ctx) != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<dialog id=\"logout-modal\"><article><header><button aria-label=\"Close\" class=\"close\" onclick=\"document.getElementById('logout-modal').close()\"></button> <strong>Confirm Logout</strong></header><p>Are you sure you want to log out?</p><footer><a href=\"/logout\" role=\"button\">Logout</a></footer></article></dialog>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<dialog id=\"logout-modal\"><article><header><button aria-label=\"Close\" class=\"close\" onclick=\"document.getElementById('logout-modal').close()\"></button> <strong>Confirm Logout</strong></header><p>Are you sure you want to log out?</p><footer><a href=\"/logout\" role=\"button\">Logout</a></footer></article></dialog>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

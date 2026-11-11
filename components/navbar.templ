@@ -1,6 +1,15 @@
 package components
 
-import "cybermedico/cmd/cybermedico/api/util"
+import (
+    "cybermedico/cmd/cybermedico/api/util"
+    "strings"
+)
+
+// inStaffArea reports whether the page is part of the logged-in area, which has
+// its own sidebar, so the navbar doesn't need a dashboard link there.
+func inStaffArea(path string) bool {
+    return strings.HasPrefix(path, "/dashboard") || strings.HasPrefix(path, "/consultations")
+}
 
 templ Navbar() {
     <nav>
@@ -41,9 +50,35 @@ templ Navbar() {
                     </ul>
                 </details>
             </li>
-            if util.GetUserID(ctx) != "" {
+            if util.GetUserID(ctx) == "" {
+                if !strings.HasPrefix(util.GetCurrentPath(ctx), "/auth") {
+                    <li>
+                        <a href="/auth/login" role="button" class="outline nav-login" data-tooltip="For doctors and administrators" data-placement="bottom">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="m10 17 5-5-5-5"/>
+                                <path d="M15 12H3"/>
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                            </svg>
+                            <span>Log in</span>
+                        </a>
+                    </li>
+                }
+            } else {
+                if !inStaffArea(util.GetCurrentPath(ctx)) {
+                    <li>
+                        <a href="/dashboard" role="button" class="outline nav-login">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect width="7" height="9" x="3" y="3" rx="1"/>
+                                <rect width="7" height="5" x="14" y="3" rx="1"/>
+                                <rect width="7" height="9" x="14" y="12" rx="1"/>
+                                <rect width="7" height="5" x="3" y="16" rx="1"/>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                }
                 <li>
-                    <a role="button" data-tooltip="Logout" onclick="document.getElementById('logout-modal').showModal()" style="margin: 0;">
+                    <a role="button" aria-label="Logout" data-tooltip="Logout" onclick="document.getElementById('logout-modal').showModal()" style="margin: 0;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m16 17 5-5-5-5"/>
                             <path d="M21 12H9"/>
