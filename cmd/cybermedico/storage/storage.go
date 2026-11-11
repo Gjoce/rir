@@ -3,6 +3,7 @@ package storage
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"time"
@@ -12,24 +13,23 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/aws/smithy-go"
 )
 
 type Config struct {
-	Endpoint           string
-	Region             string
-	Bucket             string
-	AccessKey          string
-	SecretKey          string
-	SignaturesBucket   string
-	SignaturesKMSKeyID string // KMS key ARN/ID for SSE-KMS on the signatures bucket
+	Endpoint         string
+	Region           string
+	Bucket           string
+	AccessKey        string
+	SecretKey        string
+	SignaturesBucket string
 }
 
 type Service struct {
-	client             *s3.Client
-	presigner          *s3.PresignClient
-	bucket             string
-	signaturesBucket   string
-	signaturesKMSKeyID string
+	client           *s3.Client
+	presigner        *s3.PresignClient
+	bucket           string
+	signaturesBucket string
 }
 
 func New(ctx context.Context, cfg Config) (*Service, error) {
@@ -72,11 +72,10 @@ func New(ctx context.Context, cfg Config) (*Service, error) {
 	}
 
 	return &Service{
-		client:             client,
-		presigner:          s3.NewPresignClient(client),
-		bucket:             cfg.Bucket,
-		signaturesBucket:   cfg.SignaturesBucket,
-		signaturesKMSKeyID: cfg.SignaturesKMSKeyID,
+		client:           client,
+		presigner:        s3.NewPresignClient(client),
+		bucket:           cfg.Bucket,
+		signaturesBucket: cfg.SignaturesBucket,
 	}, nil
 }
 
@@ -119,31 +118,75 @@ func (s *Service) PresignURL(ctx context.Context, key string, expiry time.Durati
 	return req.URL, nil
 }
 
-// UploadSignature writes a JSON signature record to the signatures bucket.
-// The key is signatures/{consultationID}.json. The bucket must have S3 Object
-// Lock (WORM) enabled — that policy is enforced at the bucket level in AWS,
-// not in this call.
-func (s *Service) UploadSignature(ctx context.Context, consultationID string, record []byte) error {
+// ErrSignatureExists means a signature record for the consultation is already
+// stored. Records are written once and never replaced.
+var ErrSignatureExists = errors.New("storage: signature already exists")
+
+// ErrSignatureNotFound means no signature record is stored for the consultation.
+var ErrSignatureNotFound = errors.New("storage: signature not found")
+
+func signatureKey(consultationID string) string {
+	return fmt.Sprintf("signatures/%s.json", consultationID)
+}
+
+// UploadSignature writes a JSON signature record to the signatures bucket under
+// signatures/{consultationID}.json. The write is conditional: an existing
+// record is never overwritten, it returns ErrSignatureExists. In production the
+// bucket should also have S3 Object Lock (WORM), so nobody can delete or replace it.
+func (s *Service) UploadSignature(ctx context.Context, consultationID string, record []byte) (string, error) {
 	if s.signaturesBucket == "" {
-		return fmt.Errorf("signatures bucket not configured")
+		return "", fmt.Errorf("signatures bucket not configured")
 	}
 
-	key := fmt.Sprintf("signatures/%s.json", consultationID)
-	input := &s3.PutObjectInput{
+	key := signatureKey(consultationID)
+	_, err := s.client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:        aws.String(s.signaturesBucket),
 		Key:           aws.String(key),
 		Body:          bytes.NewReader(record),
 		ContentLength: aws.Int64(int64(len(record))),
 		ContentType:   aws.String("application/json"),
-	}
-	if s.signaturesKMSKeyID != "" {
-		input.ServerSideEncryption = s3types.ServerSideEncryptionAwsKms
-		input.SSEKMSKeyId = aws.String(s.signaturesKMSKeyID)
+		IfNoneMatch:   aws.String("*"),
+	})
+	if err != nil {
+		var apiErr smithy.APIError
+		if errors.As(err, &apiErr) && apiErr.ErrorCode() == "PreconditionFailed" {
+			return key, ErrSignatureExists
+		}
+
+		return "", fmt.Errorf("failed to upload signature for consultation %s: %w", consultationID, err)
 	}
 
-	if _, err := s.client.PutObject(ctx, input); err != nil {
-		return fmt.Errorf("failed to upload signature for consultation %s: %w", consultationID, err)
+	return key, nil
+}
+
+// maxSignatureBytes caps how much of a signature record is read back. Records are
+// a few kilobytes plus the opinion.
+const maxSignatureBytes = 1 << 20
+
+// GetSignature reads the signature record stored for the consultation.
+func (s *Service) GetSignature(ctx context.Context, consultationID string) ([]byte, error) {
+	if s.signaturesBucket == "" {
+		return nil, fmt.Errorf("signatures bucket not configured")
 	}
 
-	return nil
+	out, err := s.client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(s.signaturesBucket),
+		Key:    aws.String(signatureKey(consultationID)),
+	})
+	if err != nil {
+		var noKey *s3types.NoSuchKey
+		if errors.As(err, &noKey) {
+			return nil, ErrSignatureNotFound
+		}
+
+		return nil, fmt.Errorf("failed to read signature for consultation %s: %w", consultationID, err)
+	}
+	defer func() { _ = out.Body.Close() }()
+
+	record, err := io.ReadAll(io.LimitReader(out.Body, maxSignatureBytes))
+	if err != nil {
+		return nil, fmt.Errorf("failed to read signature for consultation %s: %w", consultationID, err)
+	}
+
+	return record, nil
 }

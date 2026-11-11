@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/sha256"
 	"cybermedico/authorization"
 	"cybermedico/cmd/cybermedico/api/errors"
 	"cybermedico/cmd/cybermedico/api/html"
@@ -13,7 +14,6 @@ import (
 	"cybermedico/cmd/cybermedico/storage"
 	"cybermedico/video"
 	"cybermedico/workers"
-	"crypto/sha256"
 	"embed"
 	stderrors "errors"
 	"fmt"
@@ -72,7 +72,7 @@ func main() {
 
 	videoURLBuilder := initializeVideoURLBuilder()
 
-	riverClient := initializeRiver(ctx, dbPool, &mailer, videoURLBuilder)
+	riverClient := initializeRiver(ctx, dbPool, &mailer, videoURLBuilder, storageService, keyCipher)
 	defer shutdownRiver(ctx, riverClient)
 
 	authService, _ := initializeAuth(ctx, dbPool)
@@ -287,13 +287,12 @@ func initializeMailer() email.Emailer {
 
 func initializeStorage(ctx context.Context) *storage.Service {
 	svc, err := storage.New(ctx, storage.Config{
-		Endpoint:           os.Getenv("S3_ENDPOINT"),
-		Region:             os.Getenv("S3_REGION"),
-		Bucket:             os.Getenv("S3_BUCKET"),
-		AccessKey:          os.Getenv("S3_ACCESS_KEY"),
-		SecretKey:          os.Getenv("S3_SECRET_KEY"),
-		SignaturesBucket:   os.Getenv("S3_SIGNATURES_BUCKET"),
-		SignaturesKMSKeyID: os.Getenv("S3_SIGNATURES_KMS_KEY_ID"),
+		Endpoint:         os.Getenv("S3_ENDPOINT"),
+		Region:           os.Getenv("S3_REGION"),
+		Bucket:           os.Getenv("S3_BUCKET"),
+		AccessKey:        os.Getenv("S3_ACCESS_KEY"),
+		SecretKey:        os.Getenv("S3_SECRET_KEY"),
+		SignaturesBucket: os.Getenv("S3_SIGNATURES_BUCKET"),
 	})
 	if err != nil {
 		log.Logger.Error("Failed to initialize storage service", "error", err)
@@ -380,7 +379,7 @@ func initializeVideoURLBuilder() *video.URLBuilder {
 	return urlBuilder
 }
 
-func initializeRiver(ctx context.Context, dbPool *pgxpool.Pool, mailer *email.Emailer, videoURLBuilder *video.URLBuilder) *river.Client[pgx.Tx] {
+func initializeRiver(ctx context.Context, dbPool *pgxpool.Pool, mailer *email.Emailer, videoURLBuilder *video.URLBuilder, storageService *storage.Service, keyCipher *signing.KeyCipher) *river.Client[pgx.Tx] {
 	migrator, err := rivermigrate.New(riverpgxv5.New(dbPool), nil)
 	if err != nil {
 		log.Logger.Error("Failed to create River migrator", "error", err)
@@ -404,6 +403,7 @@ func initializeRiver(ctx context.Context, dbPool *pgxpool.Pool, mailer *email.Em
 	river.AddWorker(riverWorkers, orderConfirmationEmailWorker)
 	river.AddWorker(riverWorkers, workers.NewScheduledVideoEmailWorker(dbPool, mailer, videoURLBuilder, log.Logger))
 	river.AddWorker(riverWorkers, workers.NewVideoCallReminderWorker(dbPool, mailer, videoURLBuilder, log.Logger))
+	river.AddWorker(riverWorkers, workers.NewConsultationSignatureWorker(dbPool, storageService, keyCipher, log.Logger))
 
 	riverClient, err := river.NewClient(riverpgxv5.New(dbPool), &river.Config{
 		Logger: log.Logger,
