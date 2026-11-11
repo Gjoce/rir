@@ -136,6 +136,7 @@ templ ConsultationsSSE(consultations []Consultations, filters ConsultationFilter
                                 <td> { consultation.CreatedAt.Format("02-01-2006") }</td>
                                  if showTimeLeft {
                                     <td>
+                                        <kbd>
                                         @components.CountdownTimer(components.CountdownConfig{
                                             ExpiresAt:          consultation.ExpiresAt,
                                             VideoExpiresAt:     consultation.VideoExpiresAt,
@@ -144,6 +145,7 @@ templ ConsultationsSSE(consultations []Consultations, filters ConsultationFilter
                                             ConsultationType:   consultation.ConsultationType,
                                             ConsultationStatus: consultation.ConsultationStatus,
                                         })
+                                        </kbd>
                                     </td>
                                  }
                             </tr>
@@ -187,7 +189,7 @@ templ ConsultationFormHtml(consultation Consultation, role string, canAnswerCons
             if consultation.ConsultationStatus == "pending" || consultation.ConsultationStatus == "scheduled" {
                 <p>
                     Time left:
-                    <strong>
+                    <kbd>
                         @components.CountdownTimer(components.CountdownConfig{
                             ExpiresAt:                  consultation.ExpiresAt,
                             VideoExpiresAt:             consultation.VideoExpiresAt,
@@ -196,7 +198,7 @@ templ ConsultationFormHtml(consultation Consultation, role string, canAnswerCons
                             ConsultationType:           consultation.ConsultationType,
                             ConsultationStatus:         consultation.ConsultationStatus,
                         })
-                    </strong>
+                    </kbd>
                 </p>
                 @components.CountdownScript()
             }
@@ -414,14 +416,14 @@ templ ScheduleConsultationForm(schedule ScheduleConsultation) {
             </div>
             <p>
                 Time left to schedule:
-                <strong>
+                <kbd>
                     @components.CountdownTimer(components.CountdownConfig{
                         RequiresResponseBySchedule: schedule.VideoRequiresResponseBy,
                         ConsultationID:             schedule.ID,
                         ConsultationType:           schedule.ConsultationType,
                         ConsultationStatus:         schedule.ConsultationStatus,
                     })
-                </strong>
+                </kbd>
             </p>
             @components.CountdownScript()
             @components.Input(components.InputConfig{
