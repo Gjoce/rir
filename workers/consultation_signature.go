@@ -79,12 +79,34 @@ func (w *ConsultationSignatureWorker) Work(ctx context.Context, job *river.Job[C
 		return err
 	}
 
-	_, err = w.db.Exec(ctx, `
+	tx, err := w.db.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer func() {
+		if err := tx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+			w.logger.Error("failed to rollback transaction", "error", err)
+		}
+	}()
+
+	tag, err := tx.Exec(ctx, `
 		UPDATE consultations SET signature_doctor_url = @key
 		WHERE id = @id AND signature_doctor_url IS NULL
 	`, pgx.NamedArgs{"id": consultationID, "key": key})
 	if err != nil {
 		return fmt.Errorf("failed to store signature key: %w", err)
+	}
+
+	// The patient gets the opinion only once it is signed. Enqueued with the
+	// signature, so neither can happen without the other.
+	if tag.RowsAffected() == 1 {
+		if _, err := river.ClientFromContext[pgx.Tx](ctx).InsertTx(ctx, tx, DoctorAnswerEmailArgs{ConsultationID: consultationID}, nil); err != nil {
+			return fmt.Errorf("failed to enqueue opinion email: %w", err)
+		}
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("failed to commit signature: %w", err)
 	}
 
 	w.logger.Info("consultation opinion signed", "consultation_id", consultationID)

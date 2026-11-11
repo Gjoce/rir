@@ -1,48 +1,60 @@
 package email_templates
 
-templ ConsultationAnswerSubmitted(patientName string, doctorName string, opinionHTML string, unsubscribeURL string, isVideo bool) {
-    if isVideo {
-        @EmailHead("Written opinion for your video consultation", "en") {
-            @content(patientName, doctorName, opinionHTML, unsubscribeURL, isVideo)
-        }
-    } else {
-        @EmailHead("Answer to your written consultation", "en") {
-            @content(patientName, doctorName, opinionHTML, unsubscribeURL, isVideo)
-        }
-    }
+// SignedOpinion is what the patient receives once the doctor's opinion is signed.
+type SignedOpinion struct {
+    PatientName string
+    DoctorName  string
+    // OpinionHTML is the signed, sanitized opinion.
+    OpinionHTML string
+    SubmittedAt string
+    SignedAt    string
+    // Fingerprint identifies the signature: the start of the signed data's hash.
+    Fingerprint string
+    IsVideo     bool
 }
 
-templ content(patientName string, doctorName string, opinionHTML string, unsubscribeURL string, isVideo bool) {
-    <div class="title">
-        if isVideo {
-            Written opinion for your video consultation
-        } else {
-            Answer to your written consultation
-        }
-    </div>
-    <div class="content">
-        <p>Dear <strong>{ patientName }</strong>,</p>
+func (o SignedOpinion) Title() string {
+    if o.IsVideo {
+        return "Written opinion for your video consultation"
+    }
+    return "Answer to your written consultation"
+}
 
-        if isVideo {
-            <p>Thank you for using the <strong>CyberMedico</strong> platform for your video consultation.</p>
-            <p>Below is the <strong>written opinion</strong> from doctor <strong>{ doctorName }</strong> regarding your condition:</p>
-        } else {
-            <p>Thank you for using the written consultation service on the <strong>CyberMedico</strong> platform.</p>
-            <p>Below is the <strong>answer and opinion</strong> from doctor <strong>{ doctorName }</strong> based on your question:</p>
-        }
-
-        <div class="opinion-box">
-            @templ.Raw(opinionHTML)
+templ ConsultationAnswerSubmitted(o SignedOpinion) {
+    @EmailHead(o.Title(), "en") {
+        <div class="title">{ o.Title() }</div>
+        <div class="content">
+            <p>Dear <strong>{ o.PatientName }</strong>,</p>
+            if o.IsVideo {
+                <p>Thank you for using the <strong>CyberMedico</strong> platform for your video consultation.</p>
+                <p>Below is the <strong>written opinion</strong> from <strong>{ o.DoctorName }</strong> after your call:</p>
+            } else {
+                <p>Thank you for using the written consultation service on the <strong>CyberMedico</strong> platform.</p>
+                <p>Below is the <strong>answer and opinion</strong> from <strong>{ o.DoctorName }</strong> based on your question:</p>
+            }
         </div>
 
-        <p>If you have further questions, feel free to contact us at <a href="mailto:info@cybermedico.net">info@cybermedico.net</a>.</p>
-        <p>We would be very grateful if you could take a few moments to rate your consultation.</p>
-    </div>
+        <div class="opinion-box">
+            @templ.Raw(o.OpinionHTML)
+        </div>
 
-    <div class="button-wrapper">
-        <a href="https://www.trustpilot.com/evaluate/cybermedico.net" class="button">Rate our service</a>
-    </div>
+        <div class="info-box">
+            <p><strong>Doctor:</strong> { o.DoctorName }</p>
+            <p><strong>Submitted:</strong> { o.SubmittedAt }</p>
+            <p><strong>Digitally signed:</strong> { o.SignedAt } (Ed25519)</p>
+            <p><strong>Signature fingerprint:</strong> <code>{ o.Fingerprint }</code></p>
+        </div>
 
-    @EmailHelper()
-    @EmailFooter()
+        <div class="content">
+            <p>The opinion is digitally signed by the doctor. Any change to it, or to the information you gave us, makes the signature invalid, so you can present it to another doctor as authentic.</p>
+            <p>We would be very grateful if you could take a few moments to rate your consultation.</p>
+        </div>
+
+        <div class="button-wrapper">
+            <a href="https://www.trustpilot.com/evaluate/cybermedico.net" class="button">Rate our service</a>
+        </div>
+
+        @EmailHelper()
+        @EmailFooter()
+    }
 }

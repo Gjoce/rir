@@ -90,7 +90,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-555555555551',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222221',
-    'video', 'pending', 'paid', 150.00, TRUE, FALSE, TRUE, TRUE, NULL,
+    'video', 'pending', 'paid', 150.00, TRUE, FALSE, TRUE, FALSE, NULL,
     'Mary', 'Johnson', 45, '+38970123456', 'mary.johnson@example.com', 'Skopje', 'Google search',
     'Persistent chest tightness and shortness of breath for the past two weeks, worsening with physical activity. Episodes of palpitations lasting 5–10 minutes.',
     NULL, 'Penicillin', 'Salbutamol inhaler 100mcg as needed', NULL, NOW() - INTERVAL '2 days'
@@ -108,7 +108,7 @@ INSERT INTO consultations (
 (
     '55555555-5555-5555-5555-555555555553',
     '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222221',
-    'video', 'scheduled', 'paid', 150.00, FALSE, FALSE, TRUE, TRUE, NULL,
+    'video', 'scheduled', 'paid', 150.00, FALSE, FALSE, TRUE, FALSE, NULL,
     'Laura', 'Anderson', 52, '+38972345678', 'laura.anderson@example.com', 'Ohrid', 'Facebook ad',
     'Intermittent chest pain at rest, not clearly related to exertion. Associated with mild sweating and nausea on two occasions.',
     NULL, 'None', 'Aspirin 100mg once daily', NULL, NOW() - INTERVAL '22 days'
