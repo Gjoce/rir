@@ -43,3 +43,4 @@ func FormatInSkopje(t time.Time, layout string) string {
 func JoinWindowOpensAt(scheduledAt time.Time) time.Time {
 	return scheduledAt.Add(-JoinWindowBefore)
 }
+// This function will recieve the time.
