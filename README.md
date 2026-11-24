@@ -1,5 +1,22 @@
 # CyberMedico
 
+[![CI/CD](https://github.com/SimeonJovanovski32/rir/actions/workflows/ci-cd.yml/badge.svg?branch=main)](https://github.com/SimeonJovanovski32/rir/actions/workflows/ci-cd.yml)
+
+**Nameščena aplikacija:** https://cybermedico-ryji.onrender.com
+
+## CI/CD cevovod
+
+Cevovod (`.github/workflows/ci-cd.yml`) se zažene ob vsakem pull requestu v `main` in ob vsakem pushu na `main`.
+
+| Faza | Kaj naredi |
+|---|---|
+| `lint` | golangci-lint (konfiguracija v `.golangci.yml`) preveri Go kodo, `opa check` pa pravila Rego. Ob napaki job pade. |
+| `build` | Zgradi statično Go binarno datoteko (z vgrajenimi statičnimi datotekami, migracijami in pravili) in jo skupaj z `Dockerfile` ter začetnimi podatki shrani kot artefakt `cybermedico-build`. Go build cache se predpomni prek `actions/setup-go`. |
+| `test` | Zažene Go teste (`go test ./... -race`) in Rego teste (`opa test`). Poročilo o pokritosti (`coverage.html`, `coverage.out`, `opa-coverage.json`) shrani kot artefakt `coverage-report`. Če kateri koli test pade, pade cevovod. |
+| `deploy` | Samo ob pushu na `main` in samo, če so `lint`, `build` in `test` uspešni. V okolju `production` prenese artefakt iz `build` (aplikacije ne gradi ponovno), ga zapakira v Docker sliko, jo objavi v GitHub Container Registry in prek deploy hooka namesti na Render. Na koncu počaka, da se aplikacija odzove na javnem URL-ju. |
+
+Podatkovna baza je PostgreSQL na Neon, priloge in podpisi pa so v S3 združljivi shrambi Backblaze B2. Skrivnosti so shranjene kot GitHub Secrets okolja `production` oziroma kot spremenljivke okolja na Renderju, nikoli v kodi.
+
 Platforma za spletne konzultacije s specialisti. Pacient, ki želi mnenje specialista, pogosto čaka več tednov ali mora potovati v drug kraj. CyberMedico mu omogoča, da od doma naroči konzultacijo pri izbranem zdravniku in mnenje prejme v nekaj dneh, brez obiska ambulante.
 
 ## Kako deluje
