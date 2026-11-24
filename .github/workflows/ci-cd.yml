@@ -1,0 +1,102 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true # caches the Go build cache (modules are vendored)
+
+      - name: golangci-lint (Go)
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.15.0 # same version as mise.toml
+
+      - uses: open-policy-agent/setup-opa@v2
+        with:
+          version: 1.22.0
+
+      - name: OPA check (Rego policies)
+        run: opa check authorization/policies authorization/policies_test
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build binary
+        env:
+          CGO_ENABLED: "0"
+          GOOS: linux
+          GOARCH: amd64
+        run: go build -trimpath -ldflags="-s -w" -o build/cybermedico ./cmd/cybermedico
+
+      - name: Collect deploy files
+        run: |
+          cp Dockerfile build/
+          cp resources/config/cybermedico/compose.sql build/
+          ls -la build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cybermedico-build
+          path: build/
+          retention-days: 7
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Go tests with coverage
+        run: |
+          go test ./... -race -covermode=atomic -coverprofile=coverage.out
+          go tool cover -html=coverage.out -o coverage.html
+          echo "### Go coverage" >> "$GITHUB_STEP_SUMMARY"
+          go tool cover -func=coverage.out | tail -n 1 >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: open-policy-agent/setup-opa@v2
+        with:
+          version: 1.22.0
+
+      - name: Rego policy tests with coverage
+        run: |
+          opa test authorization/policies authorization/policies_test -v
+          opa test authorization/policies authorization/policies_test --coverage > opa-coverage.json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: |
+            coverage.out
+            coverage.html
+            opa-coverage.json
+          retention-days: 14
+
