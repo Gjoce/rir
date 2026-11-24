@@ -150,7 +150,7 @@ func runSeeds(dbPool *pgxpool.Pool) error {
 }
 
 func runMigrations() error {
-	//Update conection string to use pgx5 driver
+	//Update connection string to use pgx5 driver
 	connectionString := os.Getenv("POSTGRES_URL")
 	connectionString = strings.Replace(connectionString, "postgresql://", "pgx5://", 1)
 

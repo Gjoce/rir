@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"cybermedico/authorization"
+	herrors "cybermedico/cmd/cybermedico/api/errors"
 	"cybermedico/cmd/cybermedico/api/log"
 	"cybermedico/cmd/cybermedico/api/util"
-	herrors "cybermedico/cmd/cybermedico/api/errors"
 	api "cybermedico/cmd/cybermedico/ogen"
 	"cybermedico/cmd/cybermedico/signing"
 
