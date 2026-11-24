@@ -100,3 +100,67 @@ jobs:
             opa-coverage.json
           retention-days: 14
 
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    needs: [lint, build, test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: ${{ vars.APP_URL }}
+    permissions:
+      contents: read
+      packages: write # push the image to GitHub Container Registry
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cybermedico-build
+          path: build
+
+      - name: Image name
+        run: |
+          echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+          chmod +x build/cybermedico
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Package the built binary into an image and push it
+        uses: docker/build-push-action@v6
+        with:
+          context: build
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:latest
+
+      - name: Deploy the image on Render
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "::error::RENDER_DEPLOY_HOOK_URL secret is not set in the production environment"
+            exit 1
+          fi
+          curl -fsS -X POST -G "$RENDER_DEPLOY_HOOK_URL" \
+            --data-urlencode "imgURL=$IMAGE:$GITHUB_SHA"
+
+      - name: Wait until the app responds
+        if: vars.APP_URL != ''
+        env:
+          APP_URL: ${{ vars.APP_URL }}
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS -o /dev/null "$APP_URL/"; then
+              echo "App is up at $APP_URL"
+              exit 0
+            fi
+            echo "Waiting for $APP_URL ($i/30)..."
+            sleep 10
+          done
+          echo "::error::App did not respond at $APP_URL"
+          exit 1
