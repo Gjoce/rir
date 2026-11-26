@@ -17,15 +17,15 @@ mise run test:policies
 
 ## Commit 1 – `feat: add change_doctor_availability policy`
 
-- [ ] **T1** V `authorization/policies_test/doctors_test.rego` dodaj testa `test_admin_changes_doctor_availability` (dovoljeno) in `test_doctor_cannot_change_doctor_availability` (zavrnjeno).
+- [x] **T1** V `authorization/policies_test/doctors_test.rego` dodaj testa `test_admin_changes_doctor_availability` (dovoljeno) in `test_doctor_cannot_change_doctor_availability` (zavrnjeno).
   *Preveri:* `mise run test:policies` – prvi test pade (pravila še ni), drugi je zelen.
-- [ ] **T2** Dodaj testa `test_anonymous_cannot_change_doctor_availability` in `test_unknown_role_cannot_change_doctor_availability` (`Role: "nurse"`).
+- [x] **T2** Dodaj testa `test_anonymous_cannot_change_doctor_availability` in `test_unknown_role_cannot_change_doctor_availability` (`Role: "nurse"`).
   *Preveri:* `mise run test:policies` – oba zelena.
-- [ ] **T3** V `authorization/policies/doctors.rego` dodaj pravilo `allow`, kjer je `operation_id == "change_doctor_availability"` in `caller.Role == "admin"`.
+- [x] **T3** V `authorization/policies/doctors.rego` dodaj pravilo `allow`, kjer je `operation_id == "change_doctor_availability"` in `caller.Role == "admin"`.
   *Preveri:* `mise run test:policies` – vsi testi zeleni, tudi T1.
-- [ ] **T4** Dodaj `"change_doctor_availability"` v seznam `doctor_management_operations` v `doctors_test.rego`.
+- [x] **T4** Dodaj `"change_doctor_availability"` v seznam `doctor_management_operations` v `doctors_test.rego`.
   *Preveri:* `mise run test:policies` zelen; `mise exec -- opa check authorization/policies authorization/policies_test` brez napak.
-- [ ] **T5** Končna kontrola (lint, Go testi, Rego testi), nato commit.
+- [x] **T5** Končna kontrola (lint, Go testi, Rego testi), nato commit.
 
 ## Commit 2 – `feat: add admin doctors page with availability toggle`
 

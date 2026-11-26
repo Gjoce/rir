@@ -40,7 +40,7 @@ Odločitve:
 
 ## OpenAPI
 
-Datoteka uporablja `snake_case` za `operationId` (npr. `consultations_form`, `consultation_schedule_submit`), zato sledim temu namesto camelCase iz skilla; ogen iz obojega naredi isto obliko metode.
+`operationId` je v `snake_case` (npr. `consultations_form`, `consultation_schedule_submit`); ogen iz njega naredi ime metode v CamelCase.
 
 ```yaml
   /doctors:

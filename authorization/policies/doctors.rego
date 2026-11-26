@@ -29,3 +29,8 @@ allow if {
 	input.operation_id == "change_provision"
 	input.caller.Role == "admin"
 }
+
+allow if {
+	input.operation_id == "change_doctor_availability"
+	input.caller.Role == "admin"
+}
