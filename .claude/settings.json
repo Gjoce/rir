@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(mise exec -- golangci-lint run:*)",
+      "Bash(mise exec -- go test:*)",
+      "Bash(mise exec -- go build:*)",
+      "Bash(mise exec -- templ generate:*)",
+      "Bash(mise exec -- opa check:*)",
+      "Bash(mise run test:policies)",
+      "Bash(mise run generate)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(gh pr merge:*)",
+      "Edit(cmd/cybermedico/migrations/**)",
+      "Edit(.github/workflows/**)",
+      "Edit(mise.toml)",
+      "Edit(go.mod)",
+      "Edit(.claude/settings.json)",
+      "Edit(.mcp.json)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(./resources/config/**/compose.env)",
+      "Bash(rm -rf:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(sudo:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/format.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
