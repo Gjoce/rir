@@ -58,3 +58,23 @@ HTTP 200
 body contains "No doctors are currently available."
 body contains "href=\"/\""
 body not contains "Dr. Emily Carter"
+
+# The admin doctors page needs a login
+GET {{host}}/doctors
+HTTP 303
+[Asserts]
+header "Location" == "/auth/login"
+
+# So does changing a doctor's availability
+POST {{host}}/doctors/22222222-2222-2222-2222-222222222221/availability
+[Form]
+available: false
+HTTP 303
+[Asserts]
+header "Location" == "/auth/login"
+
+# The refused request changed nothing: the doctor is still on the public list
+GET {{host}}/
+HTTP 200
+[Asserts]
+body contains "Dr. Emily Carter"

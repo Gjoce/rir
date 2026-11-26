@@ -65,11 +65,11 @@ mise run test:policies
 
 ## Commit 4 – `test: cover /doctors login redirect in hurl`
 
-- [ ] **T23** V `tests/hurl/doctors.hurl` dodaj primer s komentarjem: `GET {{host}}/doctors` brez prijave → `HTTP 303`, `Location == "/auth/login"` (AC6).
+- [x] **T23** V `tests/hurl/doctors.hurl` dodaj primer s komentarjem: `GET {{host}}/doctors` brez prijave → `HTTP 303`, `Location == "/auth/login"` (AC6).
   *Preveri:* `mise run test:hurl` (aplikacija teče) – primer zelen.
-- [ ] **T24** Dodaj primer: `POST {{host}}/doctors/22222222-2222-2222-2222-222222222221/availability` z `[Form] available: false` brez prijave → `303` na `/auth/login` (AC6).
+- [x] **T24** Dodaj primer: `POST {{host}}/doctors/22222222-2222-2222-2222-222222222221/availability` z `[Form] available: false` brez prijave → `303` na `/auth/login` (AC6).
   *Preveri:* `mise run test:hurl` zelen; javni seznam v istem testu še vedno vsebuje *Dr. Emily Carter* (zahtevek ni ničesar spremenil).
-- [ ] **T25** Končna kontrola (lint, Go testi, Rego testi, `mise run test:hurl`), nato commit.
+- [x] **T25** Končna kontrola (lint, Go testi, Rego testi, `mise run test:hurl`), nato commit.
 
 ## Končno ročno preverjanje (po vseh commitih)
 
