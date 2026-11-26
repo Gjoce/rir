@@ -122,3 +122,45 @@ Vsa dokumentacija je v mapi [`docs/`](docs/):
 - [Wireframes](docs/06-wireframes.md)
 - [Preverjanje MVP](docs/07-preverjanje-mvp.md)
 - [Arhitekturne odločitve (ADR)](docs/adr/)
+
+## Agentno programiranje
+
+Projekt je pripravljen za delo s kodirnim agentom **[Claude Code](https://code.claude.com)** (uporabljen model: Claude Opus 5.5).
+
+### Zagon
+
+```bash
+# enkratna namestitev
+curl -fsSL https://claude.ai/install.sh | bash
+
+# token za GitHub MCP (fine-grained, samo ta repozitorij) – nikoli v repozitorij
+export GITHUB_PERSONAL_ACCESS_TOKEN=...
+
+# zagon v korenu repozitorija
+claude
+```
+
+Ob prvem zagonu potrdi zaupanje mapi in uporabo MCP strežnika iz `.mcp.json`. Z `/memory` preveriš, da je naložen `AGENTS.md`, z `/hooks` hook, z `/mcp` povezavo z GitHubom.
+
+### Datoteke za agenta
+
+| Datoteka / mapa | Namen |
+|---|---|
+| `AGENTS.md` | glavna navodila: ukazi za zagon, lint in teste, struktura projekta, kje je dokumentacija, konvencije, zaščitene datoteke, varnostne omejitve, MCP |
+| `CLAUDE.md` | za Claude Code; uvozi `AGENTS.md` (`@AGENTS.md`) |
+| `.claude/settings.json` | dovoljenja: samodejno dovoljeni lint, testi in generiranje; potrditev za `git push`, merge in spremembe migracij/workflowov; prepovedano branje `.env`/ključev ter `rm -rf`, `git push --force`, `git reset --hard`, `sudo` |
+| `.claude/hooks/format.sh` | hook po vsakem urejanju: `gofmt` za `.go`, `templ fmt` za `.templ` |
+| `.claude/skills/add-http-endpoint/` | skill za novo HTTP pot: `openapi.yml` → `mise run generate` → handler → templ → Rego → testi |
+| `.claude/skills/write-tests/` | skill za Go, Rego in Hurl teste po konvencijah projekta |
+| `.mcp.json` | GitHub MCP strežnik (PR, issues); token iz okoljske spremenljivke `GITHUB_PERSONAL_ACCESS_TOKEN` |
+| `docs/specs/NNN-ime/` | specifikacijski tok za nove funkcionalnosti: `spec.md` → `plan.md` → `tasks.md` |
+
+### Potek dela z agentom
+
+1. Napiši `docs/specs/NNN-ime/spec.md` (zahteve in sprejemni kriteriji).
+2. Agent pripravi `plan.md`, ki ga pregledaš in po potrebi popraviš.
+3. Agent razdeli načrt na naloge v `tasks.md`.
+4. Agent implementira naloge po skupinah (s testi), pred vsakim commitom sam požene lint in teste.
+5. Odpreš PR v `main`; cevovod mora biti zelen, PR ročno pregledaš.
+
+Primer: [`docs/specs/001-razpolozljivost-zdravnikov`](docs/specs/001-razpolozljivost-zdravnikov/).
