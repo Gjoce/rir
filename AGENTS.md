@@ -103,3 +103,9 @@ Nastavljene v `.claude/settings.json`:
 - hook po vsakem urejanju `.go` datoteke zažene `gofmt` na spremenjeni datoteki.
 
 Tokeni za MCP strežnike so samo v okoljskih spremenljivkah, nikoli v repozitoriju.
+
+## MCP
+
+- `github` (`.mcp.json`): uradni GitHub MCP strežnik za branje repozitorija, pull requestov in issuejev v `SimeonJovanovski32/rir` ter odpiranje PR.
+- Avtentikacija s fine-grained tokenom (samo ta repozitorij) v okoljski spremenljivki `GITHUB_PERSONAL_ACCESS_TOKEN`; token ni v repozitoriju.
+- PR vedno odpri v `SimeonJovanovski32/rir` (base `main`), nikoli v izvorni repozitorij `Gjoce/rir`.
