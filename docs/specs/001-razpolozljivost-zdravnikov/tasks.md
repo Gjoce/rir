@@ -75,10 +75,10 @@ mise run test:policies
 
 Prijava `admin@cybermedico.com` + TOTP, `mise run develop`:
 
-- [ ] **T26** *Mark unavailable* pri dr. Carter → preusmeritev na `/doctors`, status *Unavailable*, gumb *Mark available* (AC2).
-- [ ] **T27** Odjavljen: `/` ne prikaže dr. Carter; `/specialists/22222222-2222-2222-2222-222222222221`, `/written` in `/video` vrnejo 404 (AC3).
-- [ ] **T28** `/consultations` za dr. Carter je enak kot pred preklopom (AC8).
-- [ ] **T29** `POST /doctors/<naključen UUID>/availability` kot admin → 404 (AC7).
-- [ ] **T30** *Mark available* → dr. Carter je spet na `/` (AC4).
-- [ ] **T31** Prijava `dr.carter@cybermedico.com`: `/doctors` in `POST` na preklop vrneta 403 (AC5).
-- [ ] **T32** Stanje vrnjeno: vsi zdravniki *Available*.
+- [x] **T26** *Mark unavailable* pri dr. Carter → preusmeritev na `/doctors`, status *Unavailable*, gumb *Mark available* (AC2).
+- [x] **T27** Odjavljen: `/` ne prikaže dr. Carter; `/specialists/22222222-2222-2222-2222-222222222221`, `/written` in `/video` vrnejo 404 (AC3).
+- [x] **T28** `/consultations` za dr. Carter je enak kot pred preklopom (AC8).
+- [x] **T29** `POST /doctors/<naključen UUID>/availability` kot admin → 404 (AC7).
+- [x] **T30** *Mark available* → dr. Carter je spet na `/` (AC4).
+- [x] **T31** Prijava `dr.carter@cybermedico.com`: `/doctors` in `POST` na preklop vrneta 403 (AC5).
+- [x] **T32** Stanje vrnjeno: vsi zdravniki *Available*.
