@@ -1,110 +1,110 @@
 package components
 
 import (
-    "cybermedico/cmd/cybermedico/api/util"
-    "strings"
+	"cybermedico/cmd/cybermedico/api/util"
+	"strings"
 )
 
 // inStaffArea reports whether the page is part of the logged-in area, which has
 // its own sidebar, so the navbar doesn't need a dashboard link there.
 func inStaffArea(path string) bool {
-    return strings.HasPrefix(path, "/dashboard") || strings.HasPrefix(path, "/consultations")
+	return strings.HasPrefix(path, "/dashboard") || strings.HasPrefix(path, "/consultations") || strings.HasPrefix(path, "/doctors")
 }
 
 templ Navbar() {
-    <nav>
-        <ul>
-            <li>
-                <a href="/">
-                    if util.GetTheme(ctx) == "dark" {
-                        <img src="/static/logo.png" alt="CyberMedico logo" style="height: 3rem;"/>
-                    } else if util.GetTheme(ctx) == "light" {
-                        <img src="/static/logo.svg" alt="CyberMedico logo" style="height: 3rem;"/>
-                    } else {
-                        <img id="logo" src="/static/logo.svg" alt="CyberMedico logo" style="height: 3rem;"/>
-                        <style>
+	<nav>
+		<ul>
+			<li>
+				<a href="/">
+					if util.GetTheme(ctx) == "dark" {
+						<img src="/static/logo.png" alt="CyberMedico logo" style="height: 3rem;"/>
+					} else if util.GetTheme(ctx) == "light" {
+						<img src="/static/logo.svg" alt="CyberMedico logo" style="height: 3rem;"/>
+					} else {
+						<img id="logo" src="/static/logo.svg" alt="CyberMedico logo" style="height: 3rem;"/>
+						<style>
                             @media (prefers-color-scheme: dark) {
                                 #logo { content: url('/static/logo.png'); }
                             }
                         </style>
-                    }
-                </a>
-            </li>
-        </ul>
-        <ul>
-            <li>
-                <details class="dropdown hide-arrow" style="margin: 0;">
-                    <summary aria-label="Theme">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2v2"/>
-                            <path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/>
-                            <path d="M16 12a4 4 0 0 0-4-4"/>
-                            <path d="m19 5-1.256 1.256"/>
-                            <path d="M20 12h2"/>
-                        </svg>
-                    </summary>
-                    <ul dir="rtl">
-                        <li><a href="/themes/auto">Auto</a></li>
-                        <li><a href="/themes/light">Light</a></li>
-                        <li><a href="/themes/dark">Dark</a></li>
-                    </ul>
-                </details>
-            </li>
-            if util.GetUserID(ctx) == "" {
-                if !strings.HasPrefix(util.GetCurrentPath(ctx), "/auth") {
-                    <li>
-                        <a href="/auth/login" role="button" class="outline nav-login" data-tooltip="For doctors and administrators" data-placement="bottom">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="m10 17 5-5-5-5"/>
-                                <path d="M15 12H3"/>
-                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                            </svg>
-                            <span>Log in</span>
-                        </a>
-                    </li>
-                }
-            } else {
-                if !inStaffArea(util.GetCurrentPath(ctx)) {
-                    <li>
-                        <a href="/dashboard" role="button" class="outline nav-login">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <rect width="7" height="9" x="3" y="3" rx="1"/>
-                                <rect width="7" height="5" x="14" y="3" rx="1"/>
-                                <rect width="7" height="9" x="14" y="12" rx="1"/>
-                                <rect width="7" height="5" x="3" y="16" rx="1"/>
-                            </svg>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                }
-                <li>
-                    <a role="button" aria-label="Logout" data-tooltip="Logout" onclick="document.getElementById('logout-modal').showModal()" style="margin: 0;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m16 17 5-5-5-5"/>
-                            <path d="M21 12H9"/>
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                        </svg>
-                    </a>
-                </li>
-            }
-        </ul>
-    </nav>
-    if util.GetUserID(ctx) != "" {
-        <dialog id="logout-modal">
-            <article>
-                <header>
-                    <button
-                        aria-label="Close"
-                        class="close"
-                        onclick="document.getElementById('logout-modal').close()"
-                    ></button>
-                    <strong>Confirm Logout</strong>
-                </header>
-                <p>Are you sure you want to log out?</p>
-                <footer>
-                    <a href="/logout" role="button">Logout</a>
-                </footer>
-            </article>
-        </dialog>
-    }
+					}
+				</a>
+			</li>
+		</ul>
+		<ul>
+			<li>
+				<details class="dropdown hide-arrow" style="margin: 0;">
+					<summary aria-label="Theme">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M12 2v2"></path>
+							<path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"></path>
+							<path d="M16 12a4 4 0 0 0-4-4"></path>
+							<path d="m19 5-1.256 1.256"></path>
+							<path d="M20 12h2"></path>
+						</svg>
+					</summary>
+					<ul dir="rtl">
+						<li><a href="/themes/auto">Auto</a></li>
+						<li><a href="/themes/light">Light</a></li>
+						<li><a href="/themes/dark">Dark</a></li>
+					</ul>
+				</details>
+			</li>
+			if util.GetUserID(ctx) == "" {
+				if !strings.HasPrefix(util.GetCurrentPath(ctx), "/auth") {
+					<li>
+						<a href="/auth/login" role="button" class="outline nav-login" data-tooltip="For doctors and administrators" data-placement="bottom">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="m10 17 5-5-5-5"></path>
+								<path d="M15 12H3"></path>
+								<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+							</svg>
+							<span>Log in</span>
+						</a>
+					</li>
+				}
+			} else {
+				if !inStaffArea(util.GetCurrentPath(ctx)) {
+					<li>
+						<a href="/dashboard" role="button" class="outline nav-login">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<rect width="7" height="9" x="3" y="3" rx="1"></rect>
+								<rect width="7" height="5" x="14" y="3" rx="1"></rect>
+								<rect width="7" height="9" x="14" y="12" rx="1"></rect>
+								<rect width="7" height="5" x="3" y="16" rx="1"></rect>
+							</svg>
+							<span>Dashboard</span>
+						</a>
+					</li>
+				}
+				<li>
+					<a role="button" aria-label="Logout" data-tooltip="Logout" onclick="document.getElementById('logout-modal').showModal()" style="margin: 0;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="m16 17 5-5-5-5"></path>
+							<path d="M21 12H9"></path>
+							<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+						</svg>
+					</a>
+				</li>
+			}
+		</ul>
+	</nav>
+	if util.GetUserID(ctx) != "" {
+		<dialog id="logout-modal">
+			<article>
+				<header>
+					<button
+						aria-label="Close"
+						class="close"
+						onclick="document.getElementById('logout-modal').close()"
+					></button>
+					<strong>Confirm Logout</strong>
+				</header>
+				<p>Are you sure you want to log out?</p>
+				<footer>
+					<a href="/logout" role="button">Logout</a>
+				</footer>
+			</article>
+		</dialog>
+	}
 }

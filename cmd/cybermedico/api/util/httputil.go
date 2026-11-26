@@ -57,6 +57,14 @@ func GetUserID(ctx context.Context) string {
 	return userID
 }
 
+// GetRole returns the logged-in user's role ("admin" or "doctor"), which
+// SessionMiddleware puts in the context, or "" when nobody is logged in.
+func GetRole(ctx context.Context) string {
+	role, _ := ctx.Value(UserRoleContextKey).(string)
+
+	return role
+}
+
 func IsValidTheme(theme string) bool {
 	return theme == "auto" || theme == "light" || theme == "dark"
 }

@@ -54,14 +54,14 @@ mise run test:policies
 
 ## Commit 3 – `feat: show Doctors link in sidebar for admins`
 
-- [ ] **T18** V `cmd/cybermedico/api/util/util_test.go` dodaj tabelarični `TestGetRole` (kontekst z vlogo `admin`, z vlogo `doctor`, brez vloge → `""`).
+- [x] **T18** V `cmd/cybermedico/api/util/util_test.go` dodaj tabelarični `TestGetRole` (kontekst z vlogo `admin`, z vlogo `doctor`, brez vloge → `""`).
   *Preveri:* test pade, ker `GetRole` še ne obstaja.
-- [ ] **T19** V `cmd/cybermedico/api/util/httputil.go` dodaj `GetRole(ctx)`, ki bere `UserRoleContextKey` (vzorec `GetUserID`).
+- [x] **T19** V `cmd/cybermedico/api/util/httputil.go` dodaj `GetRole(ctx)`, ki bere `UserRoleContextKey` (vzorec `GetUserID`).
   *Preveri:* `go test ./cmd/cybermedico/api/util/` zelen.
-- [ ] **T20** V `components/sidebar.templ` med *Overview* in *Content* dodaj razdelek *Management* s povezavo *Doctors* (`/doctors`, `ClassIfActive`/`RoleIfActive`, ikona), samo kadar je `util.GetRole(ctx) == "admin"`.
+- [x] **T20** V `components/sidebar.templ` med *Overview* in *Content* dodaj razdelek *Management* s povezavo *Doctors* (`/doctors`, `ClassIfActive`/`RoleIfActive`, ikona), samo kadar je `util.GetRole(ctx) == "admin"`.
   *Preveri:* `mise exec -- templ generate` uspe, posodobljen je `sidebar_templ.go`.
-- [ ] **T21** Ročno: admin vidi *Doctors* in je ta poudarjen na `/doctors`; dr. Carter povezave ne vidi.
-- [ ] **T22** Končna kontrola (lint, Go testi, Rego testi), nato commit.
+- [x] **T21** Ročno: admin vidi *Doctors* in je ta poudarjen na `/doctors`; dr. Carter povezave ne vidi.
+- [x] **T22** Končna kontrola (lint, Go testi, Rego testi), nato commit.
 
 ## Commit 4 – `test: cover /doctors login redirect in hurl`
 

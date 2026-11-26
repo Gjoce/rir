@@ -137,6 +137,27 @@ func TestGetUserID(t *testing.T) {
 	}
 }
 
+func TestGetRole(t *testing.T) {
+	tests := []struct {
+		name string
+		ctx  context.Context
+		want string
+	}{
+		{"admin", context.WithValue(context.Background(), UserRoleContextKey, "admin"), "admin"},
+		{"doctor", context.WithValue(context.Background(), UserRoleContextKey, "doctor"), "doctor"},
+		{"no role in context", context.Background(), ""},
+		{"role of the wrong type", context.WithValue(context.Background(), UserRoleContextKey, 42), ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := GetRole(tt.ctx); got != tt.want {
+				t.Errorf("GetRole() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestGetThemeFromCookie(t *testing.T) {
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	r.AddCookie(&http.Cookie{Name: ThemeCookie, Value: "dark"})
