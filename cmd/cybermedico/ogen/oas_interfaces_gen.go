@@ -33,6 +33,14 @@ type DashboardRes interface {
 	dashboardRes()
 }
 
+type DoctorAvailabilitySubmitRes interface {
+	doctorAvailabilitySubmitRes()
+}
+
+type DoctorsFormRes interface {
+	doctorsFormRes()
+}
+
 type LoginRes interface {
 	loginRes()
 }

@@ -29,28 +29,28 @@ mise run test:policies
 
 ## Commit 2 – `feat: add admin doctors page with availability toggle`
 
-- [ ] **T6** V `cmd/cybermedico/openapi.yml` dodaj `GET /doctors` (`operationId: doctors_form`, `sessionCookie`, odgovora `200` in `default`).
+- [x] **T6** V `cmd/cybermedico/openapi.yml` dodaj `GET /doctors` (`operationId: doctors_form`, `sessionCookie`, odgovora `200` in `default`).
   *Preveri:* `mise run generate` uspe; v `ogen/oas_server_gen.go` obstaja `DoctorsForm`.
-- [ ] **T7** Dodaj `POST /doctors/{id}/availability` (`operationId: doctor_availability_submit`, parameter `UUID`, telo `application/x-www-form-urlencoded` z obveznim `available: boolean`, odgovora `303` in `default`).
+- [x] **T7** Dodaj `POST /doctors/{id}/availability` (`operationId: doctor_availability_submit`, parameter `UUID`, telo `application/x-www-form-urlencoded` z obveznim `available: boolean`, odgovora `303` in `default`).
   *Preveri:* `mise run generate` uspe; obstajata `DoctorAvailabilitySubmit` in `DoctorAvailabilitySubmitReq` s poljem `Available bool`. `go build ./...` pade, ker manjka handler – to je pričakovano.
-- [ ] **T8** Ustvari `cmd/cybermedico/api/html/doctors.go`: struct `DoctorsHandler{authService, db}`, `NewDoctorsHandler`, `DoctorRow` (ID, DisplayName, Specialization, Workplace, Available).
+- [x] **T8** Ustvari `cmd/cybermedico/api/html/doctors.go`: struct `DoctorsHandler{authService, db}`, `NewDoctorsHandler`, `DoctorRow` (ID, DisplayName, Specialization, Workplace, Available).
   *Preveri:* datoteka se prevede (`go vet ./cmd/cybermedico/api/html/` brez napak v `doctors.go`).
-- [ ] **T9** Napiši `doctors_test.go` s tabelaričnima testoma `TestAvailabilityLabel` (`true` → *Available*, `false` → *Unavailable*) in `TestAvailabilityAction` (`true` → *Mark unavailable*/`"false"`, `false` → *Mark available*/`"true"`).
+- [x] **T9** Napiši `doctors_test.go` s tabelaričnima testoma `TestAvailabilityLabel` (`true` → *Available*, `false` → *Unavailable*) in `TestAvailabilityAction` (`true` → *Mark unavailable*/`"false"`, `false` → *Mark available*/`"true"`).
   *Preveri:* testa padeta, ker funkciji še ne obstajata.
-- [ ] **T10** V `doctors.go` implementiraj `availabilityLabel` in `availabilityAction`.
+- [x] **T10** V `doctors.go` implementiraj `availabilityLabel` in `availabilityAction`.
   *Preveri:* `go test ./cmd/cybermedico/api/html/ -run 'TestAvailability'` zelen.
-- [ ] **T11** Ustvari `doctors.templ` s `DoctorsPage(doctors []DoctorRow)` v `layouts.Dashboard(nil)`: naslov *Doctors*, tabela `striped` (*Name*, *Specialization*, *Workplace*, *Status*, *Action*), v vsaki vrstici obrazec `POST /doctors/{id}/availability` s skritim poljem `available` in gumbom; za prazen seznam *No doctors yet.*
+- [x] **T11** Ustvari `doctors.templ` s `DoctorsPage(doctors []DoctorRow)` v `layouts.Dashboard(nil)`: naslov *Doctors*, tabela `striped` (*Name*, *Specialization*, *Workplace*, *Status*, *Action*), v vsaki vrstici obrazec `POST /doctors/{id}/availability` s skritim poljem `available` in gumbom; za prazen seznam *No doctors yet.*
   *Preveri:* `mise exec -- templ generate` uspe, nastane `doctors_templ.go`.
-- [ ] **T12** Dodaj `TestDoctorsPageRendersAllDoctors`: izris z enim razpoložljivim in enim nerazpoložljivim zdravnikom; preveri imena, specializaciji, delovni mesti, *Available*/*Unavailable*, `action="/doctors/{id}/availability"` in `value="false"`/`value="true"`. Dodaj še primer s praznim seznamom (*No doctors yet.*).
+- [x] **T12** Dodaj `TestDoctorsPageRendersAllDoctors`: izris z enim razpoložljivim in enim nerazpoložljivim zdravnikom; preveri imena, specializaciji, delovni mesti, *Available*/*Unavailable*, `action="/doctors/{id}/availability"` in `value="false"`/`value="true"`. Dodaj še primer s praznim seznamom (*No doctors yet.*).
   *Preveri:* `go test ./cmd/cybermedico/api/html/ -run TestDoctorsPage` zelen.
-- [ ] **T13** Implementiraj `DoctorsForm`: najprej `IsAllowed("doctors_form")` (ob zavrnitvi 403, `ButtonLink: "/dashboard"`), nato `SELECT id, display_name, specialization, workplace, available FROM doctor_profile ORDER BY display_name, id`, `CollectRows`, izris v `R200`. Napake ovij s `fmt.Errorf`.
+- [x] **T13** Implementiraj `DoctorsForm`: najprej `IsAllowed("doctors_form")` (ob zavrnitvi 403, `ButtonLink: "/dashboard"`), nato `SELECT id, display_name, specialization, workplace, available FROM doctor_profile ORDER BY display_name, id`, `CollectRows`, izris v `R200`. Napake ovij s `fmt.Errorf`.
   *Preveri:* pregled kode: preverjanje dovoljenja je pred poizvedbo, SQL nima lepljenja nizov.
-- [ ] **T14** Implementiraj `DoctorAvailabilitySubmit`: najprej `IsAllowed("change_doctor_availability")` (403), nato `UPDATE doctor_profile SET available = @available WHERE id = @id`; `RowsAffected() == 0` → 404 *Doctor not found*; sicer `R303` na `/doctors`.
+- [x] **T14** Implementiraj `DoctorAvailabilitySubmit`: najprej `IsAllowed("change_doctor_availability")` (403), nato `UPDATE doctor_profile SET available = @available WHERE id = @id`; `RowsAffected() == 0` → 404 *Doctor not found*; sicer `R303` na `/doctors`.
   *Preveri:* pregled kode: `UPDATE` se dotakne samo tabele `doctor_profile` (AC8).
-- [ ] **T15** V `cmd/cybermedico/main.go` dodaj `html.DoctorsHandler` v vgrajeno strukturo in `html.NewDoctorsHandler(authService, dbPool)` v `initializeHTMLServer`.
+- [x] **T15** V `cmd/cybermedico/main.go` dodaj `html.DoctorsHandler` v vgrajeno strukturo in `html.NewDoctorsHandler(authService, dbPool)` v `initializeHTMLServer`.
   *Preveri:* `mise exec -- go build ./...` uspe.
-- [ ] **T16** Ročni dim test (`mise run develop`, prijava kot admin): `/doctors` prikaže 4 zdravnike po abecedi, vsi *Available*.
-- [ ] **T17** Končna kontrola (lint, Go testi, Rego testi), nato commit (`openapi.yml`, `ogen/`, `doctors.go`, `doctors.templ`, `doctors_templ.go`, `doctors_test.go`, `main.go`).
+- [x] **T16** Ročni dim test (`mise run develop`, prijava kot admin): `/doctors` prikaže 4 zdravnike po abecedi, vsi *Available*.
+- [x] **T17** Končna kontrola (lint, Go testi, Rego testi), nato commit (`openapi.yml`, `ogen/`, `doctors.go`, `doctors.templ`, `doctors_templ.go`, `doctors_test.go`, `main.go`).
 
 ## Commit 3 – `feat: show Doctors link in sidebar for admins`
 

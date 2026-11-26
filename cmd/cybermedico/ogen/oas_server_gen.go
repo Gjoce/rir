@@ -40,6 +40,14 @@ type Handler interface {
 	//
 	// GET /dashboard
 	Dashboard(ctx context.Context) (DashboardRes, error)
+	// DoctorAvailabilitySubmit implements doctor_availability_submit operation.
+	//
+	// POST /doctors/{id}/availability
+	DoctorAvailabilitySubmit(ctx context.Context, req *DoctorAvailabilitySubmitReq, params DoctorAvailabilitySubmitParams) (DoctorAvailabilitySubmitRes, error)
+	// DoctorsForm implements doctors_form operation.
+	//
+	// GET /doctors
+	DoctorsForm(ctx context.Context) (DoctorsFormRes, error)
 	// Login implements login operation.
 	//
 	// GET /auth/login

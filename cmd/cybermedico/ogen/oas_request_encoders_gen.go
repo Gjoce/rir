@@ -56,6 +56,32 @@ func encodeConsultationScheduleSubmitRequest(
 	return nil
 }
 
+func encodeDoctorAvailabilitySubmitRequest(
+	req *DoctorAvailabilitySubmitReq,
+	r *http.Request,
+) error {
+	const contentType = "application/x-www-form-urlencoded"
+	request := req
+
+	q := uri.NewFormEncoder(map[string]string{})
+	{
+		// Encode "available" form field.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "available",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.BoolToString(request.Available))
+		}); err != nil {
+			return errors.Wrap(err, "encode query")
+		}
+	}
+	encoded := q.Values().Encode()
+	ht.SetBody(r, strings.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeLoginSubmitRequest(
 	req *LoginSubmitReq,
 	r *http.Request,

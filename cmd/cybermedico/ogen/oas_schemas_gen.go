@@ -255,6 +255,8 @@ func (*DefaultStatusCode) consultationScheduleSubmitRes() {}
 func (*DefaultStatusCode) consultationsFormRes()          {}
 func (*DefaultStatusCode) consultationsVideoFormRes()     {}
 func (*DefaultStatusCode) dashboardRes()                  {}
+func (*DefaultStatusCode) doctorAvailabilitySubmitRes()   {}
+func (*DefaultStatusCode) doctorsFormRes()                {}
 func (*DefaultStatusCode) loginRes()                      {}
 func (*DefaultStatusCode) loginSubmitRes()                {}
 func (*DefaultStatusCode) logoutRes()                     {}
@@ -273,6 +275,20 @@ func (*DefaultStatusCode) videoPagePatientRes()           {}
 func (*DefaultStatusCode) widgetRes()                     {}
 func (*DefaultStatusCode) writtenOrderFormRes()           {}
 func (*DefaultStatusCode) writtenOrderSubmitRes()         {}
+
+type DoctorAvailabilitySubmitReq struct {
+	Available bool `json:"available"`
+}
+
+// GetAvailable returns the value of Available.
+func (s *DoctorAvailabilitySubmitReq) GetAvailable() bool {
+	return s.Available
+}
+
+// SetAvailable sets the value of Available.
+func (s *DoctorAvailabilitySubmitReq) SetAvailable(val bool) {
+	s.Available = val
+}
 
 // Ref: #/components/schemas/ErrorResponse
 type ErrorResponse struct {
@@ -482,6 +498,7 @@ func (*R200) consultationScheduleSubmitRes() {}
 func (*R200) consultationsFormRes()          {}
 func (*R200) consultationsVideoFormRes()     {}
 func (*R200) dashboardRes()                  {}
+func (*R200) doctorsFormRes()                {}
 func (*R200) loginRes()                      {}
 func (*R200) loginSubmitRes()                {}
 func (*R200) orderSubmittedRes()             {}
@@ -525,6 +542,7 @@ func (s *R303) SetSetCookie(val OptString) {
 }
 
 func (*R303) consultationScheduleSubmitRes() {}
+func (*R303) doctorAvailabilitySubmitRes()   {}
 func (*R303) loginSubmitRes()                {}
 func (*R303) logoutRes()                     {}
 func (*R303) themesRes()                     {}

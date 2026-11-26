@@ -14,13 +14,13 @@ var (
 	rn8AllowedHeaders = map[string]string{
 		"GET": "Datastar-Request",
 	}
-	rn18AllowedHeaders = map[string]string{
+	rn23AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
-	rn19AllowedHeaders = map[string]string{
+	rn24AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
-	rn10AllowedHeaders = map[string]string{
+	rn15AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
 	rn6AllowedHeaders = map[string]string{
@@ -32,13 +32,16 @@ var (
 	rn5AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
-	rn20AllowedHeaders = map[string]string{
+	rn13AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
-	rn30AllowedHeaders = map[string]string{
+	rn25AllowedHeaders = map[string]string{
 		"POST": "Content-Type",
 	}
-	rn28AllowedHeaders = map[string]string{
+	rn35AllowedHeaders = map[string]string{
+		"POST": "Content-Type",
+	}
+	rn33AllowedHeaders = map[string]string{
 		"GET": "Datastar-Request",
 	}
 )
@@ -197,7 +200,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							default:
 								s.notAllowed(w, r, notAllowedParams{
 									allowedMethods: "GET,POST",
-									allowedHeaders: rn18AllowedHeaders,
+									allowedHeaders: rn23AllowedHeaders,
 									acceptPost:     "application/x-www-form-urlencoded",
 									acceptPatch:    "",
 								})
@@ -224,7 +227,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 								default:
 									s.notAllowed(w, r, notAllowedParams{
 										allowedMethods: "GET,POST",
-										allowedHeaders: rn19AllowedHeaders,
+										allowedHeaders: rn24AllowedHeaders,
 										acceptPost:     "application/x-www-form-urlencoded",
 										acceptPatch:    "",
 									})
@@ -253,7 +256,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							default:
 								s.notAllowed(w, r, notAllowedParams{
 									allowedMethods: "GET,POST",
-									allowedHeaders: rn10AllowedHeaders,
+									allowedHeaders: rn15AllowedHeaders,
 									acceptPost:     "application/x-www-form-urlencoded",
 									acceptPatch:    "",
 								})
@@ -432,29 +435,119 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 				}
 
-			case 'd': // Prefix: "dashboard"
+			case 'd': // Prefix: "d"
 
-				if l := len("dashboard"); len(elem) >= l && elem[0:l] == "dashboard" {
+				if l := len("d"); len(elem) >= l && elem[0:l] == "d" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					// Leaf node.
-					switch r.Method {
-					case "GET":
-						s.handleDashboardRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, notAllowedParams{
-							allowedMethods: "GET",
-							allowedHeaders: nil,
-							acceptPost:     "",
-							acceptPatch:    "",
-						})
+					break
+				}
+				switch elem[0] {
+				case 'a': // Prefix: "ashboard"
+
+					if l := len("ashboard"); len(elem) >= l && elem[0:l] == "ashboard" {
+						elem = elem[l:]
+					} else {
+						break
 					}
 
-					return
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "GET":
+							s.handleDashboardRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, notAllowedParams{
+								allowedMethods: "GET",
+								allowedHeaders: nil,
+								acceptPost:     "",
+								acceptPatch:    "",
+							})
+						}
+
+						return
+					}
+
+				case 'o': // Prefix: "octors"
+
+					if l := len("octors"); len(elem) >= l && elem[0:l] == "octors" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch r.Method {
+						case "GET":
+							s.handleDoctorsFormRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, notAllowedParams{
+								allowedMethods: "GET",
+								allowedHeaders: nil,
+								acceptPost:     "",
+								acceptPatch:    "",
+							})
+						}
+
+						return
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "id"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							break
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/availability"
+
+							if l := len("/availability"); len(elem) >= l && elem[0:l] == "/availability" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "POST":
+									s.handleDoctorAvailabilitySubmitRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, notAllowedParams{
+										allowedMethods: "POST",
+										allowedHeaders: rn13AllowedHeaders,
+										acceptPost:     "application/x-www-form-urlencoded",
+										acceptPatch:    "",
+									})
+								}
+
+								return
+							}
+
+						}
+
+					}
+
 				}
 
 			case 'l': // Prefix: "logout"
@@ -576,7 +669,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							default:
 								s.notAllowed(w, r, notAllowedParams{
 									allowedMethods: "GET,POST",
-									allowedHeaders: rn20AllowedHeaders,
+									allowedHeaders: rn25AllowedHeaders,
 									acceptPost:     "multipart/form-data",
 									acceptPatch:    "",
 								})
@@ -607,7 +700,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							default:
 								s.notAllowed(w, r, notAllowedParams{
 									allowedMethods: "GET,POST",
-									allowedHeaders: rn30AllowedHeaders,
+									allowedHeaders: rn35AllowedHeaders,
 									acceptPost:     "multipart/form-data",
 									acceptPatch:    "",
 								})
@@ -719,7 +812,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					default:
 						s.notAllowed(w, r, notAllowedParams{
 							allowedMethods: "GET",
-							allowedHeaders: rn28AllowedHeaders,
+							allowedHeaders: rn33AllowedHeaders,
 							acceptPost:     "",
 							acceptPatch:    "",
 						})
@@ -1187,29 +1280,117 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 
 				}
 
-			case 'd': // Prefix: "dashboard"
+			case 'd': // Prefix: "d"
 
-				if l := len("dashboard"); len(elem) >= l && elem[0:l] == "dashboard" {
+				if l := len("d"); len(elem) >= l && elem[0:l] == "d" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					// Leaf node.
-					switch method {
-					case "GET":
-						r.name = DashboardOperation
-						r.summary = ""
-						r.operationID = "dashboard"
-						r.operationGroup = ""
-						r.pathPattern = "/dashboard"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
+					break
+				}
+				switch elem[0] {
+				case 'a': // Prefix: "ashboard"
+
+					if l := len("ashboard"); len(elem) >= l && elem[0:l] == "ashboard" {
+						elem = elem[l:]
+					} else {
+						break
 					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "GET":
+							r.name = DashboardOperation
+							r.summary = ""
+							r.operationID = "dashboard"
+							r.operationGroup = ""
+							r.pathPattern = "/dashboard"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
+				case 'o': // Prefix: "octors"
+
+					if l := len("octors"); len(elem) >= l && elem[0:l] == "octors" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch method {
+						case "GET":
+							r.name = DoctorsFormOperation
+							r.summary = ""
+							r.operationID = "doctors_form"
+							r.operationGroup = ""
+							r.pathPattern = "/doctors"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "id"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							break
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/availability"
+
+							if l := len("/availability"); len(elem) >= l && elem[0:l] == "/availability" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch method {
+								case "POST":
+									r.name = DoctorAvailabilitySubmitOperation
+									r.summary = ""
+									r.operationID = "doctor_availability_submit"
+									r.operationGroup = ""
+									r.pathPattern = "/doctors/{id}/availability"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+
+						}
+
+					}
+
 				}
 
 			case 'l': // Prefix: "logout"

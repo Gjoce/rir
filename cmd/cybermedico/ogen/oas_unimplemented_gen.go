@@ -69,6 +69,20 @@ func (UnimplementedHandler) Dashboard(ctx context.Context) (r DashboardRes, _ er
 	return r, ht.ErrNotImplemented
 }
 
+// DoctorAvailabilitySubmit implements doctor_availability_submit operation.
+//
+// POST /doctors/{id}/availability
+func (UnimplementedHandler) DoctorAvailabilitySubmit(ctx context.Context, req *DoctorAvailabilitySubmitReq, params DoctorAvailabilitySubmitParams) (r DoctorAvailabilitySubmitRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// DoctorsForm implements doctors_form operation.
+//
+// GET /doctors
+func (UnimplementedHandler) DoctorsForm(ctx context.Context) (r DoctorsFormRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // Login implements login operation.
 //
 // GET /auth/login

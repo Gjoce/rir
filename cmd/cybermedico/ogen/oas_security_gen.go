@@ -42,6 +42,8 @@ var operationRolesSessionCookie = map[string][]string{
 	ConsultationsFormOperation:          []string{},
 	ConsultationsVideoFormOperation:     []string{},
 	DashboardOperation:                  []string{},
+	DoctorAvailabilitySubmitOperation:   []string{},
+	DoctorsFormOperation:                []string{},
 	LogoutOperation:                     []string{},
 	WidgetOperation:                     []string{},
 }

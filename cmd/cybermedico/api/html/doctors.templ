@@ -1,0 +1,60 @@
+package html
+
+import (
+	"cybermedico/components"
+	"cybermedico/layouts"
+	"fmt"
+)
+
+templ DoctorsPage(doctors []DoctorRow) {
+	@layouts.Dashboard(nil) {
+		@components.HeadingGroup(components.Config{
+			Description: "Mark a doctor unavailable to stop new consultations. Existing consultations are not affected.",
+			Breadcrumbs: []components.Breadcrumb{
+				{Title: "Doctors"},
+			},
+		})
+		if len(doctors) == 0 {
+			@components.MessageCard() {
+				<p>No doctors yet.</p>
+			}
+		} else {
+			<div class="overflow-auto">
+				<table class="striped" style="white-space: nowrap;">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Specialization</th>
+							<th>Workplace</th>
+							<th>Status</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, doctor := range doctors {
+							{{ label, next := availabilityAction(doctor.Available) }}
+							<tr>
+								<td>{ doctor.DisplayName }</td>
+								<td>{ doctor.Specialization }</td>
+								<td>{ doctor.Workplace }</td>
+								<td>
+									if doctor.Available {
+										<span class="badge-true">{ availabilityLabel(doctor.Available) }</span>
+									} else {
+										<span class="badge-false">{ availabilityLabel(doctor.Available) }</span>
+									}
+								</td>
+								<td>
+									<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/doctors/%s/availability", doctor.ID)) } style="margin: 0;">
+										<input type="hidden" name="available" value={ next }/>
+										<button type="submit" class="outline" style="margin: 0;">{ label }</button>
+									</form>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	}
+}
