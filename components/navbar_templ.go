@@ -17,7 +17,7 @@ import (
 // inStaffArea reports whether the page is part of the logged-in area, which has
 // its own sidebar, so the navbar doesn't need a dashboard link there.
 func inStaffArea(path string) bool {
-	return strings.HasPrefix(path, "/dashboard") || strings.HasPrefix(path, "/consultations")
+	return strings.HasPrefix(path, "/dashboard") || strings.HasPrefix(path, "/consultations") || strings.HasPrefix(path, "/doctors")
 }
 
 func Navbar() templ.Component {

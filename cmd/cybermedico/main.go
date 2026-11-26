@@ -468,6 +468,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 		html.ConsultationsHandler
 		html.VideoPageHandler
 		html.ICEHandler
+		html.DoctorsHandler
 	}{
 		html.NewRootHandler(dbPool),
 		html.NewSpecialistsHandler(dbPool),
@@ -479,6 +480,7 @@ func initializeHTMLServer(dbPool *pgxpool.Pool, authService *html.AuthService, s
 		html.NewConsultationsHandler(dbPool, authService, storageService, riverClient),
 		html.NewVideoPageHandler(dbPool, authService, videoURLBuilder.JoinSecret),
 		html.NewICEHandler(initializeTURNConfig(), videoAuthorize),
+		html.NewDoctorsHandler(authService, dbPool),
 	},
 		authHandler,
 		ogen.WithErrorHandler(errors.ErrorHandler),

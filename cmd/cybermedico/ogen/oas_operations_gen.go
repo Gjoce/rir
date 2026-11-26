@@ -14,6 +14,8 @@ const (
 	ConsultationsFormOperation          OperationName = "ConsultationsForm"
 	ConsultationsVideoFormOperation     OperationName = "ConsultationsVideoForm"
 	DashboardOperation                  OperationName = "Dashboard"
+	DoctorAvailabilitySubmitOperation   OperationName = "DoctorAvailabilitySubmit"
+	DoctorsFormOperation                OperationName = "DoctorsForm"
 	LoginOperation                      OperationName = "Login"
 	LoginSubmitOperation                OperationName = "LoginSubmit"
 	LogoutOperation                     OperationName = "Logout"

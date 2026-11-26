@@ -14,7 +14,7 @@ Vse HTTP poti so opisane v `cmd/cybermedico/openapi.yml`, strežniška koda pa j
    - Podoben obstoječ handler v `cmd/cybermedico/api/html/` (npr. `dashboard.go`, `consultations.go`) in uporabi isti vzorec.
 
 2. **Dodaj pot v `cmd/cybermedico/openapi.yml`**
-   - Unikaten `operationId` v camelCase (iz njega ogen naredi ime metode, npr. `myPage` → `MyPage`).
+   - Unikaten `operationId` v snake_case kot obstoječe poti (npr. `doctors_form`; ogen iz njega naredi ime metode `DoctorsForm`).
    - Stran za prijavljene uporabnike: `security: - sessionCookie: []`.
    - Odgovori: uporabi obstoječe `$ref: "#/components/responses/200"` in `"default"`.
    - Parameter ID: `$ref: "#/components/parameters/UUID"`.
